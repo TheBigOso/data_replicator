@@ -54,11 +54,9 @@ These are load-bearing; the prototype is designed to make each one visible rathe
 
 ### Hierarchy and navigation
 
-Four levels — **Global Fleet → Fleet (hub server) → Virtual Fleet → Stream (pipeline)**. Each screen sits at the level that owns the objects it shows: the **virtual fleet** owns Connections, Jobs, and Events; each **stream** owns Tables, Monitoring, and Admin. Under a virtual fleet the sidebar lists its streams alphabetically, then Jobs, Events, and Connections. The sidebar is a searchable, expandable tree with a resizable width that persists per user, and it shows only what the signed-in operator's grants reach.
+Four levels — **Global Fleet → Fleet (hub server) → Virtual Fleet → Pipeline** — with pipeline-scoped sections beneath each pipeline (Connections, Tables, Monitoring, Jobs, Events, Admin). The sidebar is a searchable, expandable tree with a resizable width that persists per user, and it shows only what the signed-in operator's grants reach.
 
-Screens: Global fleet console, Browse fleets, Fleet view, Virtual fleet overview, Pipelines list, Pipeline detail, Pipeline admin, Connections, Connection detail, New connection wizard, Tables, Monitoring, Jobs, Events, and Admin at three levels (global, fleet, virtual fleet).
-
-Every virtual-fleet screen is scoped by where it was opened from — from a stream it narrows to that stream, from the virtual fleet it covers all of them — and the counts published in the Global fleet console are derived from the same data those screens read, so a number you click matches what you land on.
+Screens: Fleet overview, Browse fleets, Global fleet console, Fleet view, Pipelines list, Pipeline detail, Pipeline admin, Connections, Connection detail, Tables, Monitoring, Jobs, Events, and Admin at three levels (global, fleet, virtual fleet).
 
 ### Identity and access
 

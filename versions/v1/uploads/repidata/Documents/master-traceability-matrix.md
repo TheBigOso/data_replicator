@@ -24,8 +24,8 @@ This is the authoritative cross-specification register of acceptance criteria. E
 
 ## Coverage summary
 
-- **173** acceptance criteria across **13** published design specifications.
-- **128** identically numbered test procedures, verified by the baseline extraction; the 28 FLT criteria (FLT-01..11 on 2026-07-15, FLT-12..18 on 2026-07-16, FLT-19..23 on 2026-07-17, FLT-24..25 on 2026-07-18, FLT-26..28 on 2026-07-21) the 31 FLT criteria (FLT-29..31 added 2026-07-26) and the 14 CON criteria (CON-01..09 on 2026-07-26, CON-10..14 on 2026-07-26) are newly added and await procedures.
+- **165** acceptance criteria across **13** published design specifications.
+- **128** identically numbered test procedures, verified by the baseline extraction; the 28 FLT criteria (FLT-01..11 on 2026-07-15, FLT-12..18 on 2026-07-16, FLT-19..23 on 2026-07-17, FLT-24..25 on 2026-07-18, FLT-26..28 on 2026-07-21) and the 9 CON criteria (CON-01..09 on 2026-07-26) are newly added and await procedures.
 
 ## Architecture (architecture.md)
 
@@ -243,9 +243,6 @@ This is the authoritative cross-specification register of acceptance criteria. E
 | FLT-26 | Connections view shows Connection (with role), Platform, Description, Agent, Heartbeat, and Status, plus a per-row Test action reporting pass/fail with latency or failure cause | FLT-26 | Not run | - |
 | FLT-27 | Every Connections column is sortable (asc/desc toggle with visible indicator; default Connection descending shown on load) and filterable via combining per-column filter boxes; numeric columns sort numerically | FLT-27 | Not run | - |
 | FLT-28 | Connections column chooser adds/removes columns (Host/endpoint, Created, Created by, Pipelines, Last test; Test button hideable; Connection locked); visibility and sort persist per user and are isolated between users | FLT-28 | Not run | - |
-| FLT-29 | Connections, Jobs, and Events are virtual-fleet screens; Tables, Monitoring, and Admin are stream screens; a virtual fleet lists its streams alphabetically, then Jobs, Events, Connections | FLT-29 | Not run | - |
-| FLT-30 | Browser Back and Forward walk the console's screens and never leave the application; filters, modals, and toasts create no history entries | FLT-30 | Not run | - |
-| FLT-31 | Fleet and virtual-fleet enterability is grant-derived everywhere it is shown; a SuperAdmin reaches all, an ungranted operator is told which grant to ask for | FLT-31 | Not run | - |
 
 ## Connections (connections.md)
 
@@ -260,8 +257,3 @@ This is the authoritative cross-specification register of acceptance criteria. E
 | CON-07 | The Oracle database dialog exposes ORACLE_HOME and a local-SID or TNS connect path; a saved TNS string re-derives host, port, and service consistently across the console | CON-07 | Not run | - |
 | CON-08 | Capture and integrate method choices are constrained to what the class supports, and Direct redo requested over a non-loopback TNS connection raises a configuration-time warning naming the loopback or local-SID requirement | CON-08 | Not run | - |
 | CON-09 | Every configuration dialog defaults to testing before saving, allows saving untested, discloses in the confirmation which of the two occurred, and records the save in the event ledger | CON-09 | Not run | - |
-| CON-10 | Connections are created through a five-step wizard whose completed steps collapse to editable summaries | CON-10 | Not run | - |
-| CON-11 | A connection can be saved without attaching it to any pipeline; unattached is the default and it can be attached later | CON-11 | Not run | - |
-| CON-12 | Creation refuses a missing or duplicate name and a missing capture/integrate method, naming the reason and returning to the offending step | CON-12 | Not run | - |
-| CON-13 | Every value entered during creation is stored and displayed; no field substitutes a derived default for a blank, and editing a blank field opens empty | CON-13 | Not run | - |
-| CON-14 | Connections, Jobs, and Events are virtual-fleet screens and Tables, Monitoring, and Admin are pipeline screens, each scoped to the level opened from, with counts matching the screens they open | CON-14 | Not run | - |

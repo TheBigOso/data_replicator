@@ -120,7 +120,7 @@ The table includes both published files and named planned specifications. **An e
 | `naming.md` — terminology decisions: HVR coinages renamed (pipeline, connection, history style, apply, segments…), industry-generic terms kept, banned-terms CI lint (NAM-01) | Locked for location→connection and channel→pipeline; rename sweep pending final sign-off on the rest |
 | `diagrams/diagram-plan.md` — one wire diagram per concept: the enforced inventory (type, required elements, owning section, status) with Lucid links for completed diagrams | Living — a concept without its diagram is incomplete |
 | `ddl-capture.md` - planned source-DDL detection and decoding specification; required before DDL policy verification | Planned |
-| master-traceability-matrix.md - consolidated acceptance criteria, procedures, verification state, and evidence references | Baselined 2026-07-12; 173 criteria (FLT-12..18 added 2026-07-16, FLT-19..23 on 2026-07-17, FLT-24..25 on 2026-07-18, FLT-26..28 on 2026-07-21, CON-01..09 and FLT-29..31 and CON-10..14 on 2026-07-26), all not yet run or gated/deferred |
+| master-traceability-matrix.md - consolidated acceptance criteria, procedures, verification state, and evidence references | Baselined 2026-07-12; 165 criteria (FLT-12..18 added 2026-07-16, FLT-19..23 on 2026-07-17, FLT-24..25 on 2026-07-18, FLT-26..28 on 2026-07-21, CON-01..09 on 2026-07-26), all not yet run or gated/deferred |
 
 ## Scope source of truth
 

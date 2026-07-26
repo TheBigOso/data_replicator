@@ -53,7 +53,7 @@ Each visible column carries a filter box under its header. Filters are substring
 
 Column visibility and sort order are **per user**, stored with the operator's other workspace preferences and restored at sign-in; two operators sharing a fleet keep their own table setups. Filters are session-only — they are a transient act of looking, not a preference.
 
-**Connections belong to the virtual fleet, not to a pipeline.** The Connections screen sits directly under its virtual fleet alongside Jobs and Events, while Tables, Monitoring, and Admin sit under each individual pipeline. Opened at the virtual-fleet level, the list shows every connection used by that virtual fleet's pipelines, plus connections created there that no pipeline uses yet; opened from a pipeline it narrows to that pipeline's source and target. One scope rule drives all three virtual-fleet screens, so a count shown in the Global fleet console always matches what the screen it opens contains.
+Opened from a pipeline, the list is scoped to that pipeline's source and target. Opened at the virtual-fleet level it shows every connection the operator's grants reach.
 
 ## 3. Connection Detail
 
@@ -68,26 +68,6 @@ The detail screen is organized as three configuration cards plus a membership ta
 **Source and target properties card** — the resolved capture or integrate method plus the enabled options, so the effective configuration is visible without opening the editor.
 
 **Pipeline membership** — one row per pipeline using this connection: pipeline name (linking to the pipeline), replication status, the role the connection plays *in that pipeline*, table count, and average daily volume. This is the blast-radius answer: an operator looking at an unreachable connection sees immediately which pipelines are affected. An **Add to an existing pipeline** action starts the membership change; a connection with no pipelines shows an explicit empty state rather than an empty table.
-
-## 3A. Creating a Connection
-
-A connection is created through a five-step wizard, not a single dense form. Each step confirms before the next opens, completed steps collapse to a one-line summary with an Edit action, and a persistent rail carries the connection name, description, and step progress — so the operator always knows what they have committed to and what remains.
-
-| Step | What it asks | Notes |
-|---|---|---|
-| 1 | **Select location type** | Every supported platform, filterable by All / Sources / Targets, each stating the roles it can take. The choice seeds the platform's default port and constrains every later step |
-| 2 | **Select agent connection** | Agent vs hub-direct with each mode's cost stated; agent host and port; regular vs RAC-cluster agents; test agent connection; configure agent service; certificate state; authentication method |
-| 3 | **Configure location connection** | Platform-shaped: Oracle asks ORACLE_HOME and local-SID or TNS; others ask host, port, database. User and password with the vaulting statement |
-| 4 | **Configure capture / integrate** | Role (only what the class supports) and method, with the class's options and the same configuration-time cross-validation as the edit dialog |
-| 5 | **Channel membership** — optional | Save unattached (the default) or attach to pipelines in the current virtual fleet now |
-
-Three rules govern the wizard:
-
-**A connection exists on its own.** Membership in a pipeline is a separate act, deliberately optional and defaulted off: an operator defining a database before any pipeline needs it must not be forced to invent a pipeline. The confirmation states which happened, and an unattached connection says so plainly on its detail screen with an action to attach it later.
-
-**A name is required and unique.** Nothing is saved without one — the name is how every pipeline, job, and event refers to the connection — and a duplicate is refused at creation rather than producing two rows an operator cannot tell apart. A missing method is refused the same way, and the wizard returns to the step that needs attention.
-
-**What the operator entered is what the console shows.** Every value the wizard collects — agent host and port, RAC choice, connect path, SID or TNS, ORACLE_HOME, method, and each enabled option — is stored on the connection and rendered on its detail screen. No screen substitutes a derived default for a field the operator left blank; blank reads as blank, and editing a blank field starts empty rather than pre-filled with a display placeholder. A newly created connection enters as **Enrolling** with no heartbeat until its first one arrives.
 
 ## 4. Configuration Dialogs
 
@@ -151,9 +131,9 @@ One test action is reachable from three places — the list row, the detail head
 
 | Phase | Focus | Criteria | Environment | Entry condition | Exit condition |
 |---|---|---|---|---|---|
-| A | Table behavior and scoping | CON-01, CON-02, CON-03, CON-14 | Playwright against seeded fleet fixtures | Connections list implemented | Sort, filter, and per-user column persistence proven across two accounts |
-| B | Configuration dialogs and creation | CON-04, CON-05, CON-06, CON-07, CON-10, CON-11 | Misconfiguration fixture set from `location.md` | Phase A exit; dialogs implemented | Every fixture caught at configuration time with documented remediation |
-| C | Testing and disclosure | CON-08, CON-09, CON-12, CON-13 | Integration lab incl. a deliberately unreachable agent | Phase B exit | Test results and save-without-test disclosure verified; ledger entries present |
+| A | Table behavior | CON-01, CON-02, CON-03 | Playwright against seeded fleet fixtures | Connections list implemented | Sort, filter, and per-user column persistence proven across two accounts |
+| B | Configuration dialogs | CON-04, CON-05, CON-06, CON-07 | Misconfiguration fixture set from `location.md` | Phase A exit; dialogs implemented | Every fixture caught at configuration time with documented remediation |
+| C | Testing and disclosure | CON-08, CON-09 | Integration lab incl. a deliberately unreachable agent | Phase B exit | Test results and save-without-test disclosure verified; ledger entries present |
 
 ### 7.1 Methods
 
@@ -174,8 +154,3 @@ Dialog validation reuses the misconfiguration fixture set: for connections, the 
 | CON-07 | The Oracle database dialog exposes ORACLE_HOME and a local-SID or TNS connect path; a saved TNS string re-derives host, port, and service consistently across the console |
 | CON-08 | Capture and integrate method choices are constrained to what the class supports, and Direct redo requested over a non-loopback TNS connection raises a configuration-time warning naming the loopback or local-SID requirement |
 | CON-09 | Every configuration dialog defaults to testing before saving, allows saving untested, discloses in the confirmation which of the two occurred, and records the save in the event ledger |
-| CON-10 | Connections are created through a five-step wizard (location type, agent connection, location connection, capture/integrate, channel membership) whose completed steps collapse to editable summaries |
-| CON-11 | A connection can be created and saved without attaching it to any pipeline; unattached is the default, the confirmation states which occurred, and the connection can be attached later from its detail screen |
-| CON-12 | Creation refuses a missing or duplicate name and a missing capture/integrate method, naming the reason and returning to the step that needs attention |
-| CON-13 | Every value entered during creation is stored on the connection and shown on its detail screen; no field displays a derived default in place of a value the operator left blank, and editing a blank field opens empty |
-| CON-14 | Connections, Jobs, and Events are virtual-fleet screens and Tables, Monitoring, and Admin are pipeline screens; each list is scoped to the level it is opened from, and counts shown in the Global fleet console match the screens they open |

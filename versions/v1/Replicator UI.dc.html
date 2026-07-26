@@ -262,7 +262,7 @@
           <sc-for list="{{ hubServers }}" as="srv" hint-placeholder-count="3">
             <div style="background:var(--panel); border:1px solid var(--border-soft); border-radius:10px; overflow:hidden;">
               <div onClick="{{ srv.open }}" style="display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; padding:12px 16px 12px 8px; background:var(--panel-soft); cursor:pointer; border-left:3px solid {{ accent }};" style-hover="background:var(--bg-subtle);">
-                <span onClick="{{ srv.toggle }}" title="Show virtual fleets" style="width:26px; flex:none; text-align:center; font-size:22px; line-height:1; color:{{ accent }}; cursor:pointer;">{{ srv.caret }}</span>
+                <span onClick="{{ srv.toggle }}" title="Show virtual fleets" style="width:20px; flex:none; text-align:center; font-size:15px; color:{{ accent }}; cursor:pointer;">{{ srv.caret }}</span>
                 <span style="flex:none; font-size:10px; font-weight:700; letter-spacing:.07em; color:var(--muted2); border:1px solid var(--border-soft); border-radius:4px; padding:2px 5px; background:var(--panel);">FLEET</span>
                 <span style="width:9px; height:9px; flex:none; border-radius:99px; background:{{ srv.dot }}; display:inline-block;"></span>
                 <span style="flex:none; font-weight:600; font-size:15px; color:{{ accent }};">{{ srv.name }}</span>
@@ -477,7 +477,7 @@
   <!-- ======== CONNECTIONS ======== -->
   <sc-if value="{{ showConnections }}" hint-placeholder-val="{{ false }}">
     <div data-screen-label="Connections">
-      <div onClick="{{ backUp }}" style="font-size:12px; color:var(--muted2); cursor:pointer; margin-bottom:12px;" style-hover="color:var(--text);">← {{ backUpLabel }}</div>
+      <div onClick="{{ backToPipe }}" style="font-size:12px; color:var(--muted2); cursor:pointer; margin-bottom:12px;" style-hover="color:var(--text);">← Pipeline {{ sel.name }}</div>
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
         <div style="font-size:20px; font-weight:600;">Connections</div>
         <div style="display:flex; align-items:center; gap:10px;">
@@ -497,7 +497,7 @@
         <div onClick="{{ newConnection }}" style="background:{{ accent }}; color:#fff; font-size:12.5px; font-weight:600; padding:8px 14px; border-radius:7px; cursor:pointer;" style-hover="opacity:.9;">New connection</div>
         </div>
       </div>
-      <div style="font-size:12.5px; color:var(--muted2); margin-bottom:18px;">{{ connScopeNote }}, with their enrolled agents.</div>
+      <div style="font-size:12.5px; color:var(--muted2); margin-bottom:18px;">Databases and stores the fleet replicates between, with their enrolled agents.</div>
       <div style="background:var(--panel); border:1px solid var(--border-soft); border-radius:10px; overflow:hidden;">
         <div style="display:grid; grid-template-columns:{{ connGrid }}; padding:10px 16px 0; font-size:11.5px; color:var(--muted2);">
           <sc-for list="{{ connHeaders }}" as="h" hint-placeholder-count="6">
@@ -603,9 +603,6 @@
             <sc-for list="{{ connD.props }}" as="p" hint-placeholder-count="4">
               <div style="display:flex; justify-content:space-between; gap:16px;"><span style="color:var(--muted2);">{{ p.k }}</span><span style="text-align:right;">{{ p.v }}</span></div>
             </sc-for>
-            <sc-if value="{{ connD.noProps }}" hint-placeholder-val="{{ false }}">
-              <div style="font-size:12.5px; color:var(--muted2);">No capture or integrate properties are set yet — Edit to choose a method.</div>
-            </sc-if>
           </div>
         </div>
       </div>
@@ -807,242 +804,6 @@
     </div>
   </sc-if>
 
-  <!-- ======== NEW CONNECTION WIZARD ======== -->
-  <sc-if value="{{ showNewConn }}" hint-placeholder-val="{{ false }}">
-    <div data-screen-label="New connection">
-      <div onClick="{{ nc.cancel }}" style="font-size:12px; color:var(--muted2); cursor:pointer; margin-bottom:12px;" style-hover="color:var(--text);">← Cancel connection creation</div>
-      <div style="font-size:20px; font-weight:600; margin-bottom:18px;">Create new connection</div>
-      <div style="display:grid; grid-template-columns:minmax(0,260px) minmax(0,1fr); gap:28px; align-items:start;">
-        <div style="min-width:0; background:var(--panel); border:1px solid var(--border-soft); border-radius:10px; padding:16px 18px; position:sticky; top:12px;">
-          <div style="font-size:10.5px; letter-spacing:.06em; color:var(--muted2); margin-bottom:4px;">CONNECTION NAME</div>
-          <input value="{{ nc.name }}" onChange="{{ nc.setName }}" placeholder="ORA-ERP02" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:7px; padding:8px 11px; font-size:12.5px; font-family:'IBM Plex Mono',monospace; background:var(--panel);">
-          <sc-if value="{{ nc.hasNameErr }}" hint-placeholder-val="{{ false }}">
-            <div style="font-size:11.5px; color:var(--danger); margin-top:5px;">{{ nc.nameErr }}</div>
-          </sc-if>
-          <div style="height:14px;"></div>
-          <div style="font-size:10.5px; letter-spacing:.06em; color:var(--muted2); margin-bottom:4px;">DESCRIPTION</div>
-          <input value="{{ nc.desc }}" onChange="{{ nc.setDesc }}" placeholder="What this system is for" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:7px; padding:8px 11px; font-size:12.5px; background:var(--panel); margin-bottom:18px;">
-          <div style="font-size:11.5px; color:var(--muted2); margin-bottom:6px;">Step {{ nc.step }} of 5</div>
-          <div style="height:4px; border-radius:99px; background:var(--bg-subtle); overflow:hidden;"><div style="height:100%; width:{{ nc.progress }}; background:{{ accent }};"></div></div>
-        </div>
-        <div style="min-width:0; display:flex; flex-direction:column; gap:10px;">
-
-          <div style="min-width:0; background:var(--panel); border:1px solid var(--border-soft); border-radius:10px; padding:18px 20px;">
-            <div style="display:flex; align-items:center; gap:10px;">
-              <span style="{{ nc.s1.badge }}">{{ nc.s1.mark }}</span>
-              <div style="font-size:14px; font-weight:600;">Select location type</div>
-              <sc-if value="{{ nc.s1.done }}" hint-placeholder-val="{{ false }}">
-                <span style="font-size:12.5px; color:var(--muted); margin-left:6px;">{{ nc.type }}</span>
-                <span onClick="{{ nc.editS1 }}" style="margin-left:auto; font-size:12px; font-weight:600; color:{{ accent }}; cursor:pointer;" style-hover="text-decoration:underline;">Edit</span>
-              </sc-if>
-            </div>
-            <sc-if value="{{ nc.s1.open }}" hint-placeholder-val="{{ true }}">
-              <div style="font-size:12px; color:var(--muted2); margin:8px 0 12px;">Pick the platform this connection reaches. The capability matrix decides which roles and capture methods it can take.</div>
-              <div style="display:flex; gap:8px; margin-bottom:12px;">
-                <sc-for list="{{ nc.tabs }}" as="t" hint-placeholder-count="3">
-                  <div onClick="{{ t.pick }}" style="{{ t.style }}">{{ t.label }}</div>
-                </sc-for>
-              </div>
-              <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:8px; min-width:0;">
-                <sc-for list="{{ nc.types }}" as="t" hint-placeholder-count="12">
-                  <div onClick="{{ t.pick }}" style="{{ t.style }}">
-                    <div style="display:flex; align-items:center; gap:8px;">
-                      <span style="{{ t.chip }}">{{ t.abbr }}</span>
-                      <span style="font-size:12.5px; font-weight:600;">{{ t.name }}</span>
-                    </div>
-                    <div style="font-size:10.5px; color:var(--muted3); margin-top:3px; margin-left:34px;">{{ t.roles }}</div>
-                  </div>
-                </sc-for>
-              </div>
-            </sc-if>
-          </div>
-
-          <div style="min-width:0; background:var(--panel); border:1px solid var(--border-soft); border-radius:10px; padding:18px 20px; opacity:{{ nc.s2.opacity }};">
-            <div style="display:flex; align-items:center; gap:10px;">
-              <span style="{{ nc.s2.badge }}">{{ nc.s2.mark }}</span>
-              <div style="font-size:14px; font-weight:600;">Select agent connection</div>
-              <sc-if value="{{ nc.s2.done }}" hint-placeholder-val="{{ false }}">
-                <span style="font-size:12.5px; color:var(--muted); margin-left:6px;">{{ nc.agentSummary }}</span>
-                <span onClick="{{ nc.editS2 }}" style="margin-left:auto; font-size:12px; font-weight:600; color:{{ accent }}; cursor:pointer;" style-hover="text-decoration:underline;">Edit</span>
-              </sc-if>
-            </div>
-            <sc-if value="{{ nc.s2.open }}" hint-placeholder-val="{{ false }}">
-              <div style="font-size:12px; color:var(--muted2); margin:8px 0 12px;">An agent reduces network cost, distributes CPU load, and captures changes directly from the database logging system. Agentless connects from the hub itself — no footprint, but all load lands on the hub.</div>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
-                <div onClick="{{ nc.pickAgent }}" style="{{ nc.agentCard }}">
-                  <div style="display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600;"><span style="{{ nc.agentDot }}"></span>Connect via agent</div>
-                  <div style="font-size:11.5px; color:var(--muted2); margin-top:4px;">Enrolled binary on or near the database host · mTLS</div>
-                </div>
-                <div onClick="{{ nc.pickDirect }}" style="{{ nc.directCard }}">
-                  <div style="display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600;"><span style="{{ nc.directDot }}"></span>Connect directly from hub</div>
-                  <div style="font-size:11.5px; color:var(--muted2); margin-top:4px;">Agentless · no agent enrolled</div>
-                </div>
-              </div>
-              <sc-if value="{{ nc.isAgent }}" hint-placeholder-val="{{ true }}">
-                <div style="display:flex; gap:18px; margin-bottom:12px;">
-                  <div onClick="{{ nc.pickRegular }}" style="display:flex; align-items:center; gap:8px; font-size:12.5px; cursor:pointer;"><span style="{{ nc.regularDot }}"></span>Regular connection</div>
-                  <div onClick="{{ nc.pickRac }}" style="display:flex; align-items:center; gap:8px; font-size:12.5px; cursor:pointer;"><span style="{{ nc.racDot }}"></span>Connect to agents inside a RAC cluster</div>
-                </div>
-                <div style="display:grid; grid-template-columns:minmax(0,1fr) 110px; gap:12px; margin-bottom:12px; min-width:0;">
-                  <div style="min-width:0;"><div style="font-size:10.5px; letter-spacing:.06em; color:var(--muted2); margin-bottom:4px;">AGENT HOST</div><input value="{{ nc.agentHost }}" onChange="{{ nc.setAgentHost }}" placeholder="agt-host.corp" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:7px; padding:8px 11px; font-size:12.5px; font-family:'IBM Plex Mono',monospace; background:var(--panel);"></div>
-                  <div><div style="font-size:10.5px; letter-spacing:.06em; color:var(--muted2); margin-bottom:4px;">AGENT PORT</div><input value="{{ nc.agentPort }}" onChange="{{ nc.setAgentPort }}" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:7px; padding:8px 11px; font-size:12.5px; font-family:'IBM Plex Mono',monospace; background:var(--panel);"></div>
-                </div>
-                <div style="display:flex; gap:10px; margin-bottom:12px;">
-                  <div onClick="{{ nc.testAgent }}" style="border:1px solid var(--border); font-size:12px; font-weight:600; padding:7px 13px; border-radius:7px; cursor:pointer;" style-hover="background:var(--panel-soft);">Test agent connection</div>
-                  <div onClick="{{ nc.configAgent }}" style="border:1px solid var(--border); font-size:12px; font-weight:600; padding:7px 13px; border-radius:7px; cursor:pointer;" style-hover="background:var(--panel-soft);">Configure agent service</div>
-                </div>
-                <div style="background:var(--panel-soft); border:1px solid var(--border-soft); border-radius:8px; padding:10px 13px; margin-bottom:12px;">
-                  <div style="font-size:12px; font-weight:600; margin-bottom:2px;">🔒 Public certificate of agent is not yet known</div>
-                  <div style="font-size:11.5px; color:var(--muted);">Traffic is encrypted regardless, but the agent's identity is unverified until it enrolls and its certificate is pinned on first heartbeat.</div>
-                </div>
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
-                  <div style="font-size:12.5px; color:var(--muted);">Authentication to agent</div>
-                  <select value="{{ nc.auth }}" onChange="{{ nc.setAuth }}" style="border:1px solid var(--border); border-radius:7px; padding:7px 10px; font-size:12.5px; font-family:'IBM Plex Sans',sans-serif; background:var(--panel);">
-                    <option value="anon">Anonymous connection</option>
-                    <option value="userpass">Agent user and password</option>
-                    <option value="cert">Client certificate</option>
-                  </select>
-                </div>
-              </sc-if>
-              <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 12px;">
-                <div onClick="{{ nc.toggleTestAgentFirst }}" style="display:flex; align-items:center; gap:8px; font-size:12.5px; cursor:pointer; color:var(--muted);"><span style="{{ nc.testAgentBox }}">{{ nc.testAgentMark }}</span>Test agent connection before confirming</div>
-                <div onClick="{{ nc.confirmS2 }}" style="background:{{ accent }}; color:#fff; font-size:12.5px; font-weight:600; padding:8px 18px; border-radius:7px; cursor:pointer; white-space:nowrap; flex:none;" style-hover="opacity:.9;">Confirm connection method</div>
-              </div>
-            </sc-if>
-          </div>
-
-          <div style="min-width:0; background:var(--panel); border:1px solid var(--border-soft); border-radius:10px; padding:18px 20px; opacity:{{ nc.s3.opacity }};">
-            <div style="display:flex; align-items:center; gap:10px;">
-              <span style="{{ nc.s3.badge }}">{{ nc.s3.mark }}</span>
-              <div style="font-size:14px; font-weight:600;">Configure location connection</div>
-              <sc-if value="{{ nc.s3.done }}" hint-placeholder-val="{{ false }}">
-                <span style="font-size:12.5px; color:var(--muted); margin-left:6px;">{{ nc.connSummary }}</span>
-                <span onClick="{{ nc.editS3 }}" style="margin-left:auto; font-size:12px; font-weight:600; color:{{ accent }}; cursor:pointer;" style-hover="text-decoration:underline;">Edit</span>
-              </sc-if>
-            </div>
-            <sc-if value="{{ nc.s3.open }}" hint-placeholder-val="{{ false }}">
-              <sc-if value="{{ nc.isOracle }}" hint-placeholder-val="{{ false }}">
-                <div style="margin:12px 0 14px;"><div style="font-size:10.5px; letter-spacing:.06em; color:var(--muted2); margin-bottom:4px;">ORACLE_HOME</div><input value="{{ nc.ohome }}" onChange="{{ nc.setOhome }}" placeholder="/opt/oracle/product/19c/dbhome_1" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:7px; padding:8px 11px; font-size:12.5px; font-family:'IBM Plex Mono',monospace; background:var(--panel);"></div>
-                <div onClick="{{ nc.pickLocal }}" style="display:flex; align-items:flex-start; gap:9px; cursor:pointer;">
-                  <span style="{{ nc.localDot }}"></span>
-                  <div><div style="font-size:12.5px; font-weight:600;">Local connect to database</div><div style="font-size:11.5px; color:var(--muted2);">The agent must run on Oracle's own machine.</div></div>
-                </div>
-                <sc-if value="{{ nc.isLocal }}" hint-placeholder-val="{{ true }}">
-                  <div style="margin:8px 0 12px 24px;"><div style="font-size:10.5px; letter-spacing:.06em; color:var(--muted2); margin-bottom:4px;">SID</div><input value="{{ nc.sid }}" onChange="{{ nc.setSid }}" style="width:220px; box-sizing:border-box; border:1px solid var(--border); border-radius:7px; padding:8px 11px; font-size:12.5px; font-family:'IBM Plex Mono',monospace; background:var(--panel);"></div>
-                </sc-if>
-                <div onClick="{{ nc.pickTns }}" style="display:flex; align-items:flex-start; gap:9px; cursor:pointer; margin-top:10px;">
-                  <span style="{{ nc.tnsDot }}"></span>
-                  <div><div style="font-size:12.5px; font-weight:600;">Oracle TNS</div><div style="font-size:11.5px; color:var(--muted2);">Connects via SQL*Net — a name defined in tnsnames.ora, or the [//]HOST[:PORT]/SERVICE_NAME form.</div></div>
-                </div>
-                <sc-if value="{{ nc.isTns }}" hint-placeholder-val="{{ false }}">
-                  <div style="margin:8px 0 12px 24px;"><div style="font-size:10.5px; letter-spacing:.06em; color:var(--muted2); margin-bottom:4px;">ORACLE TNS</div><input value="{{ nc.tns }}" onChange="{{ nc.setTns }}" placeholder="//ora-host.corp:1521/ERPPRD" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:7px; padding:8px 11px; font-size:12.5px; font-family:'IBM Plex Mono',monospace; background:var(--panel);"></div>
-                </sc-if>
-              </sc-if>
-              <sc-if value="{{ nc.isGeneric }}" hint-placeholder-val="{{ true }}">
-                <div style="display:grid; grid-template-columns:minmax(0,1fr) 110px; gap:12px; margin:12px 0; min-width:0;">
-                  <div style="min-width:0;"><div style="font-size:10.5px; letter-spacing:.06em; color:var(--muted2); margin-bottom:4px;">HOST / ENDPOINT</div><input value="{{ nc.host }}" onChange="{{ nc.setHost }}" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:7px; padding:8px 11px; font-size:12.5px; font-family:'IBM Plex Mono',monospace; background:var(--panel);"></div>
-                  <div><div style="font-size:10.5px; letter-spacing:.06em; color:var(--muted2); margin-bottom:4px;">PORT</div><input value="{{ nc.port }}" onChange="{{ nc.setPort }}" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:7px; padding:8px 11px; font-size:12.5px; font-family:'IBM Plex Mono',monospace; background:var(--panel);"></div>
-                </div>
-                <div style="margin-bottom:12px;"><div style="font-size:10.5px; letter-spacing:.06em; color:var(--muted2); margin-bottom:4px;">DATABASE / CONTAINER</div><input value="{{ nc.db }}" onChange="{{ nc.setDb }}" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:7px; padding:8px 11px; font-size:12.5px; font-family:'IBM Plex Mono',monospace; background:var(--panel);"></div>
-              </sc-if>
-              <div style="display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; margin-bottom:12px; min-width:0;">
-                <div style="min-width:0;"><div style="font-size:10.5px; letter-spacing:.06em; color:var(--muted2); margin-bottom:4px;">USER</div><input value="{{ nc.user }}" onChange="{{ nc.setUser }}" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:7px; padding:8px 11px; font-size:12.5px; background:var(--panel);"></div>
-                <div><div style="font-size:10.5px; letter-spacing:.06em; color:var(--muted2); margin-bottom:4px;">PASSWORD</div><input type="password" value="{{ nc.pass }}" onChange="{{ nc.setPass }}" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:7px; padding:8px 11px; font-size:12.5px; background:var(--panel);"></div>
-              </div>
-              <div style="font-size:11.5px; color:var(--muted3); margin-bottom:14px;">Credentials are vaulted on the hub on save — never written to agent disk or logs.</div>
-              <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 12px;">
-                <div onClick="{{ nc.toggleTestConnFirst }}" style="display:flex; align-items:center; gap:8px; font-size:12.5px; cursor:pointer; color:var(--muted);"><span style="{{ nc.testConnBox }}">{{ nc.testConnMark }}</span>Test connection before confirming</div>
-                <div onClick="{{ nc.confirmS3 }}" style="background:{{ accent }}; color:#fff; font-size:12.5px; font-weight:600; padding:8px 18px; border-radius:7px; cursor:pointer; white-space:nowrap; flex:none;" style-hover="opacity:.9;">Confirm connection details</div>
-              </div>
-            </sc-if>
-          </div>
-
-          <div style="min-width:0; background:var(--panel); border:1px solid var(--border-soft); border-radius:10px; padding:18px 20px; opacity:{{ nc.s4.opacity }};">
-            <div style="display:flex; align-items:center; gap:10px;">
-              <span style="{{ nc.s4.badge }}">{{ nc.s4.mark }}</span>
-              <div style="font-size:14px; font-weight:600;">Configure capture / integrate</div>
-              <sc-if value="{{ nc.s4.done }}" hint-placeholder-val="{{ false }}">
-                <span style="font-size:12.5px; color:var(--muted); margin-left:6px;">{{ nc.methodSummary }}</span>
-                <span onClick="{{ nc.editS4 }}" style="margin-left:auto; font-size:12px; font-weight:600; color:{{ accent }}; cursor:pointer;" style-hover="text-decoration:underline;">Edit</span>
-              </sc-if>
-            </div>
-            <sc-if value="{{ nc.s4.open }}" hint-placeholder-val="{{ false }}">
-              <div style="font-size:12px; color:var(--muted2); margin:8px 0 12px;">Role and method are constrained by what {{ nc.type }} supports.</div>
-              <div style="display:flex; gap:18px; margin-bottom:14px;">
-                <sc-for list="{{ nc.roleOpts }}" as="r" hint-placeholder-count="2">
-                  <div onClick="{{ r.pick }}" style="display:flex; align-items:center; gap:8px; font-size:12.5px; cursor:pointer;"><span style="{{ r.dot }}"></span>{{ r.label }}</div>
-                </sc-for>
-              </div>
-              <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
-                <sc-for list="{{ nc.methods }}" as="m" hint-placeholder-count="2">
-                  <div onClick="{{ m.pick }}" style="{{ m.card }}">
-                    <div style="display:flex; align-items:center; gap:9px; font-size:12.5px; font-weight:600;"><span style="{{ m.dot }}"></span>{{ m.title }}</div>
-                    <div style="font-size:11.5px; color:var(--muted2); margin-top:3px; margin-left:22px;">{{ m.desc }}</div>
-                  </div>
-                </sc-for>
-              </div>
-              <sc-if value="{{ nc.hasWarn }}" hint-placeholder-val="{{ false }}">
-                <div style="display:flex; gap:10px; background:oklch(.96 .04 85); border:1px solid oklch(.85 .09 85); border-radius:8px; padding:11px 13px; font-size:12px; color:oklch(.35 .07 70); margin-bottom:12px;"><span>⚠</span><span>{{ nc.warn }}</span></div>
-              </sc-if>
-              <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px;">
-                <sc-for list="{{ nc.flags }}" as="f" hint-placeholder-count="2">
-                  <div onClick="{{ f.toggle }}" style="display:flex; align-items:flex-start; gap:9px; cursor:pointer;">
-                    <span style="{{ f.box }}">{{ f.mark }}</span>
-                    <div><div style="font-size:12.5px; font-weight:600;">{{ f.label }}</div><div style="font-size:11.5px; color:var(--muted2); margin-top:2px;">{{ f.desc }}</div></div>
-                  </div>
-                </sc-for>
-              </div>
-              <div onClick="{{ nc.confirmS4 }}" style="display:inline-block; background:{{ accent }}; color:#fff; font-size:12.5px; font-weight:600; padding:8px 18px; border-radius:7px; cursor:pointer;" style-hover="opacity:.9;">Confirm capture settings</div>
-            </sc-if>
-          </div>
-
-          <div style="min-width:0; background:var(--panel); border:1px solid var(--border-soft); border-radius:10px; padding:18px 20px; opacity:{{ nc.s5.opacity }};">
-            <div style="display:flex; align-items:center; gap:10px;">
-              <span style="{{ nc.s5.badge }}">{{ nc.s5.mark }}</span>
-              <div style="font-size:14px; font-weight:600;">Channel membership</div>
-              <span style="font-size:11px; font-weight:600; letter-spacing:.05em; color:var(--muted2); border:1px solid var(--border-soft); border-radius:4px; padding:2px 6px;">OPTIONAL</span>
-            </div>
-            <sc-if value="{{ nc.s5.open }}" hint-placeholder-val="{{ false }}">
-              <div style="font-size:12px; color:var(--muted2); margin:8px 0 12px;">A connection exists on its own. Attaching it to a pipeline is a separate act you can do now or any time later from the connection detail screen.</div>
-              <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
-                <div onClick="{{ nc.pickAttachNone }}" style="{{ nc.attachNoneCard }}">
-                  <div style="display:flex; align-items:center; gap:9px; font-size:12.5px; font-weight:600;"><span style="{{ nc.attachNoneDot }}"></span>Save without attaching</div>
-                  <div style="font-size:11.5px; color:var(--muted2); margin-top:3px; margin-left:22px;">The connection is defined, validated, and ready — it simply belongs to no pipeline yet.</div>
-                </div>
-                <div onClick="{{ nc.pickAttachNow }}" style="{{ nc.attachNowCard }}">
-                  <div style="display:flex; align-items:center; gap:9px; font-size:12.5px; font-weight:600;"><span style="{{ nc.attachNowDot }}"></span>Attach to pipelines now</div>
-                  <div style="font-size:11.5px; color:var(--muted2); margin-top:3px; margin-left:22px;">Pick the pipelines in {{ currentHub }} this connection should join.</div>
-                </div>
-              </div>
-              <sc-if value="{{ nc.attachNow }}" hint-placeholder-val="{{ false }}">
-                <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
-                  <sc-for list="{{ nc.pipeOpts }}" as="p" hint-placeholder-count="3">
-                    <div onClick="{{ p.toggle }}" style="display:flex; align-items:center; gap:9px; cursor:pointer; border:1px solid var(--border-soft); border-radius:8px; padding:9px 12px;" style-hover="background:var(--panel-soft);">
-                      <span style="{{ p.box }}">{{ p.mark }}</span>
-                      <span style="font-size:12.5px; font-weight:600;">{{ p.name }}</span>
-                      <span style="font-size:11.5px; color:var(--muted2);">{{ p.detail }}</span>
-                    </div>
-                  </sc-for>
-                  <sc-if value="{{ nc.noPipes }}" hint-placeholder-val="{{ false }}">
-                    <div style="font-size:12.5px; color:var(--muted2); padding:6px 2px;">No pipelines are defined in {{ currentHub }} yet — save the connection and attach it when one exists.</div>
-                  </sc-if>
-                </div>
-              </sc-if>
-              <sc-if value="{{ nc.hasNameErr }}" hint-placeholder-val="{{ false }}">
-                <div style="background:var(--danger-bg); color:var(--danger); border-radius:8px; padding:10px 13px; font-size:12px; margin-bottom:12px;">{{ nc.nameErr }}</div>
-              </sc-if>
-              <div style="display:flex; gap:10px;">
-                <div onClick="{{ nc.save }}" style="background:{{ accent }}; color:#fff; font-size:12.5px; font-weight:600; padding:8px 18px; border-radius:7px; cursor:pointer;" style-hover="opacity:.9;">Save connection</div>
-                <div onClick="{{ nc.saveAnother }}" style="border:1px solid var(--border); font-size:12.5px; font-weight:600; padding:8px 16px; border-radius:7px; cursor:pointer;" style-hover="background:var(--panel-soft);">Save and create another</div>
-              </div>
-            </sc-if>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </sc-if>
-
   <!-- ======== TABLES ======== -->
   <sc-if value="{{ showTables }}" hint-placeholder-val="{{ false }}">
     <div data-screen-label="Tables">
@@ -1125,7 +886,7 @@
   <!-- ======== JOBS ======== -->
   <sc-if value="{{ showJobs }}" hint-placeholder-val="{{ false }}">
     <div data-screen-label="Jobs">
-      <div onClick="{{ backUp }}" style="font-size:12px; color:var(--muted2); cursor:pointer; margin-bottom:12px;" style-hover="color:var(--text);">← {{ backUpLabel }}</div>
+      <div onClick="{{ backToPipe }}" style="font-size:12px; color:var(--muted2); cursor:pointer; margin-bottom:12px;" style-hover="color:var(--text);">← Pipeline {{ sel.name }}</div>
       <div style="font-size:20px; font-weight:600; margin-bottom:6px;">Jobs</div>
       <div style="font-size:12.5px; color:var(--muted2); margin-bottom:18px;">Suspend is graceful and resumable; disable is the lock that survives colleagues.</div>
       <div style="background:var(--panel); border:1px solid var(--border-soft); border-radius:10px; overflow:hidden;">
@@ -1167,7 +928,7 @@
   <!-- ======== EVENTS ======== -->
   <sc-if value="{{ showEvents }}" hint-placeholder-val="{{ false }}">
     <div data-screen-label="Events">
-      <div onClick="{{ backUp }}" style="font-size:12px; color:var(--muted2); cursor:pointer; margin-bottom:12px;" style-hover="color:var(--text);">← {{ backUpLabel }}</div>
+      <div onClick="{{ backToPipe }}" style="font-size:12px; color:var(--muted2); cursor:pointer; margin-bottom:12px;" style-hover="color:var(--text);">← Pipeline {{ sel.name }}</div>
       <div style="font-size:20px; font-weight:600; margin-bottom:6px;">Events</div>
       <div style="font-size:12.5px; color:var(--muted2); margin-bottom:18px;">The audit ledger — complete by construction, immutable, SIEM-forwardable.</div>
       <div style="display:flex; flex-direction:column; gap:6px;">
@@ -2130,183 +1891,6 @@ class Component extends DCLogic {
     ];
   }
 
-  connBaseNames() {
-    return ['ORA-ERP01', 'ORA-SCM02', 'MSSQL-HR', 'DB2-MFG', 'PG-BILLING', 'PG-ORDERS', 'SNOWFLAKE-PRD', 'DATABRICKS-LH', 'S3-LAKE', 'PG-ANALYTICS'];
-  }
-
-  ncTypeDefs() {
-    return [
-      ['Oracle', 'ORA', 'both'], ['SQL Server', 'SQL', 'both'], ['PostgreSQL', 'PG', 'both'], ['DB2 for Linux, Unix, Windows', 'DB2', 'both'],
-      ['DB2 for i', 'DB2i', 'source'], ['DB2 for z/OS', 'DB2z', 'source'], ['MySQL', 'MY', 'both'], ['MariaDB', 'MAR', 'both'],
-      ['Aurora MySQL', 'AMY', 'both'], ['Aurora PostgreSQL', 'APG', 'both'], ['SAP HANA', 'HANA', 'both'], ['SAP NetWeaver via AppConnect', 'SAP', 'source'],
-      ['Ingres', 'ING', 'both'], ['Sybase ASE', 'SY', 'source'], ['Snowflake', 'SNOW', 'target'], ['Databricks', 'DBX', 'target'],
-      ['Redshift', 'RS', 'target'], ['Google BigQuery', 'BQ', 'target'], ['Azure Synapse Analytics', 'SYN', 'target'], ['Azure SQL Database', 'ASQL', 'both'],
-      ['Azure SQL Managed Instance', 'AMI', 'both'], ['Greenplum', 'GP', 'target'], ['Teradata', 'TD', 'target'], ['SingleStore', 'S2', 'target'],
-      ['Actian Vector', 'AV', 'target'], ['Amazon S3', 'S3', 'target'], ['Azure Blob Storage', 'ABS', 'target'], ['Azure DLS', 'DLS', 'target'],
-      ['Google Cloud Storage', 'GCS', 'target'], ['File / FTP / SFTP', 'FILE', 'both'], ['Apache HDFS', 'HDFS', 'target'], ['Apache Kafka', 'KFK', 'target'],
-      ['YugabyteDB', 'YB', 'both'],
-    ];
-  }
-
-  newConnVals(accent) {
-    const s = this.state;
-    const nc = s.nc;
-    if (s.screen !== 'newconn' || !nc) return { showNewConn: false, nc: null };
-    const set = (k) => (e) => { const v = e.target.value; this.setState(st => ({ nc: { ...st.nc, [k]: v } })); };
-    const put = (o) => this.setState(st => ({ nc: { ...st.nc, ...o } }));
-    const dot = (on) => 'display:inline-flex; width:13px; height:13px; border-radius:50%; flex:none; border:' + (on ? '4px solid ' + accent : '1.5px solid var(--border)') + '; box-sizing:border-box; background:var(--panel);';
-    const box = (on) => 'display:inline-flex; width:15px; height:15px; border-radius:4px; align-items:center; justify-content:center; font-size:10px; flex:none;' + (on ? 'background:' + accent + '; color:#fff;' : 'border:1px solid var(--border); background:var(--panel);');
-    const card = (on) => 'border:1.5px solid ' + (on ? accent : 'var(--border-soft)') + '; background:' + (on ? 'var(--panel-soft)' : 'var(--panel)') + '; border-radius:9px; padding:11px 13px; cursor:pointer;';
-    const stepUI = (n) => ({
-      open: nc.step === n,
-      done: nc.step > n,
-      opacity: nc.step < n ? '.55' : '1',
-      mark: nc.step > n ? '✓' : String(n),
-      badge: 'display:inline-flex; width:22px; height:22px; flex:none; border-radius:99px; align-items:center; justify-content:center; font-size:11px; font-weight:700;'
-        + (nc.step >= n ? 'background:' + accent + '; color:#fff;' : 'border:1.5px solid var(--border); color:var(--muted2); background:var(--panel);'),
-    });
-    const isOracle = nc.type === 'Oracle';
-    const isPg = nc.type && nc.type.indexOf('PostgreSQL') >= 0;
-    const typeRole = (this.ncTypeDefs().find(t => t[0] === nc.type) || [])[2];
-    const roleOpts = (typeRole === 'both' ? ['source', 'target'] : [typeRole || 'source']).map(r => ({
-      label: r === 'source' ? 'Source — capture changes from it' : 'Target — integrate changes into it',
-      dot: dot(nc.role === r), pick: () => put({ role: r, method: null }),
-    }));
-    const mR = (val, title, desc) => ({ title, desc, dot: dot(nc.method === val), card: card(nc.method === val), pick: () => put({ method: val }) });
-    let methods = [], flagDefs = [];
-    const effRole = nc.role || (typeRole === 'target' ? 'target' : 'source');
-    if (effRole === 'source' && isOracle) {
-      methods = [mR('direct', 'Direct redo', 'Reads online redo and archive logs directly — no LogMiner. Lowest latency; requires log access on the Oracle host.'),
-                 mR('archived', 'Archived-log only', 'Reads archived logs as they close. No online redo access needed; latency bounded by the log switch interval.')];
-      flagDefs = [['pdb', 'Pluggable database', 'Capture from a PDB — the agent must access the root container.'],
-                  ['sap', 'SAP source', 'Read SAP dictionary metadata during table selection; required to unpack cluster and pool tables.']];
-    } else if (effRole === 'source' && isPg) {
-      methods = [mR('logical', 'Logical replication slot', 'Streams committed changes via a logical slot and publication.')];
-      flagDefs = [['autoslot', 'Create the slot and publication automatically', 'Otherwise they must already exist with the right privileges.']];
-    } else if (effRole === 'source') {
-      methods = [mR('log', 'Transaction log reader', 'Reads the database transaction log directly on the source host.')];
-      flagDefs = [['retention', 'Log retention guard', 'Refuse to advance if the log would be recycled before capture reads it.']];
-    } else {
-      methods = [mR('continuous', 'Continuous', 'Apply each change as it arrives — lowest latency.'),
-                 mR('batched', 'Batched cycles', 'Accumulate changes and apply on a cycle — fewer target commits.'),
-                 mR('burst', 'Burst apply', 'Coalesce changes into set-based operations — best for warehouse targets.')];
-      flagDefs = [['autoState', 'Create state tables automatically', 'Exactly-once apply state is kept in target-side state tables.'],
-                  ['caseSensitive', 'Case sensitive names', 'Preserve the case of table and column identifiers.']];
-    }
-    const warn = (effRole === 'source' && isOracle && nc.method === 'direct' && nc.connMode !== 'local')
-      ? 'Direct redo capture only works if the TNS connection is loopback — the agent running on Oracle’s own machine — or if a local SID connection is used.'
-      : null;
-    const tabs = [['all', 'All'], ['source', 'Sources'], ['target', 'Targets']].map(([k, label]) => ({
-      label, pick: () => put({ typeTab: k }),
-      style: 'font-size:11.5px; font-weight:700; letter-spacing:.05em; padding:5px 12px; border-radius:6px; cursor:pointer;'
-        + (nc.typeTab === k ? 'background:' + accent + '; color:#fff;' : 'border:1px solid var(--border); color:var(--muted); background:var(--panel);'),
-    }));
-    const types = this.ncTypeDefs()
-      .filter(([, , role]) => nc.typeTab === 'all' || role === 'both' || role === nc.typeTab)
-      .map(([name, abbr, role]) => ({
-        name, abbr, roles: role === 'both' ? 'source or target' : role === 'source' ? 'source only' : 'target only',
-        chip: 'display:inline-flex; min-width:26px; height:20px; padding:0 5px; flex:none; align-items:center; justify-content:center; border-radius:5px; font-size:9.5px; font-weight:700; background:var(--bg-subtle); color:var(--muted);',
-        style: card(nc.type === name),
-        pick: () => put({ type: name, step: 2, role: role === 'both' ? null : role, method: null,
-          port: name.indexOf('PostgreSQL') >= 0 ? '5432' : name === 'Oracle' ? '1521' : name === 'SQL Server' ? '1433' : name.indexOf('DB2') === 0 ? '50000' : '' }),
-      }));
-    const pipeOpts = this.data().filter(p => p.hub === s.currentHub).map(p => ({
-      name: p.name, detail: p.mode + ' · ' + p.tables + ' tables',
-      box: box(!!nc.pipes[p.id]), mark: nc.pipes[p.id] ? '✓' : '',
-      toggle: () => this.setState(st => ({ nc: { ...st.nc, pipes: { ...st.nc.pipes, [p.id]: !st.nc.pipes[p.id] } } })),
-    }));
-    const existingNames = this.connBaseNames().concat((s.newConns || []).map(c => c.name));
-    const nameRaw = (nc.name || '').trim();
-    const nameErr = !nameRaw ? 'Give the connection a name — it is how every pipeline, job, and event refers to it.'
-      : existingNames.some(n => n.toLowerCase() === nameRaw.toLowerCase()) ? 'A connection named ' + nameRaw + ' already exists in this fleet.'
-      : !nc.method ? 'Choose a capture or integrate method in step 4.' : null;
-    const finish = (again) => {
-      if (nameErr) { put({ showErr: true, step: nameRaw && nc.method ? nc.step : (!nameRaw ? nc.step : 4) }); this.showToast(nameErr); return; }
-      const picked = nc.attach === 'now' ? Object.keys(nc.pipes).filter(k => nc.pipes[k]) : [];
-      const methodLabels = { direct: 'direct redo', archived: 'archived-log', logical: 'logical', log: 'log', continuous: 'continuous', batched: 'batched', burst: 'burst' };
-      const methodFull = { direct: 'Direct redo — no LogMiner', archived: 'Archived-log only', logical: 'Logical replication slot', log: 'Transaction log reader',
-        continuous: 'CONTINUOUS — apply as changes arrive', batched: 'Batched cycles', burst: 'Burst apply — set-based' };
-      const flagLabels = { pdb: 'Pluggable database', sap: 'SAP source', autoslot: 'Slot and publication created automatically',
-        retention: 'Log retention guard', autoState: 'State tables created automatically', caseSensitive: 'Case-sensitive names' };
-      const recRole = nc.role || (typeRole === 'target' ? 'target' : 'source');
-      const recProps = [[recRole === 'source' ? 'Capture method' : 'Default integrate method', methodFull[nc.method] || nc.method]]
-        .concat(nc.mode === 'agent' ? [['Reached via', 'Agent ' + (nc.agentHost || 'unset') + ':' + nc.agentPort + (nc.rac ? ' · RAC cluster' : '')]] : [['Reached via', 'Agentless — hub-direct']])
-        .concat(Object.keys(nc.flags).filter(k => nc.flags[k]).map(k => [flagLabels[k] || k, 'Enabled']))
-        .concat([['Validated', nc.testConn ? 'Connection tested before save' : 'Saved untested — next capability check validates']]);
-      const rec = {
-        name: nameRaw, platform: nc.type + ' · ' + (methodLabels[nc.method] || nc.method),
-        role: nc.role || (typeRole === 'target' ? 'target' : 'source'),
-        desc: nc.desc || 'No description',
-        agent: nc.mode === 'agent' ? 'replagent 1.4.2 · pending first heartbeat' : 'agentless · hub-direct',
-        hb: 0, status: 'Enrolling', kind: 'amber',
-        host: (isOracle ? (nc.connMode === 'local' ? '' : nc.tns) : (nc.host ? nc.host + (nc.port ? ':' + nc.port : '') : '')) || '—',
-        created: new Date().toISOString().slice(0, 10), createdBy: s.meName || s.me || 'You',
-        pipelines: picked.length, lastTest: nc.testConn ? 'passed · just now' : 'not tested',
-        db: (isOracle ? (nc.connMode === 'local' ? nc.sid : nc.db || nc.tns) : nc.db) || '—', user: nc.user || '—',
-        ohome: nc.ohome, connMode: nc.connMode, props: recProps,
-        agentHost: nc.mode === 'agent' ? nc.agentHost : null, agentPort: nc.mode === 'agent' ? nc.agentPort : null, rac: !!nc.rac,
-        sid: nc.sid, tns: nc.tns, rawHost: nc.host, rawPort: nc.port, isOracleRec: isOracle, custom: true,
-      };
-      this.setState(st => ({ newConns: (st.newConns || []).concat([rec]) }));
-      this.showToast(nameRaw + ' created — ' + nc.type + ' · ' + (nc.mode === 'agent' ? 'via agent ' + (nc.agentHost || 'unset') + ':' + nc.agentPort : 'agentless, hub-direct')
-        + ' · ' + (picked.length ? 'attached to ' + picked.length + ' pipeline' + (picked.length === 1 ? '' : 's') : 'saved unattached — attach it to a pipeline whenever you are ready')
-        + '. Enrolling until its first heartbeat. Recorded in the event ledger.');
-      if (again) put({ step: 1, name: '', desc: '', type: null, method: null, role: null, pipes: {}, attach: 'none', showErr: false });
-      else this.setState({ screen: 'connections', nc: null });
-    };
-    return {
-      showNewConn: true,
-      nc: {
-        step: String(nc.step), progress: (nc.step * 20) + '%',
-        name: nc.name, desc: nc.desc, setName: set('name'), setDesc: set('desc'),
-        type: nc.type || '—', tabs, types,
-        s1: stepUI(1), s2: stepUI(2), s3: stepUI(3), s4: stepUI(4), s5: stepUI(5),
-        editS1: () => put({ step: 1 }), editS2: () => put({ step: 2 }), editS3: () => put({ step: 3 }), editS4: () => put({ step: 4 }),
-        isAgent: nc.mode === 'agent', isDirect: nc.mode === 'direct',
-        agentCard: card(nc.mode === 'agent'), directCard: card(nc.mode === 'direct'),
-        agentDot: dot(nc.mode === 'agent'), directDot: dot(nc.mode === 'direct'),
-        pickAgent: () => put({ mode: 'agent' }), pickDirect: () => put({ mode: 'direct' }),
-        regularDot: dot(!nc.rac), racDot: dot(!!nc.rac), pickRegular: () => put({ rac: false }), pickRac: () => put({ rac: true }),
-        agentHost: nc.agentHost, agentPort: nc.agentPort, setAgentHost: set('agentHost'), setAgentPort: set('agentPort'),
-        auth: nc.auth, setAuth: set('auth'),
-        testAgentBox: box(nc.testAgent), testAgentMark: nc.testAgent ? '✓' : '',
-        toggleTestAgentFirst: () => put({ testAgent: !nc.testAgent }),
-        testAgent: () => this.showToast((nc.agentHost || 'agent host') + ':' + nc.agentPort + ' — ' + (nc.agentHost ? 'agent reachable · 38ms · mTLS handshake OK · version 1.4.2 matches hub.' : 'no agent host entered yet.')),
-        configAgent: () => this.showToast('Configure agent service — service account, spool directory, log level, upgrade ring. (Not wired in this prototype.)'),
-        agentSummary: nc.mode === 'agent' ? 'via agent ' + (nc.agentHost || 'unset') + ':' + nc.agentPort : 'agentless · hub-direct',
-        confirmS2: () => { this.showToast(nc.mode === 'agent' ? (nc.testAgent ? 'Agent connection tested · 38ms · confirmed.' : 'Connection method confirmed without testing.') : 'Agentless — the hub will connect directly.'); put({ step: 3 }); },
-        isOracle, isGeneric: !isOracle,
-        ohome: nc.ohome, setOhome: set('ohome'),
-        isLocal: nc.connMode === 'local', isTns: nc.connMode === 'tns',
-        localDot: dot(nc.connMode === 'local'), tnsDot: dot(nc.connMode === 'tns'),
-        pickLocal: () => put({ connMode: 'local' }), pickTns: () => put({ connMode: 'tns' }),
-        sid: nc.sid, setSid: set('sid'), tns: nc.tns, setTns: set('tns'),
-        host: nc.host, setHost: set('host'), port: nc.port, setPort: set('port'), db: nc.db, setDb: set('db'),
-        user: nc.user, setUser: set('user'), pass: nc.pass, setPass: set('pass'),
-        testConnBox: box(nc.testConn), testConnMark: nc.testConn ? '✓' : '',
-        toggleTestConnFirst: () => put({ testConn: !nc.testConn }),
-        connSummary: isOracle ? (nc.connMode === 'local' ? 'local · SID ' + (nc.sid || 'unset') : 'TNS · ' + (nc.tns || 'unset')) : ((nc.host || 'unset') + ':' + (nc.port || '—')),
-        confirmS3: () => { this.showToast(nc.testConn ? 'Connection tested · 51ms · credentials vaulted on the hub.' : 'Connection details confirmed without testing — the next capability check validates them.'); put({ step: 4 }); },
-        roleOpts, methods, flags: flagDefs.map(([k, label, desc]) => ({
-          label, desc, box: box(!!nc.flags[k]), mark: nc.flags[k] ? '✓' : '',
-          toggle: () => this.setState(st => ({ nc: { ...st.nc, flags: { ...st.nc.flags, [k]: !st.nc.flags[k] } } })),
-        })),
-        hasWarn: !!warn, warn,
-        methodSummary: (nc.role || effRole) + ' · ' + (nc.method || 'no method chosen'),
-        confirmS4: () => put({ step: 5 }),
-        pipeOpts, noPipes: pipeOpts.length === 0,
-        attachNow: nc.attach === 'now',
-        attachNoneCard: card(nc.attach !== 'now'), attachNowCard: card(nc.attach === 'now'),
-        attachNoneDot: dot(nc.attach !== 'now'), attachNowDot: dot(nc.attach === 'now'),
-        pickAttachNone: () => put({ attach: 'none', pipes: {} }),
-        pickAttachNow: () => put({ attach: 'now' }),
-        save: () => finish(false), saveAnother: () => finish(true),
-        hasNameErr: !!(nc.showErr && nameErr), nameErr: nameErr || '',
-        cancel: () => this.setState({ screen: 'connections', nc: null }),
-      },
-    };
-  }
-
   renderVals() {
     const s = this.state;
     const contextFleet = s.screen === 'global' ? null : (s.fleetSel || 'hubsrv-corp');
@@ -2374,8 +1958,7 @@ class Component extends DCLogic {
             }));
           }, 2));
           if (!vExpanded) return;
-          const goVf = (screen, extra) => () => this.setState({ currentHub: h.id, screen, selected: null, fleetSel: fname, ...(extra || {}) });
-          pipelines.filter(p => p.hub === h.id).slice().sort((a, b) => a.id.localeCompare(b.id)).forEach(p => {
+          pipelines.filter(p => p.hub === h.id).forEach(p => {
             const isSel = p.id === s.selected && isCur;
             const pExpanded = !!s.expandedNavPipes[p.id];
             nav.push(mkNav(p.id, pExpanded ? '▾' : '▸', isSel && s.screen === 'detail', () => {
@@ -2387,13 +1970,13 @@ class Component extends DCLogic {
             if (!pExpanded) return;
             const goPipe = (screen, extra) => () => this.setState({ currentHub: h.id, selected: p.id, screen, fleetSel: fname, ...(extra || {}) });
             const pipeAlerts = this.alertList().filter(a => a.pipe === p.id).length;
+            nav.push(mkNav('Connections', '◈', isSel && s.screen === 'connections', goPipe('connections'), 4));
             nav.push(mkNav('Tables', '☰', isSel && s.screen === 'tables', goPipe('tables', { tableFilter: p.id }), 4));
             nav.push(mkNav('Monitoring', '∿', isSel && s.screen === 'monitoring', goPipe('monitoring'), 4, pipeAlerts ? String(pipeAlerts) : null));
+            nav.push(mkNav('Jobs', '◷', isSel && s.screen === 'jobs', goPipe('jobs'), 4));
+            nav.push(mkNav('Events', '≡', isSel && s.screen === 'events', goPipe('events'), 4));
             nav.push(mkNav('Admin', '⚙', isSel && s.screen === 'pipeadmin', goPipe('pipeadmin'), 4));
           });
-          nav.push(mkNav('Jobs', '◷', isCur && s.screen === 'jobs' && !s.selected, goVf('jobs'), 3));
-          nav.push(mkNav('Events', '≡', isCur && s.screen === 'events' && !s.selected, goVf('events'), 3));
-          nav.push(mkNav('Connections', '◈', isCur && s.screen === 'connections' && !s.selected, goVf('connections'), 3));
         });
       }
     });
@@ -2493,18 +2076,14 @@ class Component extends DCLogic {
     const cs = s.connSort || { key: 'name', dir: -1 };
     const cf = s.connFilters || {};
     const hbText = (sec) => sec >= 60 ? Math.round(sec / 60) + 'm ago' : sec + 's ago';
-    const connAll = connDef.map(([name, platform, role, desc, agent, hb, status, kind, host, created, createdBy, pipelines, lastTest]) => ({ name, platform, role, desc, agent, hb, heartbeat: hbText(hb), status, kind, host, created, createdBy, pipelines, lastTest }))
-      .concat((s.newConns || []).map(c => ({ ...c, heartbeat: 'awaiting first', custom: true })));
+    const connAll = connDef.map(([name, platform, role, desc, agent, hb, status, kind, host, created, createdBy, pipelines, lastTest]) => ({ name, platform, role, desc, agent, hb, heartbeat: hbText(hb), status, kind, host, created, createdBy, pipelines, lastTest }));
     const agOvAll = s.connAgentOv || {};
     connAll.forEach(c => {
       const o = agOvAll[c.name];
       if (o) c.agent = o.mode === 'direct' ? 'agentless · hub-direct' : (c.agent.indexOf('agentless') === 0 ? 'replagent 1.4.2 · linux/x86_64' : c.agent);
     });
     let connRows = connAll;
-    const scopePipes = s.selected ? pipelines.filter(p => p.id === s.selected) : pipelines.filter(p => p.hub === s.currentHub);
-    const scopeNames = {};
-    scopePipes.forEach(p => { scopeNames[p.captureName] = true; scopeNames[p.applyName] = true; });
-    connRows = connRows.filter(c => c.custom || scopeNames[c.name]);
+    if (s.selected) connRows = connRows.filter(c => c.name === selRaw.captureName || c.name === selRaw.applyName);
     connRows = connRows.filter(c => Object.keys(cf).every(k => {
       const q = (cf[k] || '').toLowerCase();
       if (!q) return true;
@@ -2571,31 +2150,22 @@ class Component extends DCLogic {
     let dbM = null;
     let propM = null;
     if (cdRaw) {
-      const meta = connMeta[cdRaw.name] || { db: cdRaw.db || '—', user: cdRaw.user || '—', ohome: cdRaw.ohome, props: cdRaw.props || [] };
+      const meta = connMeta[cdRaw.name] || { db: '—', user: '—', props: [] };
       const hp = (cdRaw.host.includes('://') || !cdRaw.host.includes(':')) ? [cdRaw.host, '—'] : cdRaw.host.split(':');
       const agOv = agOvAll[cdRaw.name];
       const agentless = cdRaw.agent.indexOf('agentless') === 0;
-      const defAgentHost = cdRaw.agentHost || 'agt-' + cdRaw.name.toLowerCase() + '.corp';
+      const defAgentHost = 'agt-' + cdRaw.name.toLowerCase() + '.corp';
       const agentHost = (agOv && agOv.host) || defAgentHost;
-      const agentPort = (agOv && agOv.port) || cdRaw.agentPort || '4343';
+      const agentPort = (agOv && agOv.port) || '4343';
       const agentUser = (agOv && agOv.user) || 'replagent';
       const isOracle = cdRaw.platform.indexOf('Oracle') === 0;
       const dbOv = (s.connDbOv || {})[cdRaw.name] || {};
-      const seededOhome = cdRaw.custom ? (cdRaw.ohome || '—') : (meta.ohome || '/opt/oracle/product/19c/dbhome_1');
-      const dbEff = cdRaw.custom
-        ? {
-            host: cdRaw.connMode === 'local' ? '—' : (cdRaw.rawHost || hp[0] || '—'),
-            port: cdRaw.connMode === 'local' ? '—' : (cdRaw.rawPort || hp[1] || '—'),
-            db: meta.db, user: meta.user, ohome: seededOhome,
-            mode: cdRaw.connMode || 'tns', sid: cdRaw.sid || '—', tns: cdRaw.tns || '—',
-            ...dbOv,
-          }
-        : {
-            host: hp[0], port: hp[1] || '—', db: meta.db, user: meta.user,
-            ohome: seededOhome, mode: 'tns', sid: meta.db,
-            tns: hp[0] + ':' + (hp[1] || '1521') + '/' + meta.db,
-            ...dbOv,
-          };
+      const dbEff = {
+        host: hp[0], port: hp[1] || '—', db: meta.db, user: meta.user,
+        ohome: meta.ohome || '/opt/oracle/product/19c/dbhome_1', mode: 'tns', sid: meta.db,
+        tns: hp[0] + ':' + (hp[1] || '1521') + '/' + meta.db,
+        ...dbOv,
+      };
       const fmtVol = (v) => !v ? 'no data' : v >= 1e6 ? (v / 1e6).toFixed(1) + 'M rows' : Math.round(v / 1000) + 'k rows';
       const members = pipelines.filter(p => p.captureName === cdRaw.name || p.applyName === cdRaw.name).map(p => ({
         name: p.name, status: p.status, pill: this.pill(p.statusKind),
@@ -2619,24 +2189,15 @@ class Component extends DCLogic {
         platform: cdRaw.platform, desc: cdRaw.desc, agent: cdRaw.agent, heartbeat: cdRaw.heartbeat,
         isAgent: !agentless, isAgentless: agentless, agentHost, agentPort,
         host: dbEff.host, port: dbEff.port, db: dbEff.db, dbUser: dbEff.user,
-        ohome: dbEff.ohome,
+        isOracle, ohome: dbEff.ohome,
         connectVia: dbEff.mode === 'local' ? 'Local · SID ' + dbEff.sid : 'TNS · ' + dbEff.tns,
-        isOracle: isOracle || !!cdRaw.isOracleRec,
-        props: propsList.map(([k, v]) => ({ k, v })), noProps: propsList.length === 0,
+        props: propsList.map(([k, v]) => ({ k, v })),
         members, noMembers: members.length === 0,
         test: () => this.showToast(cdRaw.kind === 'red'
           ? cdRaw.name + ' — connection test FAILED: agent unreachable since 14m. Check enrollment and network path.'
           : cdRaw.name + ' — connection test passed · 42ms · capability matrix verified.'),
         editAgent: () => this.setState({ agentModalOpen: true, agentForm: { mode: agentless ? 'direct' : 'agent', host: agentHost, port: agentPort, user: agentUser, pass: 'placeholder-pw', testFirst: true } }),
-        editDb: () => {
-          const raw = (v) => (v === '—' || v == null ? '' : v);
-          this.setState({ dbModalOpen: true, dbForm: {
-            ...dbEff,
-            ohome: raw(dbEff.ohome), sid: raw(dbEff.sid), tns: raw(dbEff.tns),
-            host: raw(dbEff.host), port: raw(dbEff.port), db: raw(dbEff.db), user: raw(dbEff.user),
-            pass: 'placeholder-pw', testFirst: true,
-          } });
-        },
+        editDb: () => this.setState({ dbModalOpen: true, dbForm: { ...dbEff, pass: 'placeholder-pw', testFirst: true } }),
         editProps: () => {
           const isSrcSeed = cdRaw.role === 'source';
           const defMethod = isSrcSeed
@@ -2790,13 +2351,9 @@ class Component extends DCLogic {
       gc: h.frozen ? 'paused — hub frozen' : h.gc,
     }));
 
-    // everything below the virtual fleet is scoped to it: a pipeline when one is selected, otherwise the whole VF
-    const vfPipeIds = pipelines.filter(p => p.hub === s.currentHub).map(p => p.id);
-    const inScope = (pipeId) => s.selected ? pipeId === s.selected : vfPipeIds.indexOf(pipeId) >= 0;
-
     // jobs
     const stateKind = { RUNNING: 'green', PENDING: 'gray', WAITING: 'gray', SUSPENDED: 'amber', DISABLED: 'red', RETRY: 'amber', ALERTING: 'red', SUCCEEDED: 'green', FAILED: 'red' };
-    const jobRows = this.jobsData().filter(j => inScope(j.pipeline)).map(j => {
+    const jobRows = this.jobsData().filter(j => !s.selected || j.pipeline === s.selected).map(j => {
       const set = (state, msg) => () => { this.setState(st => ({ jobStates: { ...st.jobStates, [j.id]: state } })); this.showToast(msg); };
       const terminal = j.state === 'SUCCEEDED' || j.state === 'FAILED';
       return {
@@ -2814,7 +2371,7 @@ class Component extends DCLogic {
     });
 
     // events
-    const eventRows = this.eventsData().filter(e => !e.pipe || inScope(e.pipe)).map(e => ({
+    const eventRows = this.eventsData().filter(e => !s.selected || e.pipe === s.selected).map(e => ({
       ...e,
       pill: this.pill(e.kind),
       openArtifact: (ev) => { ev && ev.preventDefault && ev.preventDefault(); this.showToast('Event ' + e.id + ' — ' + e.artifact + ' attached. Every link in the chain resolves: alert → run → event → artifact.'); },
@@ -2961,11 +2518,6 @@ class Component extends DCLogic {
       vfEmpty: vfRaw.length === 0,
       monAlerts, monHubs: s.selected ? hubs.filter(h => h.name === selRaw.hub) : hubs,
       backToPipe: go('detail'),
-      backUp: s.selected ? go('detail') : go('fleet'),
-      backUpLabel: s.selected ? 'Pipeline ' + selRaw.id : 'Virtual fleet ' + s.currentHub,
-      connScopeNote: s.selected
-        ? 'Connections used by pipeline ' + selRaw.id
-        : 'Every database and store in virtual fleet ' + s.currentHub,
       showPipeAdmin: s.screen === 'pipeadmin',
       deactivatePipe: () => this.showToast('Deactivate ' + selRaw.id + ' — plan preview first: jobs drain at checkpoints, file-log frames kept until acked, target untouched. Confirm to proceed. (Not wired in this prototype.)'),
       adminTitle: s.adminLevel === 'global' ? 'Global Fleet Admin' : s.adminLevel === 'fleet' ? 'Fleet Admin · ' + s.fleetSel : 'Virtual Fleet Admin · ' + s.currentHub,
@@ -2995,13 +2547,7 @@ class Component extends DCLogic {
       runCompare: () => this.showToast('POST /pipelines/' + selRaw.id + '/compare → event 8815 created, state ACTIVE. Job ' + selRaw.id + '-cmp is PENDING; follow progress on Events.'),
       runRefresh: () => this.showToast('Refresh scoped to ' + selRaw.id + ' — plan preview first: snapshot guarantee, scope, and target implications before anything applies.'),
       newPipeline: () => this.showToast('The creation wizard is the front door for a new pipeline — connection groups, table registration, structured settings, plan-based activation. (Not wired in this prototype.)'),
-      newConnection: () => this.setState({
-        screen: 'newconn',
-        nc: { step: 1, name: '', desc: '', type: null, mode: 'agent', rac: false, agentHost: '', agentPort: '4343', auth: 'anon', testAgent: true,
-              ohome: '', connMode: 'local', sid: '', tns: '', host: '', port: '', db: '', user: '', pass: '', testConn: true,
-              role: null, method: null, flags: {}, pipes: {}, attach: 'none', typeTab: 'all' },
-      }),
-      ...this.newConnVals(accent),
+      newConnection: () => this.showToast('New connection: platform, credentials vaulted, agent enrollment via mTLS, capability matrix validated. (Not wired in this prototype.)'),
       tableSearch: s.tableSearch,
       setTableSearch: (e) => this.setState({ tableSearch: e.target.value }),
       tableFilter: s.tableFilter,
@@ -3535,7 +3081,7 @@ class Component extends DCLogic {
       const fname = h.fleet || 'hubsrv-corp';
       return {
         name: h.id, state, pill: vhubPill(state), dot: vhubDot(state),
-        pipelines: String(nPipes), connections: (() => { const n = {}; this.data().filter(p => p.hub === h.id).forEach(p => { n[p.captureName] = 1; n[p.applyName] = 1; }); return String(Object.keys(n).length); })(), users: '5',
+        pipelines: String(nPipes), connections: String(Math.max(nPipes * 2, 1)), users: '5',
         latency: errs[h.id] ? '—' : (h.frozen ? 'frozen' : latency),
         access: h.fleet ? 'Fleet Admin' : 'SysAdmin', canSwitch: h.id !== s.currentHub, nameColor: vAcc,
         switchTo: (ev) => { ev && ev.stopPropagation && ev.stopPropagation(); this.setState({ currentHub: h.id, screen: 'fleet', selected: null, fleetSel: fname }); this.showToast(h.id + ' is now the current virtual fleet.'); },
@@ -3548,7 +3094,7 @@ class Component extends DCLogic {
       const nPipes = this.data().filter(p => p.hub === h.id).length;
       return {
         name: h.id, state, pill: vhubPill(state), dot: vhubDot(state),
-        pipelines: String(nPipes), connections: (() => { const n = {}; this.data().filter(p => p.hub === h.id).forEach(p => { n[p.captureName] = 1; n[p.applyName] = 1; }); return String(Object.keys(n).length); })(), users: '5',
+        pipelines: String(nPipes), connections: String(Math.max(nPipes * 2, 1)), users: '5',
         latency: errs[h.id] ? '—' : (h.frozen ? 'frozen' : (h.id === 'hub-east' ? '96s' : '3.4s')),
         access: 'SysAdmin', canSwitch: h.id !== s.currentHub, nameColor: vAcc,
         switchTo: (ev) => { ev && ev.stopPropagation && ev.stopPropagation(); this.setState({ currentHub: h.id, screen: 'fleet', selected: null, fleetSel: 'hubsrv-corp' }); this.showToast(h.id + ' is now the current virtual fleet.'); },

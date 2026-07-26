@@ -158,20 +158,6 @@ The Connections screen lists the databases and stores a pipeline (or virtual fle
 - **Per-user persistence** — column visibility and sort order are stored per account with the user's other workspace preferences and restored at sign-in; each user keeps their own table setup. Filters are session-only.
 - **Scoping** — opened from a pipeline, the list is scoped to that pipeline's source and target connections; opened at the virtual-fleet level it shows all of the virtual fleet's connections.
 
-## 10A. Where each screen lives
-
-Screens sit at the level that owns the objects they show, and the sidebar mirrors that exactly:
-
-- **Virtual fleet** owns **Connections**, **Jobs**, and **Events** — the databases it replicates between, the work it runs, and its audit trail. In the sidebar these follow the virtual fleet's streams.
-- **Stream (pipeline)** owns **Tables**, **Monitoring**, and **Admin** — what this stream replicates, how it is behaving, and its own settings.
-- Under a virtual fleet, streams are listed first in alphabetical order, then Jobs, Events, and Connections.
-
-Each of the three virtual-fleet screens is scoped by the level it was opened from: from a stream it narrows to that stream, from the virtual fleet it covers every stream in it. Counts published in the Global fleet console are derived from the same data those screens read, so a number an operator clicks always matches what they land on.
-
-## 10B. Navigation and history
-
-The console participates in browser navigation rather than trapping the operator inside one page: every screen change — fleet, virtual fleet, stream, connection, admin level, table filter — pushes a browser history entry, so Back and Forward walk the console and Back never dumps the operator out of the application. Modals, filter keystrokes, and toasts deliberately create no entries; Back should undo navigation, not typing.
-
 ## 11. Acceptance criteria
 
 | ID | Criterion |
@@ -203,9 +189,6 @@ The console participates in browser navigation rather than trapping the operator
 | FLT-25 | Full names (not usernames or emails) are the primary identity shown in the user chip, Users table, Permissions rows, and the grant dialog; email is the secondary identifier |
 | FLT-26 | Connections view shows Connection (with role), Platform, Description, Agent, Heartbeat, and Status, plus a per-row Test action reporting pass/fail with latency or failure cause |
 | FLT-27 | Every Connections column is sortable (toggling asc/desc with a visible indicator; default Connection descending shown on load) and filterable via per-column filter boxes that combine; numeric columns sort numerically |
-| FLT-29 | Connections, Jobs, and Events are virtual-fleet screens; Tables, Monitoring, and Admin are stream screens; the sidebar lists a virtual fleet's streams alphabetically, then Jobs, Events, and Connections |
-| FLT-30 | Browser Back and Forward walk the console's screens and never leave the application; filters, modals, and toasts create no history entries |
-| FLT-31 | Access to enter a fleet or virtual fleet is derived from the operator's grants everywhere it is shown — a SuperAdmin reaches every fleet and virtual fleet, and an ungranted operator is told which grant to ask for |
 | FLT-28 | A column chooser adds/removes columns (Host/endpoint, Created, Created by, Pipelines, Last test; Test button hideable; Connection locked); visibility and sort order persist per user across sessions and are isolated between users |
 
 Registered in `master-traceability-matrix.md` (FLT section, procedures pending).
