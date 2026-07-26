@@ -95,6 +95,28 @@ Two properties of the model are deliberate and visible in the console:
 
 **Admin authority is bounded by level.** Global Fleet Admin manages every grant, repository-wide and per virtual fleet. Fleet Admin manages grants on its own fleet's virtual fleets and sees repository-wide grants read-only. Virtual Fleet Admin manages grants on that one virtual fleet only. A SuperAdmin can manage every grant from any admin screen — but cannot revoke their own SuperAdmin grant; only another SuperAdmin can.
 
+### The three admin levels
+
+Admin is not one screen with permission checks sprinkled through it — it is the *same* screen bounded by where the operator stands in the hierarchy. Each level sees the objects it owns and reads the levels above it without being able to change them, so authority is legible from the screen itself rather than discovered by clicking and being refused.
+
+| | **Global Fleet Admin** | **Fleet Admin** | **Virtual Fleet Admin** |
+| --- | --- | --- | --- |
+| Scope | The whole repository — every fleet, every virtual fleet | One fleet (hub server) and the virtual fleets inside it | One virtual fleet |
+| Reached from | Global fleet console → Global Admin | A fleet → Fleet Admin | A virtual fleet → VF Admin |
+| Held by | `SuperAdmin`, `SysAdmin` | `HubOwner` on a fleet | `HubOwner` on a virtual fleet |
+| Users | Create, edit, disable users; set full name, email, and auth method | View users; grant on this fleet's virtual fleets | View users; grant on this virtual fleet |
+| Grants it can edit | Repository-wide **and** any virtual fleet | This fleet's virtual fleets — repository-wide grants are read-only | This virtual fleet only — everything else read-only |
+| Fleets | Enroll a new fleet, set environment (production/test/…) | Properties of this fleet; enroll virtual fleets into it | — |
+| Repository settings | Yes — auth methods, retention, gather cycle | Read-only | Read-only |
+| Snapshots and exports | Whole repository | This fleet | This virtual fleet |
+
+The console states the operator's own boundary on the Permissions tab in plain words — for example *"Fleet Admin · hubsrv-corp — you can manage grants on this fleet's virtual fleets; repository-wide grants are read-only"* — so nobody has to infer their authority from which buttons are greyed.
+
+Two consequences worth knowing:
+
+- **A Fleet Admin cannot widen their own reach.** Repository-scope permissions (`SuperAdmin`, `SysAdmin`, `HubCreation`, `ReadStatistics`, `FleetViewer`) are only grantable from Global Fleet Admin, so a fleet-level owner cannot grant themselves company-wide sight or hub-creation rights.
+- **Global Fleet Admin is where fleets come into existence.** Enrolling a fleet and setting its environment colour are global acts, because a new fleet changes what every `FleetViewer` sees.
+
 ### Connections — specified in full in [`connections.md`](uploads/repidata/Documents/connections.md)
 
 The most developed area of the prototype, on the premise that connection problems are the most common cause of a stalled pipeline.
@@ -116,6 +138,19 @@ Every visible header sorts (click to reverse, with a visible indicator; default 
 Pipeline list and detail with replication status, latency, and volume; per-pipeline Tables with the verified-status model; Monitoring with alerts surfaced as sidebar badges; Jobs; and the Events ledger. Admin exists at global, fleet, and virtual-fleet level with capability-gated create, edit, and delete.
 
 Destructive and structural actions are modelled as **plans**: the console states what would happen — jobs draining at checkpoints, file-log frames retained until acknowledged, target left untouched — before anything is confirmed.
+
+---
+
+### Prototype behaviors worth knowing
+
+These are properties of the console as built, not aspirations — they are what an operator actually experiences when clicking through:
+
+- **Real browser history.** Every screen change pushes a history entry, so Back and Forward walk the console (fleet → virtual fleet → pipeline → connection) instead of leaving the page. Modals, filter keystrokes, and toasts deliberately create no entries — Back should not undo typing.
+- **Grant-derived everything.** Visibility, enterability, and access labels all come from the operator's grants rather than being hardcoded per screen: a SuperAdmin can enter every virtual fleet in every fleet; a non-super sees `none` on ungranted ones and is told which grant to ask for.
+- **Per-user, per-account persistence.** Theme, sidebar width, pinned fleets, connection column sets, and sort order are stored per signed-in account and restored at sign-in. Filters are session-only, being an act of looking rather than a preference.
+- **Environment signalling.** Each fleet carries an environment (production, test, …) whose colour becomes the console accent, so the operator can see which environment they are acting in without reading a label.
+- **Honest empty states.** Screens with nothing to show say so — no connections match the filters, no pipelines defined in this virtual fleet, this connection belongs to no pipeline — rather than rendering a blank area that reads as a loading failure. Counts shown in one screen match what the next screen contains.
+- **Nothing silently succeeds.** Every save, test, switch, and structural action reports what happened, including whether a connection was tested before saving, and says when it would be recorded in the event ledger.
 
 ---
 

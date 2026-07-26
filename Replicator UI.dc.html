@@ -176,6 +176,9 @@
             <div style="text-align:right; font-variant-numeric:tabular-nums;">{{ p.rows }}</div>
           </div>
         </sc-for>
+        <sc-if value="{{ vfEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:28px 16px; text-align:center; font-size:12.5px; color:var(--muted2);">No pipelines are defined in {{ currentHub }} yet.</div>
+        </sc-if>
       </div>
       <sc-if value="{{ hasAttention }}" hint-placeholder-val="{{ true }}">
         <div style="margin-top:20px;">
@@ -251,29 +254,34 @@
         <sc-if value="{{ globalEmpty }}" hint-placeholder-val="{{ false }}">
           <div style="background:var(--panel); border:1px solid var(--border-soft); border-radius:10px; padding:36px 24px; text-align:center; font-size:12.5px; color:var(--muted);">No systems are visible to you yet — visibility follows grants. Ask a fleet's admin for a grant on that system.</div>
         </sc-if>
+        <div style="display:flex; align-items:baseline; gap:8px; margin-bottom:8px;">
+          <div style="font-size:12px; font-weight:600; letter-spacing:.08em; color:var(--muted2);">FLEETS</div>
+          <div style="font-size:11.5px; color:var(--muted3);">Select a fleet to open it · expand a row to see its virtual fleets</div>
+        </div>
         <div style="display:flex; flex-direction:column; gap:10px;">
           <sc-for list="{{ hubServers }}" as="srv" hint-placeholder-count="3">
             <div style="background:var(--panel); border:1px solid var(--border-soft); border-radius:10px; overflow:hidden;">
-              <div onClick="{{ srv.toggle }}" style="display:flex; align-items:center; gap:10px; padding:12px 16px; background:var(--panel-soft); cursor:pointer;" style-hover="background:var(--panel-soft);">
-                <span style="width:16px; text-align:center; font-size:15px; color:{{ accent }};">{{ srv.caret }}</span>
-                <span style="width:9px; height:9px; border-radius:99px; background:{{ srv.dot }}; display:inline-block;"></span>
-                <span style="font-weight:600; font-size:14px;">{{ srv.name }}</span>
-                <span style="font-size:12px; color:var(--muted2);">{{ srv.org }}</span>
+              <div onClick="{{ srv.open }}" style="display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; padding:12px 16px 12px 8px; background:var(--panel-soft); cursor:pointer; border-left:3px solid {{ accent }};" style-hover="background:var(--bg-subtle);">
+                <span onClick="{{ srv.toggle }}" title="Show virtual fleets" style="width:20px; flex:none; text-align:center; font-size:15px; color:{{ accent }}; cursor:pointer;">{{ srv.caret }}</span>
+                <span style="flex:none; font-size:10px; font-weight:700; letter-spacing:.07em; color:var(--muted2); border:1px solid var(--border-soft); border-radius:4px; padding:2px 5px; background:var(--panel);">FLEET</span>
+                <span style="width:9px; height:9px; flex:none; border-radius:99px; background:{{ srv.dot }}; display:inline-block;"></span>
+                <span style="flex:none; font-weight:600; font-size:15px; color:{{ accent }};">{{ srv.name }}</span>
+                <span style="flex:none; font-size:12px; color:var(--muted2);">{{ srv.org }}</span>
                 <span style="{{ srv.pill }}">{{ srv.state }}</span>
-                <span style="font-size:11.5px; color:var(--muted2);">{{ srv.counts }}</span>
-                <span style="margin-left:auto; font-size:11.5px; color:var(--muted2); font-family:'IBM Plex Mono',monospace;">{{ srv.url }}</span>
-                <span onClick="{{ srv.togglePin }}" title="Pin to sidebar" style="font-size:14px; cursor:pointer; color:{{ srv.pinColor }};">{{ srv.pinGlyph }}</span>
-                <span onClick="{{ srv.open }}" style="font-size:11px; color:var(--muted3); cursor:pointer;" style-hover="color:var(--text);">Open fleet →</span>
+                <span style="flex:none; font-size:11.5px; color:var(--muted2);">{{ srv.counts }}</span>
+                <span style="margin-left:auto; flex:1 1 80px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:right; font-size:11.5px; color:var(--muted2); font-family:'IBM Plex Mono',monospace;">{{ srv.url }}</span>
+                <span onClick="{{ srv.togglePin }}" title="Pin to sidebar" style="flex:none; font-size:14px; cursor:pointer; color:{{ srv.pinColor }};">{{ srv.pinGlyph }}</span>
+                <span onClick="{{ srv.open }}" style="flex:none; border:1px solid {{ accent }}; color:{{ accent }}; background:var(--panel); font-size:11.5px; font-weight:600; padding:5px 11px; border-radius:6px; cursor:pointer; white-space:nowrap;" style-hover="background:var(--panel-soft);">Open fleet →</span>
               </div>
               <sc-if value="{{ srv.expanded }}" hint-placeholder-val="{{ true }}">
               <div style="display:grid; grid-template-columns:1.4fr 1fr .9fr .9fr .8fr 1fr 1fr; gap:12px; padding:9px 18px; font-size:11px; color:var(--muted2); border-bottom:1px solid var(--bg-subtle); border-top:1px solid var(--border-soft);">
-                <div>Virtual hub</div><div>State</div><div>Pipelines</div><div>Connections</div><div>Users</div><div>P95 latency</div><div>Your access</div>
+                  <div>Virtual fleet</div><div>State</div><div>Pipelines</div><div>Connections</div><div>Users</div><div>P95 latency</div><div>Your access</div>
               </div>
               <sc-for list="{{ srv.vhubs }}" as="v" hint-placeholder-count="3">
-                <div style="display:grid; grid-template-columns:1.4fr 1fr .9fr .9fr .8fr 1fr 1fr; gap:12px; padding:11px 18px; font-size:12.5px; border-bottom:1px solid var(--bg-subtle); align-items:center;">
+                <div onClick="{{ v.enter }}" style="display:grid; grid-template-columns:1.4fr 1fr .9fr .9fr .8fr 1fr 1fr; gap:12px; padding:11px 18px; font-size:12.5px; border-bottom:1px solid var(--bg-subtle); align-items:center; cursor:pointer;" style-hover="background:var(--panel-soft);">
                   <div style="display:flex; align-items:center; gap:8px;">
                     <span style="width:7px; height:7px; border-radius:99px; background:{{ v.dot }}; display:inline-block; flex:none;"></span>
-                    <span style="font-weight:600; font-family:'IBM Plex Mono',monospace; font-size:12px;">{{ v.name }}</span>
+                    <span style="font-weight:600; font-family:'IBM Plex Mono',monospace; font-size:12px; color:{{ v.nameColor }};">{{ v.name }}</span>
                   </div>
                   <div><span style="{{ v.pill }}">{{ v.state }}</span></div>
                   <div style="font-variant-numeric:tabular-nums;">{{ v.pipelines }}</div>
@@ -283,7 +291,7 @@
                   <div style="display:flex; align-items:center; gap:8px;">
                     <span style="color:var(--muted); font-size:12px;">{{ v.access }}</span>
                     <sc-if value="{{ v.canSwitch }}" hint-placeholder-val="{{ false }}">
-                      <div onClick="{{ v.switchTo }}" style="margin-left:auto; border:1px solid var(--border); font-size:11px; font-weight:600; padding:4px 10px; border-radius:6px; cursor:pointer;" style-hover="background:var(--panel-soft);">Switch</div>
+                      <div onClick="{{ v.switchTo }}" style="margin-left:auto; flex:none; border:1px solid var(--border); font-size:11px; font-weight:600; padding:4px 10px; border-radius:6px; cursor:pointer;" style-hover="background:var(--panel-soft);">Switch</div>
                     </sc-if>
                   </div>
                 </div>
@@ -1673,6 +1681,7 @@ class Component extends DCLogic {
 
   componentDidMount() {
     this.loadEnvPrefs();
+    this.initHistory();
     try {
       const cu = JSON.parse(localStorage.getItem('repl-custom-users') || '[]');
       const cg = JSON.parse(localStorage.getItem('repl-custom-grants') || '[]');
@@ -1692,7 +1701,42 @@ class Component extends DCLogic {
       this.setState(s => ({ tick: s.tick + 1, lastRefreshS: s.lastRefreshS >= 14 ? 2 : s.lastRefreshS + 2 }));
     }, 2000);
   }
-  componentWillUnmount() { clearInterval(this._iv); this._toastT && clearTimeout(this._toastT); }
+  componentWillUnmount() {
+    clearInterval(this._iv);
+    this._toastT && clearTimeout(this._toastT);
+    if (this._onPop) window.removeEventListener('popstate', this._onPop);
+  }
+
+  // ---- browser history: every screen change is a history entry, so Back/Forward walk the console ----
+  navFields() { return ['screen', 'fleetSel', 'currentHub', 'selected', 'connSel', 'adminLevel', 'adminTab', 'tableFilter']; }
+
+  navSnapshot(st) {
+    const o = {};
+    this.navFields().forEach(k => { o[k] = st[k] ?? null; });
+    return o;
+  }
+
+  initHistory() {
+    this._navKey = JSON.stringify(this.navSnapshot(this.state));
+    try { history.replaceState({ replNav: this.navSnapshot(this.state) }, ''); } catch (e) {}
+    this._onPop = (ev) => {
+      const nav = ev.state && ev.state.replNav;
+      if (!nav) return;
+      this._fromPop = true;
+      this._navKey = JSON.stringify(nav);
+      this.setState(nav, () => { this._fromPop = false; });
+    };
+    window.addEventListener('popstate', this._onPop);
+  }
+
+  componentDidUpdate() {
+    if (this._fromPop || !this._navKey) return;
+    const snap = this.navSnapshot(this.state);
+    const key = JSON.stringify(snap);
+    if (key === this._navKey) return;
+    this._navKey = key;
+    try { history.pushState({ replNav: snap }, ''); } catch (e) {}
+  }
 
   // Highest access wins the landing page: repository scope → Global Fleet; fleet scope → that fleet; VF scope → that virtual fleet.
   landingFor(username, st) {
@@ -1735,7 +1779,7 @@ class Component extends DCLogic {
       gray:   'background:var(--bg-subtle); color:var(--muted);',
       violet: 'background:#f0e9fb; color:#6a3fb5;',
     };
-    return (m[kind] || m.gray) + 'font-size:11px; font-weight:600; padding:2.5px 9px; border-radius:99px; white-space:nowrap;';
+    return (m[kind] || m.gray) + 'font-size:11px; font-weight:600; padding:2.5px 9px; border-radius:99px; white-space:nowrap; flex:none;';
   }
 
   spark(vals, w, h) {
@@ -1759,7 +1803,7 @@ class Component extends DCLogic {
 
   data() {
     const paused = this.state.paused;
-    const P = [
+    const P = this.divisionPipelines().concat([
       { id: 'ora-erp', name: 'ora-erp → snowflake', hub: 'hub-east', status: 'Healthy', statusKind: 'green', latencyS: 1.9, rowsBase: 640000, tables: 128, mode: 'Continuous CDC', applyStyle: 'Batched · 30s cycle',
         subtitle: 'hub-east · Oracle 19c direct redo capture · Snowflake apply · 128 tables',
         captureName: 'ORA-ERP01', captureDetail: 'redo pos 4.2s behind', transportName: 'hub-east file log', transportDetail: '12 MB buffered · ack-based GC', applyName: 'SNOWFLAKE-PRD', applyDetail: 'batched apply · 30s cycle' },
@@ -1796,7 +1840,7 @@ class Component extends DCLogic {
       { id: 'pg-fieldkit', name: 'pg-fieldkit → s3-field', hub: 'rd-fieldtest', status: 'Healthy', statusKind: 'green', latencyS: 6.2, rowsBase: 18000, tables: 9, mode: 'CDC + scheduled compare', applyStyle: 'File apply · manifest',
         subtitle: 'rd-fieldtest · PostgreSQL 17 logical replication · S3 file apply · 9 tables — portable kit',
         captureName: 'PG-FIELDKIT', captureDetail: 'slot lag 0.9s', transportName: 'rd-fieldtest file log', transportDetail: '2 MB buffered', applyName: 'S3-FIELD', applyDetail: 'manifest + atomic rename' },
-    ];
+    ]);
     P.forEach(p => {
       if (paused[p.id]) { p.status = 'Suspended'; p.statusKind = 'gray'; p.rowsBase = 0; p.latencyS = null; }
     });
@@ -1960,7 +2004,10 @@ class Component extends DCLogic {
       { label: 'Pipelines', value: String(vfRaw.length), style: tile, labelColor: 'var(--muted2)', valueColor: 'var(--text)' },
       { label: 'P95 latency', value: p95 >= 60 ? Math.round(p95) + 's' : p95.toFixed(1) + 's', style: tile, labelColor: 'var(--muted2)', valueColor: 'var(--text)' },
       { label: 'Rows/min', value: this.fmt(totalRows), style: tile, labelColor: 'var(--muted2)', valueColor: 'var(--text)' },
-      { label: 'Attention', value: String(attentionCount), style: tile + 'border-color:#f3d1cf;', labelColor: 'var(--danger)', valueColor: 'var(--danger)' },
+      { label: 'Attention', value: String(attentionCount),
+        style: tile + (attentionCount ? 'border-color:#f3d1cf;' : ''),
+        labelColor: attentionCount ? 'var(--danger)' : 'var(--muted2)',
+        valueColor: attentionCount ? 'var(--danger)' : 'var(--text)' },
     ];
 
     const pipeVMs = pipelines.map(p => ({
@@ -2468,6 +2515,7 @@ class Component extends DCLogic {
         };
       })(),
       vfPipeCount: String(vfRaw.length),
+      vfEmpty: vfRaw.length === 0,
       monAlerts, monHubs: s.selected ? hubs.filter(h => h.name === selRaw.hub) : hubs,
       backToPipe: go('detail'),
       showPipeAdmin: s.screen === 'pipeadmin',
@@ -3020,6 +3068,9 @@ class Component extends DCLogic {
   globalVals(hasFleetViewer) {
     const s = this.state;
     const errs = this.hubErrors();
+    const vAcc = this.props.accentColor ?? '#1a6e50';
+    const superMe = s.grants.some(g => g.user === s.me && (g.perm === 'SuperAdmin' || g.perm === 'SysAdmin'));
+    const myRoleLabel = this.myTopRole(s.me);
     const vhubPill = (state) => this.pill(state === 'Errors' ? 'red' : state === 'Frozen' ? 'blue' : 'green');
     const vhubDot = (state) => state === 'Errors' ? 'var(--danger)' : state === 'Frozen' ? '#8ab4f8' : 'var(--ok)';
 
@@ -3032,8 +3083,8 @@ class Component extends DCLogic {
         name: h.id, state, pill: vhubPill(state), dot: vhubDot(state),
         pipelines: String(nPipes), connections: String(Math.max(nPipes * 2, 1)), users: '5',
         latency: errs[h.id] ? '—' : (h.frozen ? 'frozen' : latency),
-        access: h.fleet ? 'Fleet Admin' : 'SysAdmin', canSwitch: h.id !== s.currentHub,
-        switchTo: () => { this.setState({ currentHub: h.id, screen: 'fleet', selected: null, fleetSel: fname }); this.showToast(h.id + ' is now the current virtual fleet.'); },
+        access: h.fleet ? 'Fleet Admin' : 'SysAdmin', canSwitch: h.id !== s.currentHub, nameColor: vAcc,
+        switchTo: (ev) => { ev && ev.stopPropagation && ev.stopPropagation(); this.setState({ currentHub: h.id, screen: 'fleet', selected: null, fleetSel: fname }); this.showToast(h.id + ' is now the current virtual fleet.'); },
         enter: () => { this.setState({ currentHub: h.id, screen: 'fleet', selected: null, fleetSel: fname }); this.showToast(h.id + ' is now the current virtual fleet.'); },
       };
     };
@@ -3045,22 +3096,37 @@ class Component extends DCLogic {
         name: h.id, state, pill: vhubPill(state), dot: vhubDot(state),
         pipelines: String(nPipes), connections: String(Math.max(nPipes * 2, 1)), users: '5',
         latency: errs[h.id] ? '—' : (h.frozen ? 'frozen' : (h.id === 'hub-east' ? '96s' : '3.4s')),
-        access: 'SysAdmin', canSwitch: h.id !== s.currentHub,
-        switchTo: () => { this.setState({ currentHub: h.id, screen: 'fleet', selected: null, fleetSel: 'hubsrv-corp' }); this.showToast(h.id + ' is now the current virtual fleet.'); },
+        access: 'SysAdmin', canSwitch: h.id !== s.currentHub, nameColor: vAcc,
+        switchTo: (ev) => { ev && ev.stopPropagation && ev.stopPropagation(); this.setState({ currentHub: h.id, screen: 'fleet', selected: null, fleetSel: 'hubsrv-corp' }); this.showToast(h.id + ' is now the current virtual fleet.'); },
         enter: () => { this.setState({ currentHub: h.id, screen: 'fleet', selected: null, fleetSel: 'hubsrv-corp' }); this.showToast(h.id + ' is now the current virtual fleet.'); },
       };
     }).concat(s.noAccessHubs.map(h => ({
       name: h.id, state: 'Live', pill: vhubPill('Live'), dot: vhubDot('Live'),
       pipelines: '·', connections: '·', users: '·', latency: '·',
-      access: 'none', canSwitch: false, switchTo: () => {},
-      enter: () => this.showToast(h.id + ' — no access. Ask a HubOwner or SysAdmin for a grant.'),
+      access: superMe ? myRoleLabel : 'none',
+      canSwitch: superMe, nameColor: superMe ? vAcc : 'var(--muted)',
+      switchTo: superMe ? (ev) => { ev && ev.stopPropagation && ev.stopPropagation(); this.setState({ currentHub: h.id, screen: 'fleet', selected: null, fleetSel: 'hubsrv-corp' }); this.showToast(h.id + ' is now the current virtual fleet.'); } : () => {},
+      enter: superMe
+        ? () => { this.setState({ currentHub: h.id, screen: 'fleet', selected: null, fleetSel: 'hubsrv-corp' }); this.showToast(h.id + ' is now the current virtual fleet.'); }
+        : () => this.showToast(h.id + ' — no access. Ask a HubOwner or SysAdmin for a grant.'),
     })));
 
-    const remote = (name, state, pipelines, connections, users, latency, access) => ({
-      name, state, pill: vhubPill(state), dot: vhubDot(state),
-      pipelines, connections, users, latency, access, canSwitch: false, switchTo: () => {},
-      enter: () => this.showToast(name + ' — ' + (access === 'none' ? 'no access. Ask that fleet\u2019s owner for a grant.' : 'read-only summary; this hub server is managed from its own console.')),
-    });
+    const remote = (name, state, pipelines, connections, users, latency, access, fleetName) => {
+      const eff = superMe ? myRoleLabel : access;
+      const canEnter = superMe;
+      const goThere = (ev) => {
+        ev && ev.stopPropagation && ev.stopPropagation();
+        this.setState({ currentHub: name, screen: 'fleet', selected: null, fleetSel: fleetName || s.fleetSel });
+        this.showToast(name + ' is now the current virtual fleet.');
+      };
+      return {
+        name, state, pill: vhubPill(state), dot: vhubDot(state),
+        pipelines, connections, users, latency, access: eff,
+        canSwitch: canEnter, switchTo: canEnter ? goThere : () => {},
+        nameColor: canEnter ? vAcc : 'var(--muted)',
+        enter: canEnter ? goThere : () => this.showToast(name + ' — ' + (access === 'none' ? 'no access. Ask that fleet\u2019s owner for a grant.' : 'read-only summary; this hub server is managed from its own console.')),
+      };
+    };
     const hubServers = [
       { name: 'hubsrv-corp', org: 'Corporate IT — this hub server', state: 'Connected', pill: this.pill('green'), dot: 'var(--ok)', url: 'hub-east.corp.example:8443', vhubs: localVhubs },
       { name: 'hubsrv-rockets', org: 'Propulsion Division', state: 'Connected', pill: this.pill('green'), dot: 'var(--ok)', url: 'repl.rockets.example:8443',
@@ -3070,13 +3136,16 @@ class Component extends DCLogic {
     ];
     // generated scale: dozens more division fleets
     const divisions = this.divisionNames();
+    const divDefs = this.divisionVhubDefs();
+    const allPipes = this.data();
     divisions.forEach((d, i) => {
       const org = d.charAt(0).toUpperCase() + d.slice(1) + ' Division';
-      const vhubs = [
-        remote(d + '-prod', i % 9 === 4 ? 'Errors' : 'Live', String(4 + (i * 3) % 12), String(7 + (i * 5) % 18), String(5 + (i * 2) % 14), i % 9 === 4 ? '—' : ((1 + (i % 6)) + '.' + (i % 10) + 's'), i % 7 === 2 ? 'ReadOnly' : 'none'),
-        remote(d + '-test', i % 11 === 6 ? 'Frozen' : 'Live', String(2 + (i * 2) % 8), String(4 + (i * 3) % 10), String(3 + i % 7), i % 11 === 6 ? 'frozen' : ((2 + (i % 5)) + '.' + ((i * 3) % 10) + 's'), 'none'),
-      ];
-      if (i % 3 === 0) vhubs.push(remote(d + '-dev', 'Live', String(1 + i % 4), String(2 + i % 6), String(2 + i % 5), (3 + (i % 4)) + '.' + (i % 10) + 's', 'none'));
+      const vhubs = divDefs.filter(v => v.fleet === 'hubsrv-' + d).map(v => {
+        const ps = allPipes.filter(p => p.hub === v.name);
+        const lats = ps.map(p => p.latencyS).filter(x => x != null);
+        const lat = v.state === 'Errors' ? '—' : v.state === 'Frozen' ? 'frozen' : lats.length ? Math.max.apply(null, lats).toFixed(1) + 's' : '·';
+        return remote(v.name, v.state, String(ps.length), String(ps.length * 2), v.users, lat, i % 7 === 2 ? 'ReadOnly' : 'none', 'hubsrv-' + d);
+      });
       hubServers.push({ name: 'hubsrv-' + d, org, state: 'Connected', pill: this.pill('green'), dot: 'var(--ok)', url: 'repl.' + d + '.example:8443', vhubs });
     });
 
@@ -3084,7 +3153,6 @@ class Component extends DCLogic {
       hubServers.push({ name: f.name, org: f.org, state: 'Enrolling', pill: this.pill('amber'), dot: '#e8a33d', url: 'pending enrollment', vhubs: [] });
     });
     // grant-scoped visibility: super grants (SuperAdmin/SysAdmin) see every enrolled fleet; everyone else only fleets their grants reach
-    const superMe = s.grants.some(g => g.user === s.me && (g.perm === 'SuperAdmin' || g.perm === 'SysAdmin'));
     const myFleetNames = {};
     s.grants.forEach(g => { if (g.user === s.me && g.scope && g.scope !== 'repository') myFleetNames[this.scopeFleet(g.scope)] = true; });
     const enrolledCount = hubServers.length;
@@ -3107,7 +3175,10 @@ class Component extends DCLogic {
       srv.expanded = expanded;
       srv.caret = expanded ? '▾' : '▸';
       srv.counts = srv.vhubs.length + ' virtual fleets' + (nErr ? ' · ' + nErr + ' with errors' : '');
-      srv.toggle = () => this.setState(st => ({ expandedFleets: { ...st.expandedFleets, [srv.name]: !expanded } }));
+      srv.toggle = (ev) => {
+        ev && ev.stopPropagation && ev.stopPropagation();
+        this.setState(st => ({ expandedFleets: { ...st.expandedFleets, [srv.name]: !expanded } }));
+      };
       srv.pinGlyph = s.pinnedFleets[srv.name] ? '★' : '☆';
       srv.pinColor = s.pinnedFleets[srv.name] ? '#b3541e' : 'var(--muted3)';
       srv.togglePin = (ev) => {
@@ -3191,6 +3262,50 @@ class Component extends DCLogic {
     if (scope.indexOf('rk-') === 0) return 'hubsrv-rockets';
     if (scope.indexOf('rd-') === 0) return 'hubsrv-radar';
     return 'hubsrv-corp';
+  }
+
+  // one definition of the generated division virtual fleets, used by both data() and the global console
+  divisionVhubDefs() {
+    const defs = [];
+    this.divisionNames().forEach((d, i) => {
+      const fleet = 'hubsrv-' + d;
+      defs.push({ fleet, div: d, name: d + '-prod', kind: 'prod', state: i % 9 === 4 ? 'Errors' : 'Live', nPipes: 2 + (i % 3), users: String(5 + (i * 2) % 14), i });
+      defs.push({ fleet, div: d, name: d + '-test', kind: 'test', state: i % 11 === 6 ? 'Frozen' : 'Live', nPipes: 1 + (i % 2), users: String(3 + i % 7), i });
+      if (i % 3 === 0) defs.push({ fleet, div: d, name: d + '-dev', kind: 'dev', state: 'Live', nPipes: 1, users: String(2 + i % 5), i });
+    });
+    return defs;
+  }
+
+  divisionPipelines() {
+    const srcs = [
+      ['ora', 'Oracle 19c direct redo capture', 'ORA'],
+      ['pg', 'PostgreSQL 17 logical replication', 'PG'],
+      ['mssql', 'SQL Server 2022 log capture', 'MSSQL'],
+    ];
+    const tgts = [['snowflake', 'Snowflake apply', 'SNOWFLAKE'], ['databricks', 'Databricks apply', 'DATABRICKS'], ['s3-lake', 'S3 file apply', 'S3']];
+    const out = [];
+    this.divisionVhubDefs().forEach(v => {
+      for (let k = 0; k < v.nPipes; k++) {
+        const sc = srcs[(v.i + k) % 3], tg = tgts[(v.i + k * 2) % 3];
+        const frozen = v.state === 'Frozen';
+        const bad = v.state === 'Errors' && k === 0;
+        const tables = 18 + ((v.i * 7 + k * 13) % 90);
+        out.push({
+          id: v.name + '-' + sc[0] + '-' + k, name: sc[0] + '-' + v.div + ' → ' + tg[0], hub: v.name,
+          status: bad ? 'Error' : frozen ? 'Suspended' : 'Healthy',
+          statusKind: bad ? 'red' : frozen ? 'gray' : 'green',
+          latencyS: bad ? null : frozen ? null : (1 + ((v.i + k) % 6)) + ((v.i % 10) / 10),
+          rowsBase: bad || frozen ? 0 : 40000 + ((v.i * 31 + k * 17) % 60) * 5000,
+          tables, mode: v.kind === 'test' ? 'Scheduled refresh' : 'Continuous CDC',
+          applyStyle: v.kind === 'test' ? 'Bulk refresh · nightly' : 'Batched · 30s cycle',
+          subtitle: v.name + ' · ' + sc[1] + ' · ' + tg[1] + ' · ' + tables + ' tables',
+          captureName: sc[2] + '-' + v.div.toUpperCase(), captureDetail: bad ? 'capture stopped — log unavailable' : 'log pos current',
+          transportName: v.name + ' file log', transportDetail: bad ? '0 MB — no inbound frames' : '6 MB buffered',
+          applyName: tg[2] + '-' + v.div.toUpperCase(), applyDetail: bad ? 'idle · awaiting files' : 'apply current',
+        });
+      }
+    });
+    return out;
   }
 
   divisionNames() {

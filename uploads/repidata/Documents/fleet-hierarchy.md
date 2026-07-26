@@ -149,7 +149,7 @@ Prototyped local authentication and per-user workspace behavior:
 
 ## 10. Connections view (per pipeline / virtual fleet)
 
-The Connections screen lists the databases and stores a pipeline (or virtual fleet) replicates between, with their enrolled agents. Prototyped behavior:
+The Connections screen lists the databases and stores a pipeline (or virtual fleet) replicates between, with their enrolled agents. **Specified in full in `connections.md`** (criteria CON-01..09); summarized here for hierarchy context:
 
 - **Columns (default)** — Connection (name + source/target role pill), Platform, Description, Agent (binary version + platform), Heartbeat (last agent heartbeat, relative), Status (Healthy / Unreachable pill), and a per-row **Test** button that runs a connectivity test (agent reachability, latency, capability-matrix validation) and reports pass/fail with cause.
 - **Column chooser** — a Columns dropdown toggles visibility of every column, including hiding the Test button. Hidden-by-default extras: Host / endpoint, Created (date), Created by (full name), Pipelines (count of pipelines using the connection), Last test result. The Connection column is locked on.

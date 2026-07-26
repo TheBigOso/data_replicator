@@ -24,8 +24,8 @@ This is the authoritative cross-specification register of acceptance criteria. E
 
 ## Coverage summary
 
-- **156** acceptance criteria across **12** published design specifications.
-- **128** identically numbered test procedures, verified by the baseline extraction; the 28 FLT criteria are newly added (FLT-01..11 on 2026-07-15, FLT-12..18 on 2026-07-16, FLT-19..23 on 2026-07-17, FLT-24..25 on 2026-07-18, FLT-26..28 on 2026-07-21) and await procedures.
+- **165** acceptance criteria across **13** published design specifications.
+- **128** identically numbered test procedures, verified by the baseline extraction; the 28 FLT criteria (FLT-01..11 on 2026-07-15, FLT-12..18 on 2026-07-16, FLT-19..23 on 2026-07-17, FLT-24..25 on 2026-07-18, FLT-26..28 on 2026-07-21) and the 9 CON criteria (CON-01..09 on 2026-07-26) are newly added and await procedures.
 
 ## Architecture (architecture.md)
 
@@ -243,3 +243,17 @@ This is the authoritative cross-specification register of acceptance criteria. E
 | FLT-26 | Connections view shows Connection (with role), Platform, Description, Agent, Heartbeat, and Status, plus a per-row Test action reporting pass/fail with latency or failure cause | FLT-26 | Not run | - |
 | FLT-27 | Every Connections column is sortable (asc/desc toggle with visible indicator; default Connection descending shown on load) and filterable via combining per-column filter boxes; numeric columns sort numerically | FLT-27 | Not run | - |
 | FLT-28 | Connections column chooser adds/removes columns (Host/endpoint, Created, Created by, Pipelines, Last test; Test button hideable; Connection locked); visibility and sort persist per user and are isolated between users | FLT-28 | Not run | - |
+
+## Connections (connections.md)
+
+| ID | Acceptance criterion | Procedure | State | Evidence |
+|---|---|---|---|---|
+| CON-01 | The connections list shows Connection (with source/target role), Platform, Description, Agent, Heartbeat, and Status, plus a per-row test action that reports pass with latency or fail with cause | CON-01 | Not run | - |
+| CON-02 | Every visible column is sortable, toggling ascending/descending with a visible indicator; the default order is Connection descending with the indicator shown on load; Heartbeat and Pipelines sort numerically | CON-02 | Not run | - |
+| CON-03 | Per-column filter boxes combine across columns and show an explicit empty state; column visibility and sort order persist per user across sessions and never leak between users | CON-03 | Not run | - |
+| CON-04 | The column chooser adds and removes columns including Host/endpoint, Created, Created by, Pipelines, and Last test; the Test action is hideable; the Connection column cannot be hidden | CON-04 | Not run | - |
+| CON-05 | Connection detail shows agent mode (agent-based with host, port, binary, and heartbeat, or agentless), database connection, resolved source/target properties, and pipeline membership with the role played in each pipeline | CON-05 | Not run | - |
+| CON-06 | The agent dialog switches between agent and agentless, exposes agent host and port, tests the agent (reachability, latency, mTLS, certificate, version match), and supports certificate rotation and single-use enrollment token re-issue | CON-06 | Not run | - |
+| CON-07 | The Oracle database dialog exposes ORACLE_HOME and a local-SID or TNS connect path; a saved TNS string re-derives host, port, and service consistently across the console | CON-07 | Not run | - |
+| CON-08 | Capture and integrate method choices are constrained to what the class supports, and Direct redo requested over a non-loopback TNS connection raises a configuration-time warning naming the loopback or local-SID requirement | CON-08 | Not run | - |
+| CON-09 | Every configuration dialog defaults to testing before saving, allows saving untested, discloses in the confirmation which of the two occurred, and records the save in the event ledger | CON-09 | Not run | - |
