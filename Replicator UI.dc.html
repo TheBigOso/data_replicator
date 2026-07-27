@@ -633,6 +633,51 @@
     </div>
   </sc-if>
 
+  <!-- ======== COLUMN EDIT MODAL ======== -->
+  <sc-if value="{{ colModalOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; inset:0; background:rgba(10,14,12,.45); display:flex; align-items:center; justify-content:center; z-index:120;">
+      <div style="background:var(--panel); border:1px solid var(--border); border-radius:12px; width:600px; max-width:92vw; max-height:88vh; overflow:auto; padding:22px 24px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+          <div style="font-size:16px; font-weight:600;">Column — {{ colM.orig }}</div>
+          <div onClick="{{ colM.close }}" style="cursor:pointer; color:var(--muted2); font-size:16px; padding:4px;" style-hover="color:var(--text);">✕</div>
+        </div>
+        <div style="font-size:12px; color:var(--muted); margin-bottom:18px;">Changes are staged as a plan on {{ colM.table }}. Renames and type changes apply to the target on the next activation; the source catalogue is never modified.</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div><div style="font-size:10.5px; letter-spacing:.06em; color:var(--muted2); margin-bottom:4px;">COLUMN SOURCE NAME</div><input value="{{ colM.name }}" onChange="{{ colM.setName }}" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:7px; padding:8px 11px; font-size:12.5px; font-family:'IBM Plex Mono',monospace; background:var(--panel);"></div>
+          <div><div style="font-size:10.5px; letter-spacing:.06em; color:var(--muted2); margin-bottom:4px;">COLUMN TARGET NAME</div><input value="{{ colM.tname }}" onChange="{{ colM.setTname }}" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:7px; padding:8px 11px; font-size:12.5px; font-family:'IBM Plex Mono',monospace; background:var(--panel);"></div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div><div style="font-size:10.5px; letter-spacing:.06em; color:var(--muted2); margin-bottom:4px;">SOURCE TYPE · {{ colM.srcDialect }}</div><input value="{{ colM.type }}" onChange="{{ colM.setType }}" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:7px; padding:8px 11px; font-size:12.5px; font-family:'IBM Plex Mono',monospace; background:var(--panel);"></div>
+          <div><div style="font-size:10.5px; letter-spacing:.06em; color:var(--muted2); margin-bottom:4px;">TARGET TYPE · {{ colM.tgtDialect }}</div><input value="{{ colM.ttype }}" onChange="{{ colM.setTtype }}" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:7px; padding:8px 11px; font-size:12.5px; font-family:'IBM Plex Mono',monospace; background:var(--panel);"></div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+          <div><div style="font-size:10.5px; letter-spacing:.06em; color:var(--muted2); margin-bottom:4px;">NULLABLE</div>
+            <select value="{{ colM.nullable }}" onChange="{{ colM.setNullable }}" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:7px; padding:8px 10px; font-size:12.5px; font-family:'IBM Plex Sans',sans-serif; background:var(--panel);">
+              <option value="NOT NULL">NOT NULL</option>
+              <option value="NULL">NULL</option>
+            </select>
+          </div>
+          <div><div style="font-size:10.5px; letter-spacing:.06em; color:var(--muted2); margin-bottom:4px;">KEY</div>
+            <select value="{{ colM.key }}" onChange="{{ colM.setKey }}" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:7px; padding:8px 10px; font-size:12.5px; font-family:'IBM Plex Sans',sans-serif; background:var(--panel);">
+              <option value="">— none —</option>
+              <option value="PK">PK · primary key</option>
+              <option value="UQ">UQ · unique</option>
+              <option value="IX">IX · indexed</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-bottom:18px;"><div style="font-size:10.5px; letter-spacing:.06em; color:var(--muted2); margin-bottom:4px;">NOTES</div><input value="{{ colM.note }}" onChange="{{ colM.setNote }}" placeholder="e.g. masked on apply · prefix with ! to exclude from replication" style="width:100%; box-sizing:border-box; border:1px solid var(--border); border-radius:7px; padding:8px 11px; font-size:12.5px; background:var(--panel);"></div>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+          <div onClick="{{ colM.reset }}" style="font-size:12px; color:var(--muted2); cursor:pointer;" style-hover="color:var(--text);">Reset to source definition</div>
+          <div style="display:flex; gap:10px;">
+            <div onClick="{{ colM.close }}" style="border:1px solid var(--border); background:var(--panel); font-size:12.5px; font-weight:600; padding:8px 16px; border-radius:7px; cursor:pointer;" style-hover="background:var(--panel-soft);">Cancel</div>
+            <div onClick="{{ colM.save }}" style="background:{{ accent }}; color:#fff; font-size:12.5px; font-weight:600; padding:8px 18px; border-radius:7px; cursor:pointer;" style-hover="opacity:.9;">Save</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- ======== EDIT AGENT MODAL ======== -->
   <sc-if value="{{ agentModalOpen }}" hint-placeholder-val="{{ false }}">
     <div style="position:fixed; inset:0; background:rgba(10,14,12,.45); display:flex; align-items:center; justify-content:center; z-index:120;">
@@ -1049,7 +1094,8 @@
       <div onClick="{{ backToPipe }}" style="font-size:12px; color:var(--muted2); cursor:pointer; margin-bottom:12px;" style-hover="color:var(--text);">← Pipeline {{ sel.name }}</div>
       <div style="font-size:20px; font-weight:600; margin-bottom:6px;">Tables</div>
       <div style="font-size:12.5px; color:var(--muted2); margin-bottom:16px;">Every table across every pipeline — and when it was last verified.</div>
-      <div style="display:flex; gap:10px; margin-bottom:14px;">
+      <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:14px; align-items:center;">
+        <div onClick="{{ addTable }}" style="order:2; margin-left:auto; background:{{ accent }}; color:#fff; font-size:12.5px; font-weight:600; padding:8px 14px; border-radius:7px; cursor:pointer; flex:none;" style-hover="opacity:.9;">Add table</div>
         <input value="{{ tableSearch }}" onChange="{{ setTableSearch }}" placeholder="Search identities and physical names…" style="flex:1; max-width:340px; border:1px solid var(--border); border-radius:7px; padding:8px 12px; font-size:12.5px; font-family:'IBM Plex Sans',sans-serif; background:var(--panel);">
         <select value="{{ tableFilter }}" onChange="{{ setTableFilter }}" style="border:1px solid var(--border); border-radius:7px; padding:8px 10px; font-size:12.5px; font-family:'IBM Plex Sans',sans-serif; background:var(--panel);">
           <sc-for list="{{ pipelineOptions }}" as="o">
@@ -1057,23 +1103,131 @@
           </sc-for>
         </select>
       </div>
-      <div style="background:var(--panel); border:1px solid var(--border-soft); border-radius:10px; overflow:hidden;">
-        <div style="display:grid; grid-template-columns:1.6fr 1.1fr 1.4fr .9fr 1.3fr 1.3fr .9fr; gap:12px; padding:10px 16px; font-size:11.5px; color:var(--muted2); border-bottom:1px solid var(--border-soft);">
-          <div>Table</div><div>Pipeline</div><div>Name in source</div><div>Group</div><div>Recent refresh</div><div>Recent compare</div><div>Avg changes</div>
+      <div style="background:var(--panel); border:1px solid var(--border-soft); border-radius:10px; overflow-x:auto;">
+       <div style="width:100%; min-width:960px;">
+        <div style="display:grid; grid-template-columns:minmax(150px,1.6fr) minmax(100px,1.1fr) minmax(130px,1.4fr) minmax(80px,.9fr) minmax(120px,1.3fr) minmax(130px,1.3fr) minmax(80px,.9fr) 100px; gap:12px; padding:10px 16px; font-size:11.5px; color:var(--muted2); border-bottom:1px solid var(--border-soft);">
+          <div>Table</div><div>Pipeline</div><div>Name in source</div><div>Group</div><div>Recent refresh</div><div>Recent compare</div><div>Avg changes</div><div></div>
         </div>
         <sc-for list="{{ tableRows }}" as="t" hint-placeholder-count="8">
-          <div style="display:grid; grid-template-columns:1.6fr 1.1fr 1.4fr .9fr 1.3fr 1.3fr .9fr; gap:12px; padding:11px 16px; font-size:12.5px; border-bottom:1px solid var(--bg-subtle); align-items:center;">
-            <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:500;">{{ t.identity }}</div>
+          <div style="display:grid; grid-template-columns:minmax(150px,1.6fr) minmax(100px,1.1fr) minmax(130px,1.4fr) minmax(80px,.9fr) minmax(120px,1.3fr) minmax(130px,1.3fr) minmax(80px,.9fr) 100px; gap:12px; padding:11px 16px; font-size:12.5px; border-bottom:1px solid var(--bg-subtle); align-items:center;">
+            <div onClick="{{ t.openTable }}" style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:500; cursor:pointer; width:fit-content;" style-hover="text-decoration:underline;">{{ t.identity }}</div>
             <div style="color:var(--muted);">{{ t.pipeline }}</div>
             <div style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted);">{{ t.nameSource }}</div>
             <div style="color:var(--muted);">{{ t.group }}</div>
             <div onClick="{{ t.openRefresh }}" style="cursor:pointer;"><span style="{{ t.refreshPill }}">{{ t.refresh }}</span></div>
             <div onClick="{{ t.openCompare }}" style="cursor:pointer;"><span style="{{ t.comparePill }}">{{ t.compare }}</span></div>
             <svg width="72" height="22" viewBox="0 0 72 22"><path d="{{ t.spark }}" fill="none" stroke="{{ accent }}" stroke-width="1.3"></path></svg>
+            <div style="display:flex; gap:6px; justify-content:flex-end;">
+              <div onClick="{{ t.removeTable }}" style="border:1px solid var(--border); font-size:11px; font-weight:600; padding:4px 10px; border-radius:6px; cursor:pointer; color:var(--danger);" style-hover="background:var(--danger-bg);">Remove</div>
+            </div>
+          </div>
+        </sc-for>
+       </div>
+      </div>
+      <div style="font-size:11.5px; color:var(--muted3); margin-top:10px;">Click a table name for its columns, keys and DDL. States: PENDING · BUSY · BUSY/DIFFERENT · DONE/IDENTICAL · DONE/DIFFERENT · DONE/INCONCLUSIVE — inconclusive always links to the report explaining what was unresolved.</div>
+    </div>
+  </sc-if>
+
+  <!-- ======== TABLE DETAIL ======== -->
+  <sc-if value="{{ showTableDetail }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Table detail">
+      <div onClick="{{ backToTables }}" style="font-size:12px; color:var(--muted2); cursor:pointer; margin-bottom:12px;" style-hover="color:var(--text);">← Tables</div>
+      <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:6px;">
+        <div style="font-size:20px; font-weight:600; font-family:'IBM Plex Mono',monospace;">{{ tbl.identity }}</div>
+        <span style="{{ tbl.statePill }}">{{ tbl.state }}</span>
+        <div style="font-size:12px; color:var(--muted2);">{{ tbl.group }} group · {{ tbl.pipeline }}</div>
+      </div>
+      <div style="font-size:12.5px; color:var(--muted2); margin-bottom:18px; font-family:'IBM Plex Mono',monospace;">{{ tbl.nameSource }} <span style="font-family:'IBM Plex Sans',sans-serif;">→</span> {{ tbl.targetName }}</div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; margin-bottom:22px;">
+        <sc-for list="{{ tbl.facts }}" as="f" hint-placeholder-count="6">
+          <div style="background:var(--panel); border:1px solid var(--border-soft); border-radius:9px; padding:12px 14px;">
+            <div style="font-size:11px; color:var(--muted2); margin-bottom:5px;">{{ f.label }}</div>
+            <div style="font-size:13px; font-weight:600;">{{ f.value }}</div>
+            <div style="font-size:11px; color:var(--muted3); margin-top:3px;">{{ f.note }}</div>
           </div>
         </sc-for>
       </div>
-      <div style="font-size:11.5px; color:var(--muted3); margin-top:10px;">States: PENDING · BUSY · BUSY/DIFFERENT · DONE/IDENTICAL · DONE/DIFFERENT · DONE/INCONCLUSIVE — inconclusive always links to the report explaining what was unresolved.</div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+        <div style="font-size:14px; font-weight:600;">Columns</div>
+        <div style="font-size:11.5px; color:var(--muted2);">{{ tbl.colCount }} columns · {{ tbl.replCount }} replicated · {{ tbl.keyLabel }}</div>
+      </div>
+      <div style="font-size:11.5px; color:var(--muted3); margin-bottom:10px;">Dropping a column stages a plan: the column stops being captured and the target column is dropped on the next apply cycle. Key columns cannot be dropped.</div>
+      <div style="background:var(--panel); border:1px solid var(--border-soft); border-radius:10px; overflow-x:auto; margin-bottom:26px;">
+       <div style="width:100%; min-width:820px;">
+        <div style="display:grid; grid-template-columns:26px minmax(90px,1.3fr) minmax(90px,1.3fr) minmax(84px,1.15fr) 64px 40px minmax(84px,1.15fr) minmax(90px,1.2fr) 108px; gap:8px; padding:10px 14px; font-size:11.5px; color:var(--muted2); border-bottom:1px solid var(--border-soft);">
+          <div>#</div><div>Column</div><div>Target column</div><div>Source type</div><div>Nullable</div><div>Key</div><div>Target type</div><div>Notes</div><div></div>
+        </div>
+        <sc-for list="{{ tbl.cols }}" as="c" hint-placeholder-count="12">
+          <div style="display:grid; grid-template-columns:26px minmax(90px,1.3fr) minmax(90px,1.3fr) minmax(84px,1.15fr) 64px 40px minmax(84px,1.15fr) minmax(90px,1.2fr) 108px; gap:8px; padding:9px 14px; font-size:12.5px; border-bottom:1px solid var(--bg-subtle); align-items:center;">
+            <div style="color:var(--muted3); font-variant-numeric:tabular-nums; font-size:11.5px;">{{ c.n }}</div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:500; overflow:hidden; text-overflow:ellipsis;">{{ c.name }}</div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted); overflow:hidden; text-overflow:ellipsis;">{{ c.tname }}</div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted); overflow:hidden; text-overflow:ellipsis;">{{ c.type }}</div>
+            <div style="font-size:11px; color:var(--muted2);">{{ c.nullable }}</div>
+            <div><span style="{{ c.keyPill }}">{{ c.key }}</span></div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted); overflow:hidden; text-overflow:ellipsis;">{{ c.ttype }}</div>
+            <div style="font-size:11px; color:{{ c.noteColor }}; overflow:hidden; text-overflow:ellipsis;">{{ c.note }}</div>
+            <div style="display:flex; gap:6px; justify-content:flex-end;">
+              <div onClick="{{ c.openEdit }}" style="border:1px solid var(--border); font-size:11px; font-weight:600; padding:3px 9px; border-radius:6px; cursor:pointer;" style-hover="background:var(--panel-soft);">Edit</div>
+              <sc-if value="{{ c.isKey }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:11px; color:var(--muted3); padding:3px 4px;">key</div>
+              </sc-if>
+              <sc-if value="{{ c.canDrop }}" hint-placeholder-val="{{ true }}">
+                <div onClick="{{ c.toggleDrop }}" style="{{ c.dropStyle }}" style-hover="background:var(--panel-soft);">{{ c.dropLabel }}</div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+       </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:26px;">
+        <div style="background:var(--panel); border:1px solid var(--border-soft); border-radius:10px; padding:16px 18px;">
+          <div style="font-size:13px; font-weight:600; margin-bottom:12px;">Keys and indexes</div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <sc-for list="{{ tbl.indexes }}" as="i" hint-placeholder-count="3">
+              <div>
+                <div style="font-size:12px; font-family:'IBM Plex Mono',monospace; margin-bottom:2px;">{{ i.name }}</div>
+                <div style="font-size:11.5px; color:var(--muted2);">{{ i.def }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:var(--panel); border:1px solid var(--border-soft); border-radius:10px; padding:16px 18px;">
+          <div style="font-size:13px; font-weight:600; margin-bottom:12px;">Replication rules</div>
+          <div style="display:flex; flex-direction:column; gap:9px; font-size:12px;">
+            <sc-for list="{{ tbl.rules }}" as="r" hint-placeholder-count="4">
+              <div style="display:flex; justify-content:space-between; gap:16px;">
+                <span style="color:var(--muted2);">{{ r.label }}</span>
+                <span style="text-align:right; font-family:'IBM Plex Mono',monospace; font-size:11.5px;">{{ r.value }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+        <div style="font-size:14px; font-weight:600;">DDL</div>
+        <div style="display:flex; gap:6px;">
+          <div onClick="{{ tbl.showSourceDdl }}" style="{{ tbl.srcTab }}">Source</div>
+          <div onClick="{{ tbl.showTargetDdl }}" style="{{ tbl.tgtTab }}">Target</div>
+        </div>
+      </div>
+      <pre style="background:var(--panel-soft); border:1px solid var(--border-soft); border-radius:10px; padding:16px 18px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; line-height:1.65; color:var(--text2); overflow-x:auto; margin:0 0 10px;">{{ tbl.ddl }}</pre>
+      <div style="font-size:11.5px; color:var(--muted3); margin-bottom:26px;">{{ tbl.ddlNote }}</div>
+
+      <div style="font-size:14px; font-weight:600; margin-bottom:10px;">Definition history</div>
+      <div style="background:var(--panel); border:1px solid var(--border-soft); border-radius:10px; overflow:hidden;">
+        <sc-for list="{{ tbl.history }}" as="h" hint-placeholder-count="3">
+          <div style="display:grid; grid-template-columns:130px minmax(180px,1fr) 140px; gap:12px; padding:11px 16px; font-size:12.5px; border-bottom:1px solid var(--bg-subtle); align-items:center;">
+            <div style="color:var(--muted2); font-size:11.5px;">{{ h.when }}</div>
+            <div>{{ h.what }}</div>
+            <div style="color:var(--muted2); font-size:11.5px;">{{ h.who }}</div>
+          </div>
+        </sc-for>
+      </div>
     </div>
   </sc-if>
 
@@ -1127,15 +1281,20 @@
     <div data-screen-label="Jobs">
       <div onClick="{{ backUp }}" style="font-size:12px; color:var(--muted2); cursor:pointer; margin-bottom:12px;" style-hover="color:var(--text);">← {{ backUpLabel }}</div>
       <div style="font-size:20px; font-weight:600; margin-bottom:6px;">Jobs</div>
-      <div style="font-size:12.5px; color:var(--muted2); margin-bottom:18px;">Suspend is graceful and resumable; disable is the lock that survives colleagues.</div>
-      <div style="background:var(--panel); border:1px solid var(--border-soft); border-radius:10px; overflow:hidden;">
-        <div style="display:grid; grid-template-columns:1.5fr 1fr .8fr 1.2fr 1.4fr 1.4fr; padding:10px 16px; font-size:11.5px; color:var(--muted2); border-bottom:1px solid var(--border-soft);">
-          <div>Job</div><div>Pipeline</div><div>Shape</div><div>State</div><div>Detail</div><div></div>
+      <div style="font-size:12.5px; color:var(--muted2); margin-bottom:18px;">Replication jobs plus the event-driven work running right now — a compare or refresh holds a job for as long as its event is CURRENT or WAITING, and cancelling the event drains it. Suspend is graceful and resumable; disable is the lock that survives colleagues.</div>
+      <div style="background:var(--panel); border:1px solid var(--border-soft); border-radius:10px; overflow-x:auto;">
+       <div style="width:100%; min-width:880px;">
+        <div style="display:grid; grid-template-columns:minmax(140px,1.4fr) minmax(90px,.9fr) minmax(104px,.95fr) minmax(60px,.75fr) minmax(96px,1.05fr) minmax(150px,1.3fr) minmax(160px,1.3fr); padding:10px 16px; font-size:11.5px; color:var(--muted2); border-bottom:1px solid var(--border-soft);">
+          <div>Job</div><div>Pipeline</div><div>Type</div><div>Shape</div><div>State</div><div>Detail</div><div></div>
         </div>
         <sc-for list="{{ jobRows }}" as="j" hint-placeholder-count="7">
-          <div style="display:grid; grid-template-columns:1.5fr 1fr .8fr 1.2fr 1.4fr 1.4fr; padding:11px 16px; font-size:12.5px; border-bottom:1px solid var(--bg-subtle); align-items:center;">
+          <div style="display:grid; grid-template-columns:minmax(140px,1.4fr) minmax(90px,.9fr) minmax(104px,.95fr) minmax(60px,.75fr) minmax(96px,1.05fr) minmax(150px,1.3fr) minmax(160px,1.3fr); padding:11px 16px; font-size:12.5px; border-bottom:1px solid var(--bg-subtle); align-items:center;">
             <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:500;">{{ j.name }}</div>
             <div style="color:var(--muted);">{{ j.pipeline }}</div>
+            <div style="display:flex; flex-direction:column; gap:3px; align-items:flex-start; min-width:0;">
+              <span style="{{ j.kindPill }}">{{ j.kind }}</span>
+              <span style="font-size:10.5px; color:var(--muted3);">{{ j.trigger }}</span>
+            </div>
             <div style="color:var(--muted);">{{ j.shape }}</div>
             <div style="display:flex; gap:5px; align-items:center;">
               <span style="{{ j.pill }}">{{ j.state }}</span>
@@ -1145,6 +1304,9 @@
             </div>
             <div style="color:var(--muted); font-size:12px;">{{ j.detail }}</div>
             <div style="display:flex; gap:6px; justify-content:flex-end;">
+              <sc-if value="{{ j.eventDriven }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ j.openEvent }}" style="border:1px solid var(--border); font-size:11px; font-weight:600; padding:4px 10px; border-radius:6px; cursor:pointer; white-space:nowrap;" style-hover="background:var(--panel-soft);">Open event</div>
+              </sc-if>
               <sc-if value="{{ j.canSuspend }}" hint-placeholder-val="{{ false }}">
                 <div onClick="{{ j.suspend }}" style="border:1px solid var(--border); font-size:11px; font-weight:600; padding:4px 10px; border-radius:6px; cursor:pointer;" style-hover="background:var(--panel-soft);">Suspend</div>
               </sc-if>
@@ -1160,6 +1322,7 @@
             </div>
           </div>
         </sc-for>
+       </div>
       </div>
     </div>
   </sc-if>
@@ -1168,20 +1331,191 @@
   <sc-if value="{{ showEvents }}" hint-placeholder-val="{{ false }}">
     <div data-screen-label="Events">
       <div onClick="{{ backUp }}" style="font-size:12px; color:var(--muted2); cursor:pointer; margin-bottom:12px;" style-hover="color:var(--text);">← {{ backUpLabel }}</div>
-      <div style="font-size:20px; font-weight:600; margin-bottom:6px;">Events</div>
-      <div style="font-size:12.5px; color:var(--muted2); margin-bottom:18px;">The audit ledger — complete by construction, immutable, SIEM-forwardable.</div>
-      <div style="display:flex; flex-direction:column; gap:6px;">
-        <sc-for list="{{ eventRows }}" as="e" hint-placeholder-count="9">
-          <div style="background:var(--panel); border:1px solid var(--border-soft); border-radius:8px; padding:10px 14px; display:flex; gap:12px; align-items:center; font-size:12.5px;">
-            <span style="font-family:'IBM Plex Mono',monospace; color:var(--muted2); font-size:11.5px; width:44px;">{{ e.id }}</span>
-            <span style="{{ e.pill }}">{{ e.type }}</span>
-            <span>{{ e.text }}</span>
-            <sc-if value="{{ e.artifact }}" hint-placeholder-val="{{ false }}">
-              <a href="#" onClick="{{ e.openArtifact }}" style="font-size:11.5px;">{{ e.artifact }}</a>
+      <div style="font-size:20px; font-weight:600; margin-bottom:6px;">{{ eventScopeNote }}</div>
+      <div style="font-size:12.5px; color:var(--muted2); margin-bottom:14px;">The audit ledger — every user action that changes something is recorded with who did it, what it touched, and how it ended. Read-only activity and automated job cycles are not events; those live in the job logs.</div>
+      <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:12px;">
+        <select value="{{ evChannel }}" onChange="{{ setEvChannel }}" style="border:1px solid var(--border); border-radius:7px; padding:7px 10px; font-size:12.5px; font-family:'IBM Plex Sans',sans-serif; background:var(--panel);">
+          <sc-for list="{{ evChannelOpts }}" as="o" hint-placeholder-count="2"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+        </select>
+        <select value="{{ evLocation }}" onChange="{{ setEvLocation }}" style="border:1px solid var(--border); border-radius:7px; padding:7px 10px; font-size:12.5px; font-family:'IBM Plex Sans',sans-serif; background:var(--panel);">
+          <sc-for list="{{ evLocationOpts }}" as="o" hint-placeholder-count="2"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+        </select>
+        <select value="{{ evType }}" onChange="{{ setEvType }}" style="border:1px solid var(--border); border-radius:7px; padding:7px 10px; font-size:12.5px; font-family:'IBM Plex Sans',sans-serif; background:var(--panel);">
+          <sc-for list="{{ evTypeOpts }}" as="o" hint-placeholder-count="2"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+        </select>
+        <select value="{{ evState }}" onChange="{{ setEvState }}" style="border:1px solid var(--border); border-radius:7px; padding:7px 10px; font-size:12.5px; font-family:'IBM Plex Sans',sans-serif; background:var(--panel);">
+          <sc-for list="{{ evStateOpts }}" as="o" hint-placeholder-count="2"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+        </select>
+        <select value="{{ evStarted }}" onChange="{{ setEvStarted }}" style="border:1px solid var(--border); border-radius:7px; padding:7px 10px; font-size:12.5px; font-family:'IBM Plex Sans',sans-serif; background:var(--panel);">
+          <sc-for list="{{ evStartedOpts }}" as="o" hint-placeholder-count="2"><option value="{{ o.value }}">{{ o.label }}</option></sc-for>
+        </select>
+        <input value="{{ eventSearch }}" onChange="{{ setEventSearch }}" placeholder="Search events…" style="flex:1 1 160px; min-width:0; border:1px solid var(--border); border-radius:7px; padding:7px 11px; font-size:12.5px; font-family:'IBM Plex Sans',sans-serif; background:var(--panel);">
+        <span style="font-size:11.5px; color:var(--muted2); flex:none;">{{ evCount }}</span>
+        <div style="position:relative; flex:none;">
+          <div onClick="{{ toggleEvCols }}" style="border:1px solid var(--border); background:var(--panel); font-size:12.5px; font-weight:600; padding:7px 12px; border-radius:7px; cursor:pointer;" style-hover="background:var(--panel-soft);">Columns ▾</div>
+          <sc-if value="{{ evColsOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute; right:0; top:calc(100% + 6px); background:var(--panel); border:1px solid var(--border); border-radius:9px; box-shadow:0 8px 24px rgba(0,0,0,.14); padding:8px; z-index:40; width:190px;">
+              <div style="font-size:11px; color:var(--muted2); padding:4px 10px 6px;">Show columns</div>
+              <sc-for list="{{ evColOpts }}" as="o" hint-placeholder-count="6">
+                <div onClick="{{ o.toggle }}" style="display:flex; align-items:center; gap:9px; padding:7px 10px; border-radius:6px; cursor:pointer; font-size:12.5px;" style-hover="background:var(--panel-soft);">
+                  <span style="{{ o.box }}">{{ o.mark }}</span>{{ o.label }}
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+      <div style="background:var(--panel); border:1px solid var(--border-soft); border-radius:10px; overflow-x:auto;">
+       <div style="width:100%; min-width:1000px;">
+        <div style="display:grid; grid-template-columns:{{ evGrid }}; gap:10px; padding:10px 14px; font-size:11px; letter-spacing:.05em; color:var(--muted2); border-bottom:1px solid var(--border-soft);">
+          <div></div>
+          <sc-for list="{{ evHeaders }}" as="h" hint-placeholder-count="6">
+            <div onClick="{{ h.sort }}" style="cursor:pointer; user-select:none; display:flex; align-items:center; gap:4px; min-width:0;" style-hover="color:var(--text);">{{ h.label }}<span style="font-size:9px; color:{{ accent }};">{{ h.arrow }}</span></div>
+          </sc-for>
+          <div></div>
+        </div>
+        <sc-for list="{{ evRows }}" as="e" hint-placeholder-count="9">
+          <div style="border-bottom:1px solid var(--bg-subtle);">
+            <div onClick="{{ e.toggle }}" style="display:grid; grid-template-columns:{{ evGrid }}; gap:10px; padding:11px 14px; font-size:12.5px; align-items:center; cursor:pointer;" style-hover="background:var(--panel-soft);">
+              <div style="color:{{ accent }}; font-size:13px;">{{ e.caret }}</div>
+              <sc-for list="{{ e.cells }}" as="c">
+                <div style="min-width:0;">
+                  <sc-if value="{{ c.isType }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex; flex-wrap:wrap; align-items:center; gap:5px;"><span style="{{ c.pill }}">{{ c.text }}</span></div>
+                    <div style="font-size:11.5px; color:var(--muted2); margin-top:4px;">{{ c.sub }}</div>
+                  </sc-if>
+                  <sc-if value="{{ c.isState }}" hint-placeholder-val="{{ false }}">
+                    <span style="{{ c.pill }}">{{ c.text }}</span>
+                  </sc-if>
+                  <sc-if value="{{ c.isPlain }}" hint-placeholder-val="{{ true }}">
+                    <span style="display:block; color:var(--muted); font-family:{{ c.font }}; font-size:{{ c.size }}; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ c.text }}</span>
+                  </sc-if>
+                </div>
+              </sc-for>
+              <div>
+                <sc-if value="{{ e.hasLog }}" hint-placeholder-val="{{ false }}">
+                  <div onClick="{{ e.viewLog }}" style="border:1px solid var(--border); text-align:center; font-size:11px; font-weight:600; padding:5px 0; border-radius:6px; cursor:pointer; white-space:nowrap;" style-hover="background:var(--panel-soft);">View log</div>
+                </sc-if>
+              </div>
+            </div>
+            <sc-if value="{{ e.open }}" hint-placeholder-val="{{ false }}">
+              <div style="background:var(--panel-soft); border-top:1px solid var(--border-soft); padding:14px 16px 16px 52px; display:flex; flex-direction:column; gap:12px;">
+
+                <div style="background:var(--panel); border:1px solid var(--border-soft); border-radius:9px; padding:13px 16px;">
+                  <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:10px; margin-bottom:2px;">
+                    <span style="font-size:15px; font-weight:600;">{{ e.type }}</span>
+                    <span style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--muted);">{{ e.eventIdIso }}</span>
+                    <div style="margin-left:auto; display:flex; flex-wrap:wrap; gap:8px;">
+                      <sc-if value="{{ e.hasLog }}" hint-placeholder-val="{{ false }}">
+                        <div onClick="{{ e.viewLog }}" style="border:1px solid var(--border); background:var(--panel); font-size:11.5px; font-weight:600; padding:6px 12px; border-radius:7px; cursor:pointer;" style-hover="background:var(--bg-subtle);">View log</div>
+                      </sc-if>
+                      <sc-if value="{{ e.canRepeat }}" hint-placeholder-val="{{ false }}">
+                        <div onClick="{{ e.repeat }}" style="border:1px solid var(--border); background:var(--panel); font-size:11.5px; font-weight:600; padding:6px 12px; border-radius:7px; cursor:pointer;" style-hover="background:var(--bg-subtle);">Repeat {{ e.type }}</div>
+                      </sc-if>
+                      <sc-if value="{{ e.canCancel }}" hint-placeholder-val="{{ false }}">
+                        <div onClick="{{ e.cancelEvent }}" style="border:1px solid var(--border); background:var(--panel); font-size:11.5px; font-weight:600; padding:6px 12px; border-radius:7px; cursor:pointer;" style-hover="background:var(--bg-subtle);">Cancel event</div>
+                      </sc-if>
+                      <sc-if value="{{ e.canUndo }}" hint-placeholder-val="{{ false }}">
+                        <div onClick="{{ e.undo }}" style="border:1px solid var(--border); background:var(--panel); font-size:11.5px; font-weight:600; padding:6px 12px; border-radius:7px; cursor:pointer;" style-hover="background:var(--bg-subtle);">Undo</div>
+                        <div onClick="{{ e.exportDef }}" style="border:1px solid var(--border); background:var(--panel); font-size:11.5px; font-weight:600; padding:6px 12px; border-radius:7px; cursor:pointer;" style-hover="background:var(--bg-subtle);">Export definition change</div>
+                      </sc-if>
+                    </div>
+                  </div>
+                  <div style="font-size:12.5px; color:var(--muted2); margin-bottom:12px;">{{ e.text }}</div>
+                  <div style="display:flex; flex-wrap:wrap; gap:12px 28px;">
+                    <sc-for list="{{ e.summary }}" as="d" hint-placeholder-count="6">
+                      <div style="min-width:0;">
+                        <div style="font-size:10px; letter-spacing:.06em; color:var(--muted2); margin-bottom:2px;">{{ d.k }}</div>
+                        <div style="font-size:12.5px;">{{ d.v }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+
+                <div style="background:var(--panel); border:1px solid var(--border-soft); border-radius:9px; padding:13px 16px;">
+                  <div style="font-size:11px; letter-spacing:.06em; color:var(--muted2); margin-bottom:8px;">PARAMETERS</div>
+                  <div style="display:flex; flex-direction:column; gap:6px; font-size:12.5px;">
+                    <sc-for list="{{ e.details }}" as="d" hint-placeholder-count="3">
+                      <div style="display:flex; gap:14px;"><span style="color:var(--muted2); min-width:170px;">{{ d.k }}</span><span>{{ d.v }}</span></div>
+                    </sc-for>
+                    <sc-if value="{{ e.noDetails }}" hint-placeholder-val="{{ false }}">
+                      <div style="color:var(--muted2);">No further detail was recorded for this event.</div>
+                    </sc-if>
+                  </div>
+                </div>
+
+                <sc-if value="{{ e.hasResults }}" hint-placeholder-val="{{ false }}">
+                  <div style="background:var(--panel); border:1px solid var(--border-soft); border-radius:9px; padding:13px 16px;">
+                    <div style="font-size:11px; letter-spacing:.06em; color:var(--muted2); margin-bottom:10px;">RESULTS</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:14px 28px; margin-bottom:14px;">
+                      <sc-for list="{{ e.resultStats }}" as="r" hint-placeholder-count="6">
+                        <div>
+                          <div style="font-size:10px; letter-spacing:.06em; color:var(--muted2); margin-bottom:2px;">{{ r.k }}</div>
+                          <div style="font-size:12.5px; font-variant-numeric:tabular-nums;">{{ r.v }}</div>
+                        </div>
+                      </sc-for>
+                    </div>
+                    <div style="display:flex; justify-content:flex-end; margin-bottom:6px; position:relative;">
+                      <div onClick="{{ toggleResCols }}" style="border:1px solid var(--border); background:var(--panel); font-size:11.5px; font-weight:600; padding:5px 11px; border-radius:6px; cursor:pointer;" style-hover="background:var(--panel-soft);">Columns ▾</div>
+                      <sc-if value="{{ resColsOpen }}" hint-placeholder-val="{{ false }}">
+                        <div style="position:absolute; right:0; top:calc(100% + 6px); background:var(--panel); border:1px solid var(--border); border-radius:9px; box-shadow:0 8px 24px rgba(0,0,0,.14); padding:8px; z-index:40; width:220px;">
+                          <div style="font-size:11px; color:var(--muted2); padding:4px 10px 6px;">Show columns</div>
+                          <sc-for list="{{ resColOpts }}" as="o" hint-placeholder-count="6">
+                            <div onClick="{{ o.toggle }}" style="display:flex; align-items:center; gap:9px; padding:7px 10px; border-radius:6px; cursor:pointer; font-size:12.5px;" style-hover="background:var(--panel-soft);">
+                              <span style="{{ o.box }}">{{ o.mark }}</span>{{ o.label }}
+                            </div>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </div>
+                    <div style="overflow-x:auto;">
+                     <div style="width:100%; min-width:620px;">
+                      <div style="display:grid; grid-template-columns:{{ e.resGrid }}; gap:10px; padding:0 0 7px; font-size:10px; letter-spacing:.05em; color:var(--muted2); border-bottom:1px solid var(--border-soft);">
+                        <div>TABLE</div><div>STATE</div>
+                        <sc-if value="{{ e.resHead.onlySrc }}" hint-placeholder-val="{{ false }}"><div style="text-align:right;">ROWS ONLY ON SOURCE</div></sc-if>
+                        <sc-if value="{{ e.resHead.onlyTgt }}" hint-placeholder-val="{{ false }}"><div style="text-align:right;">ROWS ONLY ON TARGET</div></sc-if>
+                        <sc-if value="{{ e.resHead.differ }}" hint-placeholder-val="{{ false }}"><div style="text-align:right;">ROWS WHICH DIFFER</div></sc-if>
+                        <div style="text-align:right;">SOURCE ROWS SELECTED</div><div style="text-align:right;">TARGET ROWS SELECTED</div>
+                        <sc-if value="{{ e.resHead.subtasks }}" hint-placeholder-val="{{ false }}"><div style="text-align:right;">SUBTASKS DONE(BUSY)/TOTAL</div></sc-if>
+                        <sc-if value="{{ e.resHead.started }}" hint-placeholder-val="{{ false }}"><div style="text-align:right;">START TIME</div></sc-if>
+                        <div style="text-align:right;">DURATION</div><div style="text-align:right;">SPEED</div>
+                        <sc-if value="{{ e.resHead.diff }}" hint-placeholder-val="{{ false }}"><div style="text-align:right;">DIFF FILE</div></sc-if>
+                      </div>
+                      <sc-for list="{{ e.resultRows }}" as="r" hint-placeholder-count="6">
+                        <div style="display:grid; grid-template-columns:{{ e.resGrid }}; gap:10px; padding:7px 0; font-size:12px; border-bottom:1px solid var(--bg-subtle);">
+                          <div style="font-family:'IBM Plex Mono',monospace; font-size:11.5px;">{{ r.name }}</div>
+                          <div style="color:{{ r.color }}; font-weight:600; font-size:11.5px;">{{ r.state }}</div>
+                          <sc-if value="{{ r.showOnlySrc }}" hint-placeholder-val="{{ false }}"><div style="text-align:right; font-variant-numeric:tabular-nums; color:var(--muted);">{{ r.onlySrc }}</div></sc-if>
+                          <sc-if value="{{ r.showOnlyTgt }}" hint-placeholder-val="{{ false }}"><div style="text-align:right; font-variant-numeric:tabular-nums; color:var(--muted);">{{ r.onlyTgt }}</div></sc-if>
+                          <sc-if value="{{ r.showDiffer }}" hint-placeholder-val="{{ false }}"><div style="text-align:right; font-variant-numeric:tabular-nums; color:var(--muted);">{{ r.differ }}</div></sc-if>
+                          <div style="text-align:right; font-variant-numeric:tabular-nums; color:var(--muted);">{{ r.src }}</div>
+                          <div style="text-align:right; font-variant-numeric:tabular-nums; color:var(--muted);">{{ r.tgt }}</div>
+                          <sc-if value="{{ r.showSubtasks }}" hint-placeholder-val="{{ false }}"><div style="text-align:right; font-variant-numeric:tabular-nums; color:var(--muted);">{{ r.subtasks }}</div></sc-if>
+                          <sc-if value="{{ r.showStarted }}" hint-placeholder-val="{{ false }}"><div style="text-align:right; color:var(--muted);">{{ r.started }}</div></sc-if>
+                          <div style="text-align:right; font-variant-numeric:tabular-nums; color:var(--muted);">{{ r.duration }}</div>
+                          <div style="text-align:right; font-variant-numeric:tabular-nums; color:var(--muted);">{{ r.speed }}</div>
+                          <sc-if value="{{ r.showDiffCol }}" hint-placeholder-val="{{ false }}">
+                            <div style="text-align:right;">
+                              <sc-if value="{{ r.hasDiff }}" hint-placeholder-val="{{ false }}">
+                                <a href="#" onClick="{{ r.viewDiff }}" style="font-size:11.5px;">View file</a>
+                              </sc-if>
+                            </div>
+                          </sc-if>
+                        </div>
+                      </sc-for>
+                     </div>
+                    </div>
+                  </div>
+                </sc-if>
+
+              </div>
             </sc-if>
-            <span style="margin-left:auto; color:var(--muted3); font-size:11px; flex:none;">{{ e.when }}</span>
           </div>
         </sc-for>
+        <sc-if value="{{ evEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:26px 16px; text-align:center; font-size:12.5px; color:var(--muted2);">No events match these filters.</div>
+        </sc-if>
+       </div>
       </div>
     </div>
   </sc-if>
@@ -1782,6 +2116,11 @@ class Component extends DCLogic {
     selected: null,
     paused: {},
     tableSearch: '',
+    tableSel: null,
+    droppedCols: {},
+    colEdits: {},
+    colForm: null,
+    ddlView: 'source',
     tableFilter: 'all',
     toast: null,
     tick: 0,
@@ -1921,6 +2260,11 @@ class Component extends DCLogic {
   componentDidMount() {
     this.loadEnvPrefs();
     this.initHistory();
+    // The ledger is immutable and complete by construction — it survives reloads.
+    try {
+      const log = JSON.parse(localStorage.getItem('repl-event-log') || '[]');
+      if (log.length) this.setState({ eventLog: log });
+    } catch (e) {}
     try {
       const cu = JSON.parse(localStorage.getItem('repl-custom-users') || '[]');
       const cg = JSON.parse(localStorage.getItem('repl-custom-grants') || '[]');
@@ -2098,36 +2442,729 @@ class Component extends DCLogic {
       { identity: 'PAYMENTS', pipeline: 'pg-billing', nameSource: 'billing.payments', group: 'FINANCE', refresh: 'DONE', refreshKind: 'gray', compare: 'DONE/IDENTICAL', compareKind: 'green', vol: [2,3,3,4,3,5,4,5,6,5,6,7], state: 'Replicating', stateKind: 'green', rowsToday: '190k', lastChange: '1.1s ago', latency: '0.9s' },
       { identity: 'ORDERS', pipeline: 'pg-orders', nameSource: 'public.orders', group: 'SALES', refresh: 'BUSY', refreshKind: 'blue', compare: 'DONE/IDENTICAL', compareKind: 'green', vol: [6,7,5,8,7,9,8,10,9,11,10,12], state: 'Replicating', stateKind: 'green', rowsToday: '820k', lastChange: '3s ago', latency: '2.2s' },
       { identity: 'SHIPMENTS', pipeline: 'ora-scm', nameSource: 'SCM.SHIPMENTS', group: 'SUPPLY', refresh: 'DONE', refreshKind: 'gray', compare: 'DONE/IDENTICAL', compareKind: 'green', vol: [4,5,4,6,5,7,6,6,8,7,9,8], state: 'Replicating', stateKind: 'green', rowsToday: '1.1M', lastChange: '2s ago', latency: '3.4s' },
+      { identity: 'GL_BALANCES', pipeline: 'ora-erp', nameSource: 'ERP.GL_BALANCES', group: 'FINANCE', refresh: 'DONE', refreshKind: 'gray', compare: 'DONE/IDENTICAL', compareKind: 'green', vol: [2,2,3,2,3,3,4,3,4,4,5,4], state: 'Replicating', stateKind: 'green', rowsToday: '64k', lastChange: '4s ago', latency: '1.9s' },
+      { identity: 'AP_PAYMENTS', pipeline: 'ora-erp', nameSource: 'ERP.AP_PAYMENTS', group: 'FINANCE', refresh: 'DONE', refreshKind: 'gray', compare: 'DONE/IDENTICAL', compareKind: 'green', vol: [1,2,2,3,2,3,3,4,3,4,4,5], state: 'Replicating', stateKind: 'green', rowsToday: '41k', lastChange: '7s ago', latency: '2.0s' },
+      { identity: 'AR_RECEIPTS', pipeline: 'ora-erp', nameSource: 'ERP.AR_RECEIPTS', group: 'FINANCE', refresh: 'DONE', refreshKind: 'gray', compare: 'DONE/DIFFERENT', compareKind: 'red', vol: [3,3,4,4,5,4,6,5,6,6,7,6], state: 'Replicating', stateKind: 'green', rowsToday: '129k', lastChange: '3s ago', latency: '2.1s' },
+      { identity: 'PO_HEADERS', pipeline: 'ora-erp', nameSource: 'ERP.PO_HEADERS', group: 'PROCURE', refresh: 'BUSY', refreshKind: 'blue', compare: 'NONE', compareKind: 'gray', vol: [2,2,3,3,4,3,4,4,5,4,5,5], state: 'Refreshing', stateKind: 'blue', rowsToday: '96k', lastChange: '—', latency: '—' },
+      { identity: 'SUPPLIERS', pipeline: 'ora-erp', nameSource: 'ERP.SUPPLIERS', group: 'PROCURE', refresh: 'DONE', refreshKind: 'gray', compare: 'DONE/IDENTICAL', compareKind: 'green', vol: [1,1,1,2,1,2,1,2,2,1,2,2], state: 'Replicating', stateKind: 'green', rowsToday: '3.1k', lastChange: '12m ago', latency: '1.8s' },
+      { identity: 'COST_CENTERS', pipeline: 'ora-erp', nameSource: 'ERP.COST_CENTERS', group: 'FINANCE', refresh: 'DONE', refreshKind: 'gray', compare: 'DONE/IDENTICAL', compareKind: 'green', vol: [1,1,1,1,1,1,2,1,1,2,1,1], state: 'Replicating', stateKind: 'green', rowsToday: '420', lastChange: '1h ago', latency: '1.8s' },
+      { identity: 'ASSET_REGISTER', pipeline: 'ora-erp', nameSource: 'ERP.ASSET_REGISTER', group: 'FINANCE', refresh: 'DONE', refreshKind: 'gray', compare: 'DONE/INCONCLUSIVE', compareKind: 'violet', vol: [1,2,1,2,2,3,2,3,2,3,3,4], state: 'DDL pending', stateKind: 'amber', rowsToday: '18k', lastChange: '2m ago', latency: '2.4s' },
+      { identity: 'BOM_COMPONENTS', pipeline: 'db2-mfg', nameSource: 'MFG.BOM_COMPONENTS', group: 'SHOPFLOOR', refresh: 'DONE', refreshKind: 'gray', compare: 'DONE/IDENTICAL', compareKind: 'green', vol: [4,5,4,6,5,6,6,7,6,8,7,8], state: 'Lagging', stateKind: 'amber', rowsToday: '380k', lastChange: '94s ago', latency: '96s' },
+      { identity: 'MACHINE_EVENTS', pipeline: 'db2-mfg', nameSource: 'MFG.MACHINE_EVENTS', group: 'SHOPFLOOR', refresh: 'DONE', refreshKind: 'gray', compare: 'NONE', compareKind: 'gray', vol: [9,11,10,12,11,13,12,14,13,15,14,16], state: 'Lagging', stateKind: 'amber', rowsToday: '4.8M', lastChange: '98s ago', latency: '102s' },
+      { identity: 'QUALITY_CHECKS', pipeline: 'db2-mfg', nameSource: 'MFG.QUALITY_CHECKS', group: 'SHOPFLOOR', refresh: 'DONE', refreshKind: 'gray', compare: 'DONE/DIFFERENT', compareKind: 'red', vol: [2,3,2,3,3,4,3,4,4,5,4,5], state: 'Lagging', stateKind: 'amber', rowsToday: '76k', lastChange: '92s ago', latency: '95s' },
+      { identity: 'ROUTINGS', pipeline: 'db2-mfg', nameSource: 'MFG.ROUTINGS', group: 'SHOPFLOOR', refresh: 'PENDING', refreshKind: 'gray', compare: 'PENDING', compareKind: 'gray', vol: [1,1,2,1,2,1,2,2,1,2,2,2], state: 'Queued', stateKind: 'gray', rowsToday: '—', lastChange: '—', latency: '—' },
+      { identity: 'DEPARTMENTS', pipeline: 'mssql-hr', nameSource: 'HR.DEPARTMENTS', group: 'PEOPLE', refresh: 'PENDING', refreshKind: 'gray', compare: 'PENDING', compareKind: 'gray', vol: [1,1,1,1,1,1,1,1,1,1,1,1], state: 'Stopped', stateKind: 'red', rowsToday: '0', lastChange: '—', latency: '—' },
+      { identity: 'PAYROLL_RUNS', pipeline: 'mssql-hr', nameSource: 'HR.PAYROLL_RUNS', group: 'PEOPLE', refresh: 'PENDING', refreshKind: 'gray', compare: 'PENDING', compareKind: 'gray', vol: [1,2,1,2,1,2,1,2,1,2,1,2], state: 'Stopped', stateKind: 'red', rowsToday: '0', lastChange: '—', latency: '—' },
+      { identity: 'TIMESHEETS', pipeline: 'mssql-hr', nameSource: 'HR.TIMESHEETS', group: 'PEOPLE', refresh: 'PENDING', refreshKind: 'gray', compare: 'PENDING', compareKind: 'gray', vol: [3,4,3,5,4,5,4,6,5,6,5,7], state: 'Stopped', stateKind: 'red', rowsToday: '0', lastChange: '—', latency: '—' },
+      { identity: 'INVENTORY_LOTS', pipeline: 'ora-scm', nameSource: 'SCM.INVENTORY_LOTS', group: 'SUPPLY', refresh: 'DONE', refreshKind: 'gray', compare: 'DONE/IDENTICAL', compareKind: 'green', vol: [5,6,5,7,6,8,7,8,9,8,10,9], state: 'Replicating', stateKind: 'green', rowsToday: '1.6M', lastChange: '2s ago', latency: '3.3s' },
+      { identity: 'WAREHOUSES', pipeline: 'ora-scm', nameSource: 'SCM.WAREHOUSES', group: 'SUPPLY', refresh: 'DONE', refreshKind: 'gray', compare: 'DONE/IDENTICAL', compareKind: 'green', vol: [1,1,1,1,1,1,1,2,1,1,1,1], state: 'Replicating', stateKind: 'green', rowsToday: '180', lastChange: '22m ago', latency: '3.1s' },
+      { identity: 'CARRIER_RATES', pipeline: 'ora-scm', nameSource: 'SCM.CARRIER_RATES', group: 'SUPPLY', refresh: 'DONE', refreshKind: 'gray', compare: 'BUSY/DIFFERENT', compareKind: 'amber', vol: [2,2,3,2,3,3,3,4,3,4,4,4], state: 'Replicating', stateKind: 'green', rowsToday: '9.4k', lastChange: '38s ago', latency: '3.5s' },
+      { identity: 'DEMAND_FORECAST', pipeline: 'ora-scm', nameSource: 'SCM.DEMAND_FORECAST', group: 'SUPPLY', refresh: 'BUSY', refreshKind: 'blue', compare: 'NONE', compareKind: 'gray', vol: [3,4,3,5,4,5,5,6,5,7,6,7], state: 'Refreshing', stateKind: 'blue', rowsToday: '240k', lastChange: '—', latency: '—' },
+      { identity: 'CREDIT_NOTES', pipeline: 'pg-billing', nameSource: 'billing.credit_notes', group: 'FINANCE', refresh: 'DONE', refreshKind: 'gray', compare: 'DONE/IDENTICAL', compareKind: 'green', vol: [1,2,1,2,2,2,3,2,3,2,3,3], state: 'Replicating', stateKind: 'green', rowsToday: '12k', lastChange: '1.4s ago', latency: '0.8s' },
+      { identity: 'SUBSCRIPTIONS', pipeline: 'pg-billing', nameSource: 'billing.subscriptions', group: 'FINANCE', refresh: 'DONE', refreshKind: 'gray', compare: 'DONE/IDENTICAL', compareKind: 'green', vol: [2,2,3,3,3,4,3,4,4,4,5,5], state: 'Replicating', stateKind: 'green', rowsToday: '58k', lastChange: '0.9s ago', latency: '0.8s' },
+      { identity: 'DUNNING_LOG', pipeline: 'pg-billing', nameSource: 'billing.dunning_log', group: 'FINANCE', refresh: 'DONE', refreshKind: 'gray', compare: 'DONE/INCONCLUSIVE', compareKind: 'violet', vol: [1,1,2,1,2,2,2,3,2,3,2,3], state: 'Replicating', stateKind: 'green', rowsToday: '4.2k', lastChange: '6s ago', latency: '0.9s' },
+      { identity: 'ORDER_ITEMS', pipeline: 'pg-orders', nameSource: 'public.order_items', group: 'SALES', refresh: 'DONE', refreshKind: 'gray', compare: 'DONE/IDENTICAL', compareKind: 'green', vol: [7,8,7,9,8,10,9,11,10,12,11,13], state: 'Replicating', stateKind: 'green', rowsToday: '2.1M', lastChange: '1s ago', latency: '2.2s' },
+      { identity: 'CUSTOMERS', pipeline: 'pg-orders', nameSource: 'public.customers', group: 'SALES', refresh: 'DONE', refreshKind: 'gray', compare: 'DONE/IDENTICAL', compareKind: 'green', vol: [2,2,2,3,2,3,3,3,4,3,4,4], state: 'Replicating', stateKind: 'green', rowsToday: '31k', lastChange: '5s ago', latency: '2.3s' },
+      { identity: 'CARTS', pipeline: 'pg-orders', nameSource: 'public.carts', group: 'SALES', refresh: 'DONE', refreshKind: 'gray', compare: 'DONE/DIFFERENT', compareKind: 'red', vol: [5,6,5,7,6,7,7,8,7,9,8,9], state: 'DDL pending', stateKind: 'amber', rowsToday: '740k', lastChange: '18s ago', latency: '2.6s' },
+      { identity: 'REFUNDS', pipeline: 'pg-orders', nameSource: 'public.refunds', group: 'SALES', refresh: 'PENDING', refreshKind: 'gray', compare: 'PENDING', compareKind: 'gray', vol: [1,1,1,2,1,2,1,2,1,2,2,2], state: 'Queued', stateKind: 'gray', rowsToday: '—', lastChange: '—', latency: '—' },
+      { identity: 'DEVICE_TELEMETRY', pipeline: 'ora-telem', nameSource: 'TELEM.DEVICE_TELEMETRY', group: 'IOT', refresh: 'DONE', refreshKind: 'gray', compare: 'NONE', compareKind: 'gray', vol: [12,14,13,15,14,16,15,17,16,18,17,19], state: 'Replicating', stateKind: 'green', rowsToday: '9.8M', lastChange: '1s ago', latency: '2.1s' },
+      { identity: 'DEVICE_REGISTRY', pipeline: 'ora-telem', nameSource: 'TELEM.DEVICE_REGISTRY', group: 'IOT', refresh: 'DONE', refreshKind: 'gray', compare: 'DONE/IDENTICAL', compareKind: 'green', vol: [1,1,1,1,2,1,1,2,1,1,2,1], state: 'Replicating', stateKind: 'green', rowsToday: '2.6k', lastChange: '3m ago', latency: '2.0s' },
+      { identity: 'FIRMWARE_EVENTS', pipeline: 'ora-telem', nameSource: 'TELEM.FIRMWARE_EVENTS', group: 'IOT', refresh: 'DONE', refreshKind: 'gray', compare: 'DONE/IDENTICAL', compareKind: 'green', vol: [2,3,2,4,3,4,3,5,4,5,4,6], state: 'Replicating', stateKind: 'green', rowsToday: '88k', lastChange: '9s ago', latency: '2.2s' },
+      { identity: 'ALERT_THRESHOLDS', pipeline: 'ora-telem', nameSource: 'TELEM.ALERT_THRESHOLDS', group: 'IOT', refresh: 'DONE', refreshKind: 'gray', compare: 'BUSY/DIFFERENT', compareKind: 'amber', vol: [1,1,1,1,1,1,1,1,2,1,1,1], state: 'Replicating', stateKind: 'green', rowsToday: '96', lastChange: '46m ago', latency: '2.1s' },
     ];
+  }
+
+  // ---- Table structure -------------------------------------------------------
+  // A table's structure is derived, never stored twice: columnDefs() holds the source
+  // catalogue definition, and everything the detail screen shows (types per side, keys,
+  // DDL, replication rules) is computed from it by tableDetailVM(). User changes live in
+  // two override maps on state — colEdits (per-column edits) and droppedCols — so the
+  // catalogue definition stays the baseline a column can always be reset to.
+
+  // Source and target SQL dialect for a pipeline. Drives type mapping and DDL shape.
+  tableDialects(pipeline) {
+    const m = {
+      'ora-erp': ['Oracle 19c', 'Snowflake'], 'ora-scm': ['Oracle 19c', 'S3 · Parquet'], 'ora-telem': ['Oracle 19c', 'Snowflake'],
+      'db2-mfg': ['DB2 LUW 11.5', 'Databricks Delta'], 'mssql-hr': ['SQL Server 2022', 'Snowflake'],
+      'pg-billing': ['PostgreSQL 17', 'PostgreSQL 17'], 'pg-orders': ['PostgreSQL 17', 'Snowflake'],
+    };
+    return m[pipeline] || ['PostgreSQL 17', 'Snowflake'];
+  }
+
+  // Abstract column kind ('bigint', 'str:30', 'ts', …) rendered in a dialect's own type
+  // vocabulary. '{n}' is the width placeholder — never a bare letter, or type names that
+  // contain it (BIGINT, STRING) get corrupted.
+  typeFor(kind, dialect) {
+    const n = kind.indexOf(':') > 0 ? kind.split(':')[1] : null;
+    const k = kind.split(':')[0];
+    const maps = {
+      'Oracle 19c':      { bigint:'NUMBER(19)', int:'NUMBER(10)', str:'VARCHAR2({n} CHAR)', ts:'TIMESTAMP(6)', date:'DATE', dec:'NUMBER(18,4)', bool:'CHAR(1)', txt:'CLOB', json:'CLOB' },
+      'DB2 LUW 11.5':    { bigint:'BIGINT', int:'INTEGER', str:'VARCHAR({n})', ts:'TIMESTAMP(6)', date:'DATE', dec:'DECIMAL(18,4)', bool:'CHAR(1)', txt:'CLOB(1M)', json:'CLOB(1M)' },
+      'SQL Server 2022': { bigint:'bigint', int:'int', str:'nvarchar({n})', ts:'datetime2(3)', date:'date', dec:'decimal(18,4)', bool:'bit', txt:'nvarchar(max)', json:'nvarchar(max)' },
+      'PostgreSQL 17':   { bigint:'bigint', int:'integer', str:'varchar({n})', ts:'timestamptz', date:'date', dec:'numeric(18,4)', bool:'boolean', txt:'text', json:'jsonb' },
+      'Snowflake':       { bigint:'NUMBER(19,0)', int:'NUMBER(10,0)', str:'VARCHAR({n})', ts:'TIMESTAMP_NTZ(6)', date:'DATE', dec:'NUMBER(18,4)', bool:'BOOLEAN', txt:'VARCHAR(16777216)', json:'VARIANT' },
+      'Databricks Delta':{ bigint:'BIGINT', int:'INT', str:'STRING', ts:'TIMESTAMP', date:'DATE', dec:'DECIMAL(18,4)', bool:'BOOLEAN', txt:'STRING', json:'STRING' },
+      'S3 · Parquet':    { bigint:'INT64', int:'INT32', str:'BYTE_ARRAY/UTF8', ts:'INT64/TIMESTAMP_MICROS', date:'INT32/DATE', dec:'DECIMAL(18,4)', bool:'BOOLEAN', txt:'BYTE_ARRAY/UTF8', json:'BYTE_ARRAY/JSON' },
+    };
+    const m = maps[dialect] || maps['PostgreSQL 17'];
+    return (m[k] || 'VARCHAR').replace('{n}', n || '60');
+  }
+
+  // [name, kind, key, notNull, note]  — note beginning with '!' means the column is not replicated
+  columnDefs(identity, group) {
+    const audit = (dt) => [['CREATED_AT', dt, '', true, ''], ['CREATED_BY', 'str:30', '', false, ''], ['UPDATED_AT', dt, 'IX', true, 'CDC watermark'], ['UPDATED_BY', 'str:30', '', false, '']];
+    const map = {
+      WORKORDERS: [
+        ['WORKORDER_ID','bigint','PK',true,''], ['PLANT_CODE','str:8','IX',true,''], ['ITEM_NO','str:30','',true,''],
+        ['ROUTING_ID','bigint','',false,'FK → MFG.ROUTINGS'], ['WORK_CENTER','str:16','IX',false,''],
+        ['QTY_ORDERED','dec','',true,''], ['QTY_COMPLETED','dec','',false,''], ['QTY_SCRAPPED','dec','',false,''],
+        ['STATUS','str:12','',true,'RELEASED / WIP / CLOSED'], ['PRIORITY','int','',false,''],
+        ['SCHED_START','ts','',false,''], ['SCHED_END','ts','',false,''], ['ACTUAL_START','ts','',false,''], ['ACTUAL_END','ts','',false,''],
+        ['SUPERVISOR_ID','bigint','',false,''], ['NOTES','txt','',false,'LOB — captured out-of-band'],
+        ['ROW_VERSION','int','',true,'optimistic lock'],
+      ].concat(audit('ts')),
+      GL_JOURNALS: [
+        ['JOURNAL_ID','bigint','PK',true,''], ['LEDGER_ID','int','IX',true,''], ['PERIOD_NAME','str:15','',true,''],
+        ['JOURNAL_SOURCE','str:25','',false,''], ['JOURNAL_CATEGORY','str:25','',false,''], ['CURRENCY_CODE','str:3','',true,''],
+        ['ACCOUNTED_DR','dec','',false,''], ['ACCOUNTED_CR','dec','',false,''], ['STATUS','str:1','',true,'P = posted'],
+        ['POSTED_DATE','date','',false,''], ['DESCRIPTION','str:240','',false,''], ['ATTRIBUTE_JSON','json','',false,'flexfields'],
+        ['CREATED_BY','str:30','',false,''], ['CREATION_DATE','ts','',true,''], ['LAST_UPDATE_DATE','ts','IX',true,'CDC watermark'],
+      ],
+      PO_LINES: [
+        ['PO_LINE_ID','bigint','PK',true,''], ['PO_HEADER_ID','bigint','IX',true,'FK → ERP.PO_HEADERS'], ['LINE_NUM','int','',true,''],
+        ['ITEM_ID','bigint','',false,''], ['ITEM_DESCRIPTION','str:240','',false,''], ['UNIT_MEAS','str:25','',false,''],
+        ['QUANTITY','dec','',true,''], ['UNIT_PRICE','dec','',false,''], ['CURRENCY_CODE','str:3','',false,''],
+        ['NEED_BY_DATE','date','',false,''], ['CLOSED_FLAG','bool','',false,''],
+        ['CREATION_DATE','ts','',true,''], ['LAST_UPDATE_DATE','ts','IX',true,'CDC watermark'],
+      ],
+      AP_INVOICES: [
+        ['INVOICE_ID','bigint','PK',true,''], ['VENDOR_ID','bigint','IX',true,''], ['INVOICE_NUM','str:50','UQ',true,''],
+        ['INVOICE_DATE','date','',true,''], ['INVOICE_AMOUNT','dec','',true,''], ['AMOUNT_PAID','dec','',false,''],
+        ['CURRENCY_CODE','str:3','',true,''], ['PAYMENT_STATUS','str:1','',false,''], ['TERMS_ID','int','',false,''],
+        ['APPROVAL_STATUS','str:20','',false,''], ['DESCRIPTION','str:240','',false,''], ['BANK_ACCOUNT_NUM','str:40','',false,'!excluded — PCI'],
+        ['CREATION_DATE','ts','',true,''], ['LAST_UPDATE_DATE','ts','IX',true,'CDC watermark'],
+      ],
+      ORDER_LINES: [
+        ['ORDER_LINE_ID','bigint','PK',true,''], ['ORDER_ID','bigint','IX',true,''], ['LINE_NUM','int','',true,''],
+        ['ITEM_NO','str:30','',true,''], ['WAREHOUSE_CODE','str:8','',false,''], ['QTY_ORDERED','dec','',true,''],
+        ['QTY_SHIPPED','dec','',false,''], ['UNIT_PRICE','dec','',false,''], ['PROMISE_DATE','date','',false,''],
+        ['SHIP_DATE','date','',false,''], ['STATUS','str:12','',true,''], ['LAST_UPDATE_DATE','ts','IX',true,'CDC watermark'],
+      ],
+      EMPLOYEES: [
+        ['EMPLOYEE_ID','bigint','PK',true,''], ['EMPLOYEE_NO','str:20','UQ',true,''], ['FIRST_NAME','str:60','',true,''],
+        ['LAST_NAME','str:60','',true,''], ['EMAIL','str:120','',false,'masked on apply'], ['DEPARTMENT_ID','int','IX',true,''],
+        ['JOB_TITLE','str:80','',false,''], ['MANAGER_ID','bigint','',false,'self FK'], ['HIRE_DATE','date','',true,''],
+        ['TERMINATION_DATE','date','',false,''], ['SALARY','dec','',false,'!excluded — restricted'], ['NATIONAL_ID','str:32','',false,'!excluded — PII'],
+        ['STATUS','str:12','',true,''], ['MODIFIED_AT','ts','IX',true,'CDC watermark'],
+      ],
+      INVOICES: [
+        ['invoice_id','bigint','PK',true,''], ['account_id','bigint','IX',true,''], ['invoice_no','str:32','UQ',true,''],
+        ['issued_on','date','',true,''], ['due_on','date','',false,''], ['currency','str:3','',true,''],
+        ['subtotal','dec','',true,''], ['tax_total','dec','',false,''], ['total','dec','',true,'compared each night'],
+        ['status','str:16','',true,'open / paid / void'], ['metadata','json','',false,''],
+        ['created_at','ts','',true,''], ['updated_at','ts','IX',true,'CDC watermark'],
+      ],
+      ORDERS: [
+        ['order_id','bigint','PK',true,''], ['customer_id','bigint','IX',true,''], ['order_no','str:24','UQ',true,''],
+        ['placed_at','ts','',true,''], ['channel','str:16','',false,'web / pos / api'], ['status','str:16','',true,''],
+        ['currency','str:3','',true,''], ['subtotal','dec','',true,''], ['discount','dec','',false,''], ['shipping','dec','',false,''],
+        ['tax','dec','',false,''], ['total','dec','',true,''], ['ship_address','json','',false,''],
+        ['created_at','ts','',true,''], ['updated_at','ts','IX',true,'CDC watermark'],
+      ],
+      MACHINE_EVENTS: [
+        ['EVENT_ID','bigint','PK',true,''], ['MACHINE_ID','bigint','IX',true,''], ['PLANT_CODE','str:8','',true,''],
+        ['EVENT_TYPE','str:24','',true,''], ['EVENT_TS','ts','IX',true,'partition key on target'], ['SHIFT_CODE','str:4','',false,''],
+        ['VALUE_NUM','dec','',false,''], ['UOM','str:12','',false,''], ['PAYLOAD','json','',false,'passed through as string'],
+        ['OPERATOR_ID','bigint','',false,''], ['INGESTED_AT','ts','',true,'set by apply'],
+      ],
+      DEVICE_TELEMETRY: [
+        ['READING_ID','bigint','PK',true,''], ['DEVICE_ID','bigint','IX',true,''], ['METRIC','str:40','',true,''],
+        ['READING_TS','ts','IX',true,'clustering key on target'], ['VALUE_NUM','dec','',true,''], ['UOM','str:12','',false,''],
+        ['QUALITY','int','',false,'0–100'], ['FIRMWARE_VER','str:16','',false,''], ['PAYLOAD','json','',false,''],
+        ['INGESTED_AT','ts','',true,'set by apply'],
+      ],
+    };
+    if (map[identity]) return map[identity];
+    const base = identity.replace(/S$/, '').replace(/IES$/, 'Y');
+    const byGroup = {
+      FINANCE:  [['AMOUNT','dec','',true,''], ['CURRENCY_CODE','str:3','',true,''], ['PERIOD_NAME','str:15','',false,''], ['STATUS','str:16','',true,'']],
+      PROCURE:  [['VENDOR_ID','bigint','IX',true,''], ['ITEM_NO','str:30','',false,''], ['QUANTITY','dec','',false,''], ['STATUS','str:16','',true,'']],
+      SUPPLY:   [['WAREHOUSE_CODE','str:8','IX',true,''], ['ITEM_NO','str:30','',false,''], ['QUANTITY','dec','',false,''], ['STATUS','str:16','',true,'']],
+      SHOPFLOOR:[['PLANT_CODE','str:8','IX',true,''], ['ITEM_NO','str:30','',false,''], ['QUANTITY','dec','',false,''], ['STATUS','str:12','',true,'']],
+      PEOPLE:   [['EMPLOYEE_ID','bigint','IX',true,''], ['NAME','str:80','',true,''], ['EFFECTIVE_FROM','date','',true,''], ['STATUS','str:12','',true,'']],
+      SALES:    [['customer_id','bigint','IX',true,''], ['amount','dec','',false,''], ['currency','str:3','',false,''], ['status','str:16','',true,'']],
+      IOT:      [['DEVICE_ID','bigint','IX',true,''], ['METRIC','str:40','',false,''], ['VALUE_NUM','dec','',false,''], ['QUALITY','int','',false,'']],
+    };
+    const lower = identity === identity.toLowerCase();
+    const cols = [[base + '_ID', 'bigint', 'PK', true, ''], [base + '_CODE', 'str:32', 'UQ', true, 'natural key'], ['DESCRIPTION', 'str:240', '', false, '']]
+      .concat(byGroup[group] || byGroup.FINANCE)
+      .concat(audit('ts'));
+    return lower ? cols.map(c => [c[0].toLowerCase()].concat(c.slice(1))) : cols;
+  }
+
+  // Physical name of the table on the target side — schema/catalogue conventions differ per
+  // platform (Snowflake keeps case, Delta/Postgres/Parquet fold to lower, S3 is a prefix).
+  tableTargetName(identity, pipeline) {
+    const lo = identity.toLowerCase();
+    const m = {
+      'ora-erp': 'SNOWFLAKE_PRD.RAW_ERP.' + identity,
+      'ora-scm': 's3://acme-lake/scm/' + lo + '/',
+      'ora-telem': 'SNOWFLAKE_RKT.RAW_TELEM.' + identity,
+      'db2-mfg': 'lakehouse.mfg_raw.' + lo,
+      'mssql-hr': 'SNOWFLAKE_PRD.RAW_HR.' + identity,
+      'pg-billing': 'analytics.' + lo,
+      'pg-orders': 'SNOWFLAKE_PRD.RAW_ORDERS.' + identity,
+    };
+    return m[pipeline] || 'SNOWFLAKE_PRD.RAW.' + identity;
+  }
+
+  // Everything the table detail screen renders, computed from the catalogue definition plus
+  // the user's overrides. `dropped` is a set of original column names; `edits` maps an
+  // original column name to any of {name, tname, type, ttype, nullable, key, note}.
+  // Source and target column names are independent (Documents/tables.md §3.1): the target
+  // name defaults from the ORIGINAL source name, so renaming one side never moves the other.
+  tableDetailVM(t, ddlView, dropped, edits) {
+    const [srcDialect, tgtDialect] = this.tableDialects(t.pipeline);
+    const defs = this.columnDefs(t.identity, t.group);
+    const isDropped = (name) => !!(dropped && dropped[name]);
+    const lowerTgt = tgtDialect !== 'Snowflake';
+    // eff = effective columns: catalogue definition with overrides applied. A note starting
+    // with '!' means the column is excluded from replication; dropped columns behave the same
+    // way but are reversible from the row.
+    const eff = defs.map(d => {
+      const ov = (edits && edits[d[0]]) || {};
+      const name = ov.name || d[0];
+      const note = ov.note !== undefined ? ov.note : d[4];
+      const drop = isDropped(d[0]);
+      return {
+        orig: d[0], kind: d[1], name,
+        tname: ov.tname || (lowerTgt ? d[0].toLowerCase() : d[0]),
+        type: ov.type || this.typeFor(d[1], srcDialect),
+        ttype: ov.ttype || this.typeFor(d[1], tgtDialect),
+        nn: ov.nullable ? ov.nullable === 'NOT NULL' : d[3],
+        key: ov.key !== undefined ? ov.key : (d[2] || ''),
+        note, dropped: drop, excl: note.charAt(0) === '!' || drop,
+        edited: Object.keys(ov).length > 0,
+      };
+    });
+    const cols = eff.map((e, i) => ({
+      n: i + 1, orig: e.orig, name: e.name, tname: e.excl ? '—' : e.tname,
+      key: e.key || '—', keyPill: this.pill(e.key === 'PK' ? 'blue' : e.key === 'UQ' ? 'violet' : 'gray'),
+      type: e.type, ttype: e.excl ? '—' : e.ttype,
+      nullable: e.nn ? 'NOT NULL' : 'NULL',
+      note: e.dropped ? 'dropped — target column removed on next apply' : (e.excl ? e.note.slice(1) : e.note),
+      noteColor: e.excl ? 'var(--warn)' : 'var(--muted2)', excl: e.excl, dropped: e.dropped, edited: e.edited,
+      isKey: e.key === 'PK',
+      dropLabel: e.dropped ? 'Restore' : 'Drop',
+      dropStyle: 'border:1px solid var(--border); font-size:11px; font-weight:600; padding:3px 9px; border-radius:6px; cursor:pointer; text-align:center; white-space:nowrap; color:' + (e.dropped ? 'var(--text)' : 'var(--danger)') + ';',
+    }));
+    const pk = eff.filter(e => e.key === 'PK').map(e => e.name);
+    const uq = eff.filter(e => e.key === 'UQ').map(e => e.name);
+    const ix = eff.filter(e => e.key === 'IX').map(e => e.name);
+    const targetName = this.tableTargetName(t.identity, t.pipeline);
+    const pad = Math.max(...eff.map(e => Math.max(e.name.length, e.tname.length))) + 2;
+    const line = (name, type, nn) => '  ' + (name + ' '.repeat(Math.max(1, pad - name.length))) + type + (nn ? ' NOT NULL' : '');
+    const srcBody = eff.map(e => line(e.name, e.type, e.nn)).join(',\n');
+    const constraint = pk.length ? ',\n  CONSTRAINT ' + ('PK_' + t.identity).toUpperCase() + ' PRIMARY KEY (' + pk.join(', ') + ')' : '';
+    const uqLine = uq.length ? ',\n  CONSTRAINT ' + ('UQ_' + t.identity).toUpperCase() + ' UNIQUE (' + uq.join(', ') + ')' : '';
+    let srcDdl = 'CREATE TABLE ' + t.nameSource + ' (\n' + srcBody + constraint + uqLine + '\n);\n';
+    ix.forEach(c => { srcDdl += '\nCREATE INDEX ' + ('IX_' + t.identity + '_' + c).toUpperCase() + ' ON ' + t.nameSource + ' (' + c + ');'; });
+    if (srcDialect.indexOf('Oracle') === 0) srcDdl += '\n\nALTER TABLE ' + t.nameSource + '\n  ADD SUPPLEMENTAL LOG GROUP ' + ('SLG_' + t.identity).toUpperCase() + ' (' + (pk[0] || eff[0].name) + ') ALWAYS;';
+    if (srcDialect.indexOf('DB2') === 0) srcDdl += '\n\nALTER TABLE ' + t.nameSource + ' DATA CAPTURE CHANGES INCLUDE LONGVAR COLUMNS;';
+    if (srcDialect.indexOf('SQL Server') === 0) srcDdl += '\n\nEXEC sys.sp_cdc_enable_table @source_schema = N\'' + t.nameSource.split('.')[0] + '\', @source_name = N\'' + t.identity + '\',\n  @role_name = N\'repl_reader\', @supports_net_changes = 1;';
+    if (srcDialect.indexOf('PostgreSQL') === 0) srcDdl += '\n\nALTER TABLE ' + t.nameSource + ' REPLICA IDENTITY USING INDEX ' + ('PK_' + t.identity).toLowerCase() + ';';
+
+    const kept = eff.filter(e => !e.excl);
+    const keptNames = kept.map(e => e.name);
+    const timeCol = (kept.find(e => e.key === 'IX' && (e.kind === 'ts' || e.kind === 'date')) || {}).tname || null;
+    const anchorCol = (kept.find(e => e.name === pk[0]) || kept[0] || {}).tname;
+    const tgtBody = kept.map(e => line(e.tname, e.ttype, false)).join(',\n');
+    const opTail = '  ' + 'OP_TYPE' + ' '.repeat(Math.max(1, pad - 7)) + this.typeFor('str:1', tgtDialect) + ',\n  ' + 'OP_TS' + ' '.repeat(Math.max(1, pad - 5)) + this.typeFor('ts', tgtDialect);
+    let tgtDdl;
+    if (tgtDialect === 'S3 · Parquet') {
+      tgtDdl = '-- Parquet layout written to ' + targetName + '\n-- one file set per integrate cycle, manifest + atomic rename\nmessage ' + t.identity.toLowerCase() + ' {\n'
+        + kept.map(e => '  ' + (e.nn ? 'required ' : 'optional ') + e.ttype + ' ' + e.tname.toLowerCase() + ';').join('\n')
+        + '\n  required BYTE_ARRAY/UTF8 op_type;\n  required INT64/TIMESTAMP_MICROS op_ts;\n}';
+    } else if (tgtDialect === 'Databricks Delta') {
+      tgtDdl = 'CREATE TABLE ' + targetName + ' (\n' + tgtBody + ',\n' + opTail + '\n)\nUSING DELTA'
+        + (timeCol ? '\nPARTITIONED BY (DATE(' + timeCol + '))' : '')
+        + '\nTBLPROPERTIES (delta.enableChangeDataFeed = true);';
+    } else if (tgtDialect === 'Snowflake') {
+      tgtDdl = 'CREATE OR REPLACE TABLE ' + targetName + ' (\n' + tgtBody + ',\n' + opTail + '\n)\nCLUSTER BY (' + (timeCol || anchorCol) + ');';
+    } else {
+      tgtDdl = 'CREATE TABLE ' + targetName + ' (\n' + tgtBody + ',\n' + opTail + '\n);\n\nCREATE UNIQUE INDEX ON ' + targetName + ' (' + anchorCol + ');';
+    }
+
+    const captureMethod = { 'Oracle 19c': 'Direct redo log read', 'DB2 LUW 11.5': 'db2ReadLog API', 'SQL Server 2022': 'CDC change tables', 'PostgreSQL 17': 'Logical decoding (pgoutput)' }[srcDialect] || 'Log-based CDC';
+    const suppLog = { 'Oracle 19c': 'Supplemental log group on key', 'DB2 LUW 11.5': 'DATA CAPTURE CHANGES', 'SQL Server 2022': 'Net changes enabled', 'PostgreSQL 17': 'REPLICA IDENTITY USING INDEX' }[srcDialect] || '—';
+    const volAvg = t.vol.reduce((a, b) => a + b, 0) / t.vol.length;
+    const rowsEst = Math.round(volAvg * 1.8) / 10;
+
+    return {
+      identity: t.identity, nameSource: t.nameSource, pipeline: t.pipeline, group: t.group, targetName,
+      state: t.state, statePill: this.pill(t.stateKind),
+      colCount: eff.length, replCount: kept.length,
+      keyLabel: pk.length ? 'key ' + pk.join(' + ') : 'no declared key',
+      cols,
+      facts: [
+        { label: 'Source', value: srcDialect, note: t.nameSource },
+        { label: 'Target', value: tgtDialect, note: targetName },
+        { label: 'Rows in source', value: rowsEst.toFixed(1) + 'M', note: 'estimate from last refresh' },
+        { label: 'Changes today', value: t.rowsToday, note: 'last change ' + t.lastChange },
+        { label: 'Capture', value: captureMethod, note: suppLog },
+        { label: 'Apply latency', value: t.latency, note: 'end-to-end, p50' },
+      ],
+      indexes: [
+        { name: pk.length ? ('PK_' + t.identity).toUpperCase() : '(none)', def: pk.length ? 'PRIMARY KEY (' + pk.join(', ') + ') — used by apply to match rows' : 'Apply falls back to all-column match' },
+      ].concat(uq.map(c => ({ name: ('UQ_' + t.identity).toUpperCase(), def: 'UNIQUE (' + c + ') — natural key, preserved on target' })))
+       .concat(ix.map(c => ({ name: ('IX_' + t.identity + '_' + c).toUpperCase(), def: 'INDEX (' + c + ')' + (c.toLowerCase().indexOf('updat') === 0 || c.toLowerCase().indexOf('_ts') > 0 ? ' — also the compare watermark' : '') })))
+       .concat([{ name: 'Target key', def: (timeCol || anchorCol) + ' — ' + (tgtDialect === 'Snowflake' ? 'cluster key' : tgtDialect === 'Databricks Delta' ? (timeCol ? 'partition by DATE(' + timeCol + ')' : 'unpartitioned · merge on ' + anchorCol) : tgtDialect === 'S3 · Parquet' ? 'sort key within each file set' : 'unique index') }]),
+      rules: [
+        { label: 'Columns replicated', value: kept.length + ' of ' + eff.length },
+        { label: 'Renamed columns', value: eff.filter(e => e.name !== e.orig).map(e => e.orig + ' → ' + e.name).join(', ') || 'none' },
+        { label: 'Excluded columns', value: cols.filter(c => c.excl && !c.dropped).map(c => c.name).join(', ') || 'none' },
+        { label: 'Dropped columns', value: cols.filter(c => c.dropped).map(c => c.name).join(', ') || 'none' },
+        { label: 'Restrict condition', value: t.group === 'PEOPLE' ? 'STATUS <> \'PURGED\'' : 'none' },
+        { label: 'Key for apply', value: pk.join(' + ') || 'all columns' },
+        { label: 'Soft delete', value: t.pipeline === 'pg-orders' ? 'OP_TYPE = D retained' : 'row removed on apply' },
+        { label: 'Actions', value: (cols.some(c => c.excl) ? 'ColumnProperties, ' : '') + 'Restrict, TableProperties' },
+        { label: 'Recent compare', value: t.compare },
+      ],
+      ddl: ddlView === 'target' ? tgtDdl : srcDdl,
+      ddlNote: ddlView === 'target'
+        ? 'Target DDL is generated by the integrate job from the captured definition — OP_TYPE and OP_TS are added by the apply. Edit the plan to change mappings.'
+        : 'Read from the source catalogue at the last table refresh. The supplemental logging statement is what capture requires; a table without it cannot produce before-images.',
+      srcTab: this.ddlTab(ddlView !== 'target'), tgtTab: this.ddlTab(ddlView === 'target'),
+      history: [
+        { when: '2026-07-24 09:12', what: 'Column ' + (cols[cols.length - 1] || {}).name + ' widened — plan applied on next activation', who: 'ops@acme.com' },
+        { when: '2026-07-19 22:04', what: 'Table refresh completed · ' + eff.length + ' columns verified against source catalogue', who: 'scheduler' },
+        { when: '2026-06-02 14:30', what: 'Table added to ' + t.pipeline + ' in group ' + t.group, who: 'dba@acme.com' },
+      ],
+    };
+  }
+
+  // Store only the fields that actually differ from the catalogue definition, so a column
+  // reverts cleanly and the ledger event names exactly what changed.
+  saveColumnEdit(t, f) {
+    const defs = this.columnDefs(t.identity, t.group);
+    const d = defs.find(x => x[0] === f.orig) || [];
+    const [srcDialect, tgtDialect] = this.tableDialects(t.pipeline);
+    const base = {
+      name: d[0], tname: tgtDialect === 'Snowflake' ? d[0] : (d[0] || '').toLowerCase(),
+      type: this.typeFor(d[1], srcDialect), ttype: this.typeFor(d[1], tgtDialect),
+      nullable: d[3] ? 'NOT NULL' : 'NULL', key: d[2] || '', note: d[4] || '',
+    };
+    const ov = {};
+    const changed = [];
+    ['name', 'tname', 'type', 'ttype', 'nullable', 'key', 'note'].forEach(k => {
+      const v = (f[k] === undefined || f[k] === null) ? '' : String(f[k]);
+      if (v !== String(base[k])) { ov[k] = v; changed.push([k === 'tname' ? 'target name' : k === 'ttype' ? 'target type' : k === 'type' ? 'source type' : k, (base[k] || '—') + ' → ' + (v || '—')]); }
+    });
+    const all = { ...(this.state.colEdits || {}) };
+    const cur = { ...(all[t.identity] || {}) };
+    if (Object.keys(ov).length) cur[f.orig] = ov; else delete cur[f.orig];
+    all[t.identity] = cur;
+    this.setState({ colEdits: all, colForm: null });
+    if (!changed.length) { this.showToast('No changes to ' + f.orig + '.'); return; }
+    this.logEvent({ type: 'DEFINITION CHANGE', kind: 'violet', pipe: t.pipeline, location: t.nameSource, artifact: 'plan diff',
+      text: 'Column ' + f.orig + ' definition changed on ' + t.identity,
+      details: [['object', 'column'], ['column', f.orig]].concat(changed).concat([['applies', 'as a plan on next activation']]) });
+    this.showToast(f.orig + ' updated — ' + changed.map(c => c[0]).join(', ') + '. Staged as a plan on ' + t.identity + ' and recorded in the event ledger.');
+  }
+
+  resetColumnEdit(t, orig) {
+    const all = { ...(this.state.colEdits || {}) };
+    const cur = { ...(all[t.identity] || {}) };
+    delete cur[orig];
+    all[t.identity] = cur;
+    this.setState({ colEdits: all, colForm: null });
+    this.showToast(orig + ' reset to the source catalogue definition.');
+  }
+
+  // Drop/restore is keyed on the ORIGINAL column name so it survives a rename. Dropping stages
+  // a plan: capture stops now, the target column goes on the next apply cycle.
+  toggleDropColumn(t, c) {
+    const all = { ...(this.state.droppedCols || {}) };
+    const cur = { ...(all[t.identity] || {}) };
+    const restoring = !!cur[c.orig];
+    if (restoring) delete cur[c.orig]; else cur[c.orig] = true;
+    all[t.identity] = cur;
+    this.setState({ droppedCols: all });
+    this.logEvent({ type: 'DEFINITION CHANGE', kind: 'violet', pipe: t.pipeline, location: t.nameSource, artifact: 'plan diff',
+      text: 'Column ' + c.name + (restoring ? ' restored to ' : ' dropped from ') + t.identity,
+      details: [['object', 'column'], [restoring ? 'restored' : 'dropped', c.name], ['source type', c.type],
+        ['target', restoring ? 'column re-added and backfilled on next refresh' : 'column dropped on next apply cycle']] });
+    this.showToast(restoring
+      ? 'Column ' + c.name + ' restored to ' + t.identity + ' — it is captured again and backfilled on the next refresh. Recorded in the event ledger.'
+      : 'Column ' + c.name + ' dropped from ' + t.identity + ' — capture stops immediately and the target column is dropped on the next apply cycle. Recorded in the event ledger.');
+  }
+
+  ddlTab(active) {
+    return 'font-size:11.5px; font-weight:600; padding:5px 12px; border-radius:6px; cursor:pointer; border:1px solid ' +
+      (active ? 'var(--text); background:var(--text); color:var(--panel);' : 'var(--border); background:var(--panel); color:var(--muted);');
   }
 
   jobsData() {
     const o = this.state.jobStates;
     const base = [
-      { id: 'j1', name: 'ora-erp-capture', pipeline: 'ora-erp', shape: 'cyclic', state: 'RUNNING', detail: 'redo pos 4.2s behind head' },
-      { id: 'j2', name: 'ora-erp-apply', pipeline: 'ora-erp', shape: 'cyclic', state: 'RUNNING', detail: 'cycle 30s · 128 tables' },
-      { id: 'j3', name: 'db2-mfg-capture', pipeline: 'db2-mfg', shape: 'cyclic', state: 'RUNNING', hanging: true, detail: '18m past envelope · still reading' },
-      { id: 'j4', name: 'mssql-hr-capture', pipeline: 'mssql-hr', shape: 'cyclic', state: 'RETRY', detail: 'attempt 4 of 8 · backoff 120s' },
-      { id: 'j5', name: 'ora-scm-compare', pipeline: 'ora-scm', shape: 'cyclic', state: 'WAITING', detail: 'next fire 02:00 UTC (calendar: nightly)' },
-      { id: 'j6', name: 'pg-billing-refresh', pipeline: 'pg-billing', shape: 'acyclic', state: 'SUSPENDED', detail: 'drained at slice 12/40 · resumable' },
-      { id: 'j7', name: 'orders-cmp-8812', pipeline: 'pg-orders', shape: 'acyclic', state: 'SUCCEEDED', detail: 'report attached to event 8812' },
+      { id: 'j1', name: 'ora-erp-capture', kind: 'CAPTURE', trigger: 'continuous', pipeline: 'ora-erp', shape: 'cyclic', state: 'RUNNING', detail: 'redo pos 4.2s behind head' },
+      { id: 'j2', name: 'ora-erp-apply', kind: 'INTEGRATE', trigger: 'continuous', pipeline: 'ora-erp', shape: 'cyclic', state: 'RUNNING', detail: 'cycle 30s · 128 tables' },
+      { id: 'j3', name: 'db2-mfg-capture', kind: 'CAPTURE', trigger: 'continuous', pipeline: 'db2-mfg', shape: 'cyclic', state: 'RUNNING', hanging: true, detail: '18m past envelope · still reading' },
+      { id: 'j4', name: 'mssql-hr-capture', kind: 'CAPTURE', trigger: 'continuous', pipeline: 'mssql-hr', shape: 'cyclic', state: 'RETRY', detail: 'attempt 4 of 8 · backoff 120s' },
+      { id: 'j5', name: 'ora-scm-compare', kind: 'COMPARE', trigger: 'scheduled', pipeline: 'ora-scm', shape: 'cyclic', state: 'WAITING', detail: 'next fire 02:00 UTC (calendar: nightly)' },
+      { id: 'j6', name: 'pg-billing-refresh', kind: 'REFRESH', trigger: 'event-driven', pipeline: 'pg-billing', shape: 'acyclic', state: 'SUSPENDED', detail: 'drained at slice 12/40 · resumable' },
+      { id: 'j7', name: 'orders-cmp-8812', kind: 'COMPARE', trigger: 'event-driven', pipeline: 'pg-orders', shape: 'acyclic', state: 'SUCCEEDED', detail: 'report attached to event 8812' },
     ];
     base.forEach(j => { if (o[j.id]) { j.state = o[j.id]; if (o[j.id] !== 'RUNNING') j.hanging = false; } });
     return base;
   }
 
+  // Every user action that changes something is recorded. Read-only activity and automated job
+  // cycles are not — those live in the job logs. Mirrors the HVR_EVENT model: id, type, state,
+  // user, scope (fleet / virtual fleet / channel / location), and time.
+  logEvent(o) {
+    const s = this.state;
+    const now = new Date();
+    const rec = {
+      id: String(now.getTime() * 1000 + (this._evSeq = ((this._evSeq || 0) + 1) % 1000)),
+      type: o.type, kind: o.kind || 'gray', state: o.state || 'DONE',
+      text: o.text, user: o.user || s.meName || s.me || 'system',
+      fleet: o.fleet || s.fleetSel, vf: o.vf === null ? null : (o.vf || s.currentHub),
+      pipe: o.pipe || null, location: o.location || null,
+      ts: now.getTime(), started: now.getTime(), finished: (o.state && o.state !== 'DONE' && o.state !== 'FAILED') ? null : now.getTime(),
+      details: (o.details || []).map(([k, v]) => ({ k, v })), artifact: o.artifact || null, logged: true,
+    };
+    this.setState(st => {
+      const log = [rec].concat(st.eventLog || []).slice(0, 500);
+      try { localStorage.setItem('repl-event-log', JSON.stringify(log)); } catch (err) {}
+      return { eventLog: log };
+    });
+    return rec;
+  }
+
+  agoText(ts) {
+    const d = Math.max(0, Math.round((Date.now() - ts) / 1000));
+    if (d < 60) return d + 's ago';
+    if (d < 3600) return Math.round(d / 60) + 'm ago';
+    if (d < 86400) return Math.round(d / 3600) + 'h ago';
+    return Math.round(d / 86400) + 'd ago';
+  }
+
   eventsData() {
-    return [
-      { id: '8814', type: 'ALERT', kind: 'red', text: 'mssql-hr capture failed — transaction log unavailable; retry curve engaged', when: '2m ago', pipe: 'mssql-hr', artifact: 'run log' },
-      { id: '8813', type: 'DDL', kind: 'amber', text: 'DDL detected on ERP.AP_INVOICES — hold-and-alert policy queued the change', when: '41m ago', pipe: 'ora-erp', artifact: 'drift report' },
-      { id: '8812', type: 'COMPARE', kind: 'green', text: 'pg-orders compare finished — SUCCEEDED, 35 tables identical', when: '1h ago', pipe: 'pg-orders', artifact: 'sync report' },
-      { id: '8811', type: 'LATENCY', kind: 'amber', text: 'db2-mfg latency exceeded 60s threshold — alert fired', when: '2h ago', pipe: 'db2-mfg', artifact: null },
-      { id: '8810', type: 'REFRESH', kind: 'blue', text: 'pg-billing row-wise refresh suspended by operator rn.reeves — graceful drain at slice boundary', when: '3h ago', pipe: 'pg-billing', artifact: 'run log' },
-      { id: '8809', type: 'PLAN', kind: 'violet', text: 'ora-scm identity rename SHIP_HDR → SHIPMENTS applied — alias window active, self-retiring', when: '5h ago', pipe: 'ora-scm', artifact: 'plan diff' },
-      { id: '8808', type: 'ENROLL', kind: 'gray', text: 'agent PG-ORDERS enrolled on hub-west — mTLS certificate issued, platform linux/x86_64', when: '1d ago', pipe: 'pg-orders', artifact: null },
-      { id: '8807', type: 'COMPARE', kind: 'violet', text: 'ora-scm ORDER_LINES compare DONE/INCONCLUSIVE — in-flight window closed unresolved; report explains 214 undecided rows', when: '1d ago', pipe: 'ora-scm', artifact: 'compare report' },
-      { id: '8806', type: 'GC', kind: 'gray', text: 'hub-east file log GC reclaimed 1.8 GB — all frames acked by apply agents', when: '1d ago', pipe: null, artifact: null },
+    if (this._seedEvents) return this._seedEvents;
+    const m = 60000, h = 3600000, d = 86400000;
+    const now = Date.now();
+    const defs = [
+      ['ALERT', 'Capture failed on mssql-hr', 'red', 'FAILED', 'system', 'hub-west', 'mssql-hr', 'MSSQL-HR', 2 * m, 'run log',
+        [['reason', 'transaction log unavailable'], ['retry curve', 'engaged — 30s, 2m, 10m'], ['frames buffered', '0 MB']]],
+      ['DDL', 'DDL detected on ERP.AP_INVOICES', 'amber', 'CURRENT', 'system', 'hub-east', 'ora-erp', 'ORA-ERP01', 41 * m, 'drift report',
+        [['policy', 'hold-and-alert'], ['change', 'ADD COLUMN approval_tier NUMBER'], ['queued', 'awaiting operator decision']]],
+      ['COMPARE', 'Bulk compare of 35 tables', 'green', 'DONE', 'Kwame Osei', 'hub-west', 'pg-orders', 'PG-ORDERS → SNOWFLAKE-PRD', h, 'sync report',
+        [['granularity', 'bulk — table checksums only'], ['online compare', 'off'], ['parallel sessions', '4'], ['tables', '35'], ['slicing', 'none'], ['contexts', '—'], ['keep difference files', 'no'], ['read location', 'PG-ORDERS'], ['write location', 'SNOWFLAKE-PRD']]],
+      ['LATENCY', 'db2-mfg exceeded the 60s threshold', 'amber', 'CURRENT', 'system', 'hub-east', 'db2-mfg', 'DB2-MFG', 2 * h, null,
+        [['observed', '96s'], ['threshold', '60s'], ['backlog', '340 MB draining']]],
+      ['REFRESH', 'Row-wise refresh of pg-billing', 'blue', 'CANCELED', 'Ryan Reeves', 'hub-east', 'pg-billing', 'PG-BILLING → PG-ANALYTICS', 3 * h, 'run log',
+        [['granularity', 'row-wise'], ['parallel sessions', '4'], ['canceled at', 'slice 12 of 40 — graceful drain'], ['resumable', 'yes']]],
+      ['DEFINITION CHANGE', 'Identity rename SHIP_HDR → SHIPMENTS', 'violet', 'DONE', 'Mei Tanaka', 'hub-euc', 'ora-scm', 'ORA-SCM02', 5 * h, 'plan diff',
+        [['object', 'table identity'], ['from', 'SHIP_HDR'], ['to', 'SHIPMENTS'], ['alias window', 'active — self-retiring in 7 days']]],
+      ['ENROLL', 'Agent enrolled for PG-ORDERS', 'gray', 'DONE', 'Kwame Osei', 'hub-west', 'pg-orders', 'PG-ORDERS', d, null,
+        [['platform', 'linux/x86_64'], ['certificate', 'mTLS issued and pinned'], ['version', 'replagent 1.4.2']]],
+      ['COMPARE', 'Online compare of ORDER_LINES', 'violet', 'DONE', 'Mei Tanaka', 'hub-euc', 'ora-scm', 'ORA-SCM02 ≈ S3-LAKE', d + 2 * h, 'compare report',
+        [['granularity', 'row-by-row'], ['online compare', 'combine initial differences with changes captured while running'], ['parallel sessions', '2'], ['tables', '9'], ['keep difference files', 'yes'], ['rows in motion inconclusive', '214'], ['read location', 'ORA-SCM02'], ['write location', 'S3-LAKE'], ['note', 'in-flight window closed unresolved']]],
+      ['REFRESH', 'Bulk refresh of 12 tables in ora-erp', 'blue', 'CURRENT', 'Ryan Reeves', 'hub-east', 'ora-erp', 'ORA-ERP01 → SNOWFLAKE-PRD', 4 * m, 'run log',
+        [['granularity', 'bulk'], ['parallel sessions', '4'], ['tables', '12'], ['slicing', 'modulo on ORDER_ID — 4 slices'], ['progress', 'slice 5 of 12'], ['read location', 'ORA-ERP01'], ['write location', 'SNOWFLAKE-PRD']]],
+      ['COMPARE', 'Scheduled compare of pg-billing', 'gray', 'WAITING', 'Ryan Reeves', 'hub-east', 'pg-billing', 'PG-BILLING ≈ PG-ANALYTICS', 6 * m, null,
+        [['granularity', 'row-by-row'], ['scheduling', 'repeatedly — nightly 02:00 UTC'], ['tables', '22'], ['parallel sessions', '2'], ['read location', 'PG-BILLING'], ['write location', 'PG-ANALYTICS']]],
+      ['GC', 'File log GC reclaimed 1.8 GB', 'gray', 'DONE', 'system', 'hub-east', null, null, d + 4 * h, null,
+        [['reclaimed', '1.8 GB'], ['condition', 'all frames acked by apply agents']]],
+      ['SIGNIN', 'Ryan Reeves signed in', 'gray', 'DONE', 'Ryan Reeves', null, null, null, 12 * m, null,
+        [['email', 'rn.reeves@corp.example'], ['authentication', 'Local'], ['highest grant', 'SuperAdmin'], ['landed at', 'Global Fleet']]],
+      ['SIGNIN', 'Kwame Osei signed in', 'gray', 'DONE', 'Kwame Osei', null, null, null, 3 * h, null,
+        [['email', 'k.osei@corp.example'], ['authentication', 'SAML (Okta)'], ['highest grant', 'SysAdmin'], ['landed at', 'Global Fleet']]],
+      ['SIGNOUT', 'Mei Tanaka signed out', 'gray', 'DONE', 'Mei Tanaka', null, null, null, 4 * h, null,
+        [['session length', '2h 14m'], ['reason', 'user action']]],
+      ['ACTIVATE', 'Activate replication for ora-erp', 'green', 'DONE', 'Ryan Reeves', 'hub-east', 'ora-erp', 'ORA-ERP01 → SNOWFLAKE-PRD', 8 * h, 'run log',
+        [['tables', '128'], ['capture', 'started from the current redo position'], ['integrate', 'started · batched 30s cycles'], ['initial load', 'refresh already completed']]],
+      ['DEFINITION CHANGE', 'Table AP_INVOICES added to ora-erp', 'violet', 'DONE', 'Ryan Reeves', 'hub-east', 'ora-erp', 'ORA-ERP01', 9 * h, 'plan diff',
+        [['object', 'table'], ['added', 'ERP.AP_INVOICES'], ['identity', 'AP_INVOICES'], ['next step', 'refresh to load the initial data']]],
+      ['DEFINITION CHANGE', 'Column legacy_batch_id removed from GL_JOURNALS', 'violet', 'DONE', 'Mei Tanaka', 'hub-east', 'ora-erp', 'ORA-ERP01', 11 * h, 'plan diff',
+        [['object', 'column'], ['removed', 'legacy_batch_id'], ['target', 'column dropped on the next apply cycle']]],
+      ['DEFINITION CHANGE', 'Table PAYROLL_RUNS removed from mssql-hr', 'violet', 'DONE', 'Kwame Osei', 'hub-west', 'mssql-hr', 'MSSQL-HR', 14 * h, 'plan diff',
+        [['object', 'table'], ['removed', 'PAYROLL_RUNS'], ['target rows', 'left in place'], ['capture', 'stopped at the next checkpoint']]],
+      ['LOCATION', 'PG-ANALYTICS database connection changed', 'blue', 'DONE', 'Kwame Osei', 'hub-east', null, 'PG-ANALYTICS', 16 * h, null,
+        [['changed', 'host and port'], ['credentials', 're-vaulted on the hub'], ['validation', 'tested before save · 47ms']]],
+      ['AGENT', 'SNOWFLAKE-PRD switched to agentless', 'blue', 'DONE', 'Ryan Reeves', 'hub-east', null, 'SNOWFLAKE-PRD', 18 * h, null,
+        [['previous', 'agent agt-snowflake-prd.corp:4343'], ['new', 'agentless — hub-direct'], ['reason', 'warehouse target needs no local footprint']]],
+      ['GRANT', 'Granted ReadExecRefresh to Mei Tanaka on hub-east', 'blue', 'DONE', 'Ryan Reeves', 'hub-east', null, null, 20 * h, null,
+        [['permission', 'ReadExecRefresh'], ['scope', 'hub-east'], ['granted by', 'Ryan Reeves (SuperAdmin)']]],
+      ['USER', 'User Jae Alvarez created', 'blue', 'DONE', 'Ryan Reeves', null, null, null, d + 6 * h, null,
+        [['email', 'j.alvarez@corp.example'], ['authentication', 'SAML (Okta)'], ['initial grant', 'inherits All Users ReadOnly']]],
+      ['SUSPEND', 'Job pg-billing-refresh → SUSPENDED', 'amber', 'DONE', 'Ryan Reeves', 'hub-east', 'pg-billing', null, d + 8 * h, 'run log',
+        [['job', 'pg-billing-refresh'], ['job type', 'REFRESH'], ['previous state', 'RUNNING'], ['new state', 'SUSPENDED'], ['drained at', 'slice 12 of 40']]],
+      ['HUB', 'Virtual fleet hub-euc frozen', 'amber', 'DONE', 'Mei Tanaka', 'hub-euc', null, null, d + 10 * h, null,
+        [['previous state', 'running'], ['new state', 'frozen'], ['scheduler', 'stopped — every job in the fleet halted at its checkpoint'], ['reason', 'quarter-end change freeze']]],
+      ['SNAPSHOT', 'Snapshot of hub-east exported', 'blue', 'DONE', 'Ryan Reeves', 'hub-east', null, null, 2 * d, 'snapshot',
+        [['classification', 'encrypted — single-use transport key issued'], ['reason', 'pre-upgrade backup'], ['contents', 'fleet configuration, channel and location definitions']]],
+      ['ENROLL', 'Fleet hubsrv-radar enrolled', 'gray', 'DONE', 'Ryan Reeves', null, null, null, 3 * d, null,
+        [['token', 'single-use, 15 minutes'], ['joined with', 'mTLS'], ['first Fleet Admin', 'Ryan Reeves']]],
     ];
+    this._seedEvents = defs.map(([type, text, kind, state, user, vf, pipe, location, ago, artifact, details], i) => ({
+      id: String((now - ago) * 1000 + i), type, text, kind, state, user, vf, pipe, location, artifact,
+      ts: now - ago, started: now - ago, finished: state === 'CURRENT' || state === 'WAITING' ? null : now - ago + 65000,
+      details: details.map(([k, v]) => ({ k, v })),
+    }));
+    return this._seedEvents;
+  }
+
+  eventVals(inScope, accent) {
+    const s = this.state;
+    const cols = s.evCols || { type: true, channel: true, locations: true, state: true, user: false, eventId: true, started: false, finished: false, created: true };
+    const sort = s.evSort || { key: 'eventId', dir: -1 };
+    const fl = s.evFilters || {};
+    // The id carries microsecond resolution, so two events in the same millisecond stay distinct.
+    const iso = (ts, id) => {
+      const base = new Date(ts).toISOString().slice(0, 23);
+      const micro = id && String(id).length > 13 ? String(id).slice(13).padStart(3, '0') : '000';
+      return base + micro + 'Z';
+    };
+    const statePill = (st) => this.pill(st === 'FAILED' ? 'red' : st === 'CANCELED' ? 'amber' : st === 'CURRENT' ? 'blue' : st === 'WAITING' ? 'gray' : 'green');
+    const ov = s.evStateOv || {};
+    // A job that is not running is an open condition, so the ledger shows it as a CURRENT event
+    // for as long as it lasts — not only as the DONE record of the click that caused it.
+    const condType = { SUSPENDED: 'SUSPEND', DISABLED: 'DISABLE', RETRY: 'RETRY', ALERTING: 'ALERT', FAILED: 'ALERT' };
+    const condKind = { SUSPENDED: 'amber', DISABLED: 'red', RETRY: 'amber', ALERTING: 'red', FAILED: 'red' };
+    // Stamped once, when the condition first appears — it is a fact with a start time, not a value
+    // recomputed on every render. Changing state starts a new condition with its own timestamp.
+    this._jobCondTs = this._jobCondTs || {};
+    this._jobCondSeq = this._jobCondSeq || {};
+    const jobConditions = this.jobsData().filter(j => condType[j.state]).map((j, idx) => {
+      const vf = (this.data().find(p => p.id === j.pipeline) || {}).hub || s.currentHub;
+      const key = j.id + ':' + j.state;
+      if (!this._jobCondTs[key]) {
+        this._jobCondTs[key] = Date.now();
+        this._jobCondSeq[key] = (Object.keys(this._jobCondSeq).length % 900) + 100;
+      }
+      const ts = this._jobCondTs[key];
+      // Suspensions this session carry their actor; seeded ones do not claim one.
+      const actor = (s.eventLog || []).find(ev => ev.text === 'Job ' + j.name + ' → ' + j.state);
+      return {
+        id: String(ts * 1000 + this._jobCondSeq[key]), type: condType[j.state], kind: condKind[j.state], state: 'CURRENT',
+        user: j.state === 'RETRY' || j.state === 'ALERTING' ? 'system' : (actor ? actor.user : '—'),
+        vf, pipe: j.pipeline, location: null, artifact: 'run log',
+        text: 'Job ' + j.name + ' is ' + j.state, ts, started: ts, finished: null, jobName: j.name,
+        details: [['job', j.name], ['job type', j.kind || '—'], ['current state', j.state], ['detail', j.detail],
+                  ['clears when', j.state === 'DISABLED' ? 'an operator explicitly re-enables the job' : j.state === 'RETRY' ? 'the next attempt succeeds' : 'an operator resumes the job']]
+                  .map(([k, v]) => ({ k, v })),
+      };
+    });
+    const all = (s.eventLog || []).concat(jobConditions).concat(this.eventsData())
+      .map(e => (ov[e.id] ? { ...e, state: ov[e.id].state, finished: ov[e.id].finished ?? e.finished } : e))
+      .filter(e => (e.vf ? e.vf === s.currentHub : true) && (!e.pipe || inScope(e.pipe)) && (!s.selected || e.pipe === s.selected));
+
+    const uniq = (key) => Array.from(new Set(all.map(e => e[key]).filter(Boolean))).sort();
+    const startedWindows = { all: Infinity, '1h': 3600000, '24h': 86400000, '7d': 604800000 };
+    let rows = all.filter(e =>
+      (!fl.channel || e.pipe === fl.channel) &&
+      (!fl.location || (e.location || '').indexOf(fl.location) >= 0) &&
+      (!fl.type || e.type === fl.type) &&
+      (!fl.state || (e.state || 'DONE') === fl.state) &&
+      (Date.now() - e.ts) <= (startedWindows[fl.started || 'all'] ?? Infinity));
+    const q = (s.eventSearch || '').trim().toLowerCase();
+    if (q) rows = rows.filter(e => [e.type, e.text, e.user, e.pipe, e.location, e.state].some(v => v && String(v).toLowerCase().includes(q)));
+    const sortVal = (e) => ({ type: e.type, channel: e.pipe || '', user: e.user || '', eventId: e.ts, started: e.started || 0, finished: e.finished || 0, created: e.ts }[sort.key]);
+    rows = rows.slice().sort((a, b) => { const av = sortVal(a), bv = sortVal(b); return (av < bv ? -1 : av > bv ? 1 : 0) * sort.dir; });
+
+    const colDefs = [
+      ['type', 'Type', 'minmax(190px,1.6fr)', true], ['channel', 'Channel', 'minmax(90px,.9fr)'], ['locations', 'Locations', 'minmax(120px,1.3fr)'],
+      ['state', 'State', 'minmax(84px,.8fr)'], ['user', 'User', 'minmax(90px,.9fr)'], ['eventId', 'Event ID', 'minmax(190px,1.5fr)'],
+      ['started', 'Started', 'minmax(78px,.8fr)'], ['finished', 'Finished', 'minmax(78px,.8fr)'], ['created', 'Created', 'minmax(78px,.8fr)'],
+    ];
+    const visible = colDefs.filter(c => cols[c[0]]);
+    const grid = '28px ' + visible.map(c => c[2]).join(' ') + ' 92px';
+    const sortable = { type: 1, channel: 1, user: 1, eventId: 1, started: 1, finished: 1, created: 1 };
+    const setF = (k) => (ev) => { const v = ev.target.value; this.setState(st => ({ evFilters: { ...(st.evFilters || {}), [k]: v } })); };
+    const opt = (list, allLabel) => [{ value: '', label: allLabel }].concat(list.map(v => ({ value: v, label: v })));
+
+    return {
+      evGrid: grid,
+      resCols: s.resCols || {},
+      resColsOpen: !!s.resColsOpen,
+      toggleResCols: () => this.setState(st => ({ resColsOpen: !st.resColsOpen })),
+      resColOpts: [['onlySrc', 'Rows only on source'], ['onlyTgt', 'Rows only on target'], ['differ', 'Rows which differ'], ['subtasks', 'Subtasks done(busy)/total'], ['started', 'Start time'], ['diff', 'Diff file']].map(([key, label]) => {
+        const cur = s.resCols || { onlySrc: true, onlyTgt: true, differ: true, diff: true };
+        return {
+          label,
+          box: 'display:inline-flex; width:15px; height:15px; border-radius:4px; align-items:center; justify-content:center; font-size:10px; flex:none;'
+            + (cur[key] ? 'background:' + accent + '; color:#fff;' : 'border:1px solid var(--border); background:var(--panel);'),
+          mark: cur[key] ? '✓' : '',
+          toggle: () => this.setState(st => ({ resCols: { ...(st.resCols || cur), [key]: !(st.resCols || cur)[key] } })),
+        };
+      }),
+      evHeaders: visible.map(([key, label]) => ({
+        label,
+        arrow: sort.key === key ? (sort.dir === 1 ? '▲' : '▼') : '',
+        sort: sortable[key] ? () => this.setState(st => ({ evSort: { key, dir: (st.evSort || sort).key === key ? -(st.evSort || sort).dir : -1 } })) : () => {},
+      })),
+      evRows: rows.map(e => {
+        const st = e.state || 'DONE';
+        const open = !!(s.evOpen || {})[e.id];
+        const isDefChange = e.type === 'DEFINITION CHANGE' || e.type === 'LOCATION' || e.type === 'AGENT' || e.type === 'GRANT' || e.type === 'USER';
+        const repeatable = e.type === 'COMPARE' || e.type === 'REFRESH';
+        return {
+          id: e.id, type: e.type, text: e.text, state: st, statePill: statePill(st),
+          caret: open ? '▾' : '▸', open,
+          toggle: () => this.setState(sx => ({ evOpen: { ...(sx.evOpen || {}), [e.id]: !open } })),
+          cells: visible.map(([key]) => ({
+            isType: key === 'type', isState: key === 'state', isPlain: key !== 'type' && key !== 'state',
+            text: {
+              type: e.type, channel: e.pipe || '—', locations: e.location || '—', state: st,
+              user: e.user || 'system', eventId: iso(e.ts, e.id),
+              started: e.started ? this.agoText(e.started) : '—',
+              finished: e.finished ? this.agoText(e.finished) : '—',
+              created: this.agoText(e.ts),
+            }[key],
+            sub: key === 'type' ? e.text : null,
+            pill: key === 'state' ? statePill(st) : key === 'type' ? this.pill(e.kind) : null,
+            font: (key === 'eventId' || key === 'locations') ? "'IBM Plex Mono',monospace" : "'IBM Plex Sans',sans-serif",
+            size: (key === 'eventId' || key === 'locations') ? '11px' : '12.5px',
+          })),
+          hasLog: !!e.artifact,
+          viewLog: (ev) => { ev && ev.stopPropagation && ev.stopPropagation(); this.showToast('Event ' + iso(e.ts, e.id) + ' — opening ' + (e.artifact || 'run log') + '. Every link resolves: alert → run → event → artifact.'); },
+          details: e.details || [],
+          noDetails: !(e.details || []).length,
+          summary: [
+            ['Channel', e.pipe || '—'], ['Locations', e.location || '—'], ['State', st],
+            ['Job', e.jobName || ((e.pipe || s.currentHub) + (e.type === 'COMPARE' ? '-cmp' : e.type === 'REFRESH' ? '-rfr' : '-evt') + '-' + String(e.ts).slice(-4))],
+            ['Started', e.started ? this.agoText(e.started) : '—'],
+            // A condition has lasted, not run — never describe a suspended job as running.
+            ['Duration', e.finished && e.started ? Math.max(1, Math.round((e.finished - e.started) / 1000)) + 's'
+              : e.jobName && st === 'CURRENT' ? this.agoText(e.started).replace(' ago', ' so far')
+              : st === 'CURRENT' ? 'running' : st === 'WAITING' ? 'not started' : '—'],
+            ['Number of retries', e.type === 'ALERT' ? '4' : '1'],
+          ].map(([k, v]) => ({ k, v })),
+          eventIdIso: iso(e.ts, e.id),
+          hasResults: e.type === 'COMPARE' || e.type === 'REFRESH',
+          resultStats: this.eventResultStats(e, st),
+          resGrid: (() => {
+            const rc = s.resCols || (e.type === 'COMPARE' ? { onlySrc: true, onlyTgt: true, differ: true, diff: true } : {});
+            return 'minmax(110px,1.2fr) minmax(130px,1.3fr)' + (rc.onlySrc ? ' minmax(96px,1fr)' : '') + (rc.onlyTgt ? ' minmax(96px,1fr)' : '') + (rc.differ ? ' minmax(96px,1fr)' : '')
+              + ' minmax(100px,1fr) minmax(100px,1fr)' + (rc.subtasks ? ' minmax(96px,.9fr)' : '') + (rc.started ? ' minmax(80px,.8fr)' : '')
+              + ' minmax(70px,.7fr) minmax(90px,.9fr)' + (rc.diff ? ' minmax(80px,.8fr)' : '');
+          })(),
+          resultRows: (() => {
+            const rc = s.resCols || (e.type === 'COMPARE' ? { onlySrc: true, onlyTgt: true, differ: true, diff: true } : {});
+            return this.eventResultRows(e, st).map(r => ({ ...r,
+              showOnlySrc: !!rc.onlySrc, showOnlyTgt: !!rc.onlyTgt, showDiffer: !!rc.differ,
+              showSubtasks: !!rc.subtasks, showStarted: !!rc.started, showDiffCol: !!rc.diff }));
+          })(),
+          resHead: (() => {
+            const rc = s.resCols || (e.type === 'COMPARE' ? { onlySrc: true, onlyTgt: true, differ: true, diff: true } : {});
+            return { onlySrc: !!rc.onlySrc, onlyTgt: !!rc.onlyTgt, differ: !!rc.differ, subtasks: !!rc.subtasks, started: !!rc.started, diff: !!rc.diff };
+          })(),
+          canRepeat: repeatable && st !== 'CURRENT' && st !== 'WAITING',
+          // Only event-driven work holds a job in the scheduler, so only it can be cancelled.
+          // Observations (latency breach, DDL detection, alerts, GC, sign-in) are recorded facts.
+          canCancel: repeatable && (st === 'CURRENT' || st === 'WAITING'),
+          canUndo: isDefChange && st === 'DONE',
+          repeat: (evt) => {
+            evt && evt.stopPropagation && evt.stopPropagation();
+            const rec = this.logEvent({ type: e.type, kind: e.kind, state: 'CURRENT', vf: e.vf, pipe: e.pipe, location: e.location, artifact: 'run log',
+              text: e.text + ' — repeated', details: (e.details || []).map(d => [d.k, d.v]) });
+            this.showToast(e.type + ' restarted as event ' + iso(rec.ts) + ' — same scope and settings; the original stays in the ledger. Its job is now running.');
+          },
+          cancelEvent: (evt) => {
+            evt && evt.stopPropagation && evt.stopPropagation();
+            this.setState(sx => ({ evStateOv: { ...(sx.evStateOv || {}), [e.id]: { state: 'CANCELED', finished: Date.now() } } }));
+            this.showToast(e.type + ' canceled — the job drained at its checkpoint and left the scheduler. The event is CANCELED in the ledger and can be repeated.');
+          },
+          undo: () => this.showToast('Undo definition change — the inverse change is applied as a new event; nothing is erased from the ledger.'),
+          exportDef: () => this.showToast('Export definition change — written as JSON, importable on another hub. Import creates its own Definition Change event.'),
+        };
+      }),
+      evEmpty: rows.length === 0,
+      evCount: rows.length === all.length ? 'All ' + all.length + ' matching events' : rows.length + ' of ' + all.length + ' events',
+      evChannelOpts: opt(uniq('pipe'), 'All channels'), evLocationOpts: opt(uniq('location'), 'All locations'),
+      evTypeOpts: opt(uniq('type'), 'Type: all'),
+      evStateOpts: opt(['CURRENT', 'CANCELED', 'DONE', 'FAILED', 'WAITING'], 'State: all'),
+      evStartedOpts: [{ value: 'all', label: 'Started: any time' }, { value: '1h', label: 'Started: last hour' }, { value: '24h', label: 'Started: last 24h' }, { value: '7d', label: 'Started: last 7 days' }],
+      evChannel: fl.channel || '', evLocation: fl.location || '', evType: fl.type || '', evState: fl.state || '', evStarted: fl.started || 'all',
+      setEvChannel: setF('channel'), setEvLocation: setF('location'), setEvType: setF('type'), setEvState: setF('state'), setEvStarted: setF('started'),
+      evColsOpen: !!s.evColsOpen,
+      toggleEvCols: () => this.setState(st => ({ evColsOpen: !st.evColsOpen })),
+      evColOpts: colDefs.filter(c => !c[3]).map(([key, label]) => ({
+        label,
+        box: 'display:inline-flex; width:15px; height:15px; border-radius:4px; align-items:center; justify-content:center; font-size:10px; flex:none;'
+          + (cols[key] ? 'background:' + accent + '; color:#fff;' : 'border:1px solid var(--border); background:var(--panel);'),
+        mark: cols[key] ? '✓' : '',
+        toggle: () => this.setState(st => ({ evCols: { ...(st.evCols || cols), [key]: !(st.evCols || cols)[key] } })),
+      })),
+    };
+  }
+
+  // Compare and refresh events carry per-table results, derived deterministically from the event
+  // so the aggregate row and the table rows always agree.
+  eventResultTables(e) {
+    const names = ['customer', 'district', 'history', 'item', 'new_order', 'order_line', 'orders', 'stock', 'warehouse', 'shipments', 'invoices', 'payments'];
+    const declared = (e.details || []).find(d => d.k === 'tables');
+    const n = declared && Number(declared.v) ? Number(declared.v) : (e.type === 'REFRESH' ? 12 : 9);
+    const seed = Number(String(e.ts).slice(-4)) || 7;
+    // Names cycle with a suffix past the base list, so the row count always equals the declared scope.
+    const scope = Array.from({ length: n }, (_, i) => i < names.length ? names[i] : names[i % names.length] + '_' + (Math.floor(i / names.length) + 1));
+    return scope.map((name, i) => {
+      const src = 10 * Math.pow(10, (seed + i) % 5) + ((seed * (i + 3)) % 9999);
+      const diff = e.state === 'CURRENT' ? false : (seed + i) % 3 === 0;
+      const inconclusive = e.text.indexOf('Online') >= 0 && i === 2;
+      return { name, src, diff, inconclusive, i };
+    });
+  }
+
+  eventResultStats(e, st) {
+    if (!(e.type === 'COMPARE' || e.type === 'REFRESH')) return [];
+    const rows = this.eventResultTables(e);
+    const done = st === 'WAITING' ? 0 : st === 'CURRENT' ? Math.ceil(rows.length / 2) : rows.length;
+    const totalRows = rows.slice(0, done).reduce((a, r) => a + r.src, 0);
+    const dur = e.finished && e.started ? Math.max(1, Math.round((e.finished - e.started) / 1000)) : null;
+    return [
+      ['Event duration', st === 'WAITING' ? 'not started' : dur ? (dur >= 60 ? Math.floor(dur / 60) + 'm ' + (dur % 60) + 's' : dur + 's') : 'running'],
+      ['Event speed', st === 'WAITING' ? '—' : dur ? Math.round(totalRows / dur / 1000) + 'K rows/s' : '—'],
+      [e.type === 'COMPARE' ? 'Number of different tables' : 'Tables refreshed', done === 0 ? '—' : String(e.type === 'COMPARE' ? rows.slice(0, done).filter(r => r.diff).length : done)],
+      ['Number of tables', String(rows.length)],
+      ['Rows processed during event', st === 'WAITING' ? '0' : totalRows.toLocaleString('en-US')],
+      ['Subtasks done(busy)/total', done + '(' + (st === 'CURRENT' ? rows.length - done : 0) + ')/' + rows.length],
+      ['Tables in scope', String(rows.length)],
+    ].concat(e.type === 'COMPARE' ? [
+      ['Number of inconclusive tables', done === 0 ? '—' : String(rows.slice(0, done).filter(r => r.inconclusive).length)],
+      ['Rows only on source', done === 0 ? '—' : rows.slice(0, done).filter(r => r.diff).reduce((a, r) => a + Math.round(r.src * 0.02), 0).toLocaleString('en-US')],
+      ['Rows only on target', done === 0 ? '—' : rows.slice(0, done).filter(r => r.diff).reduce((a, r) => a + Math.round(r.src * 0.005), 0).toLocaleString('en-US')],
+    ] : []).map(([k, v]) => ({ k, v }));
+  }
+
+  eventResultRows(e, st) {
+    if (!(e.type === 'COMPARE' || e.type === 'REFRESH')) return [];
+    const rows = this.eventResultTables(e);
+    const done = st === 'WAITING' ? 0 : st === 'CURRENT' ? Math.ceil(rows.length / 2) : rows.length;
+    return rows.map((r, i) => {
+      const pending = i >= done;
+      const state = pending ? 'PENDING' : r.inconclusive ? 'DONE/INCONCLUSIVE' : e.type === 'REFRESH' ? 'DONE' : r.diff ? 'DONE/DIFFERENT' : 'DONE/IDENTICAL';
+      const color = pending ? 'var(--muted2)' : state.indexOf('DIFFERENT') >= 0 ? 'var(--danger)' : state.indexOf('INCONCLUSIVE') >= 0 ? 'var(--warn)' : 'var(--ok-strong)';
+      const tgt = pending ? 0 : r.diff ? Math.round(r.src * 0.97) : r.src;
+      const dur = pending ? 0 : ((r.i * 7) % 55) / 10;
+      const onlySrc = pending || !r.diff ? 0 : Math.round(r.src * 0.02);
+      const onlyTgt = pending || !r.diff ? 0 : Math.round(r.src * 0.005);
+      const differ = pending || !r.diff ? 0 : Math.max(0, r.src - tgt - onlySrc + onlyTgt);
+      const num = (v) => pending ? '—' : v.toLocaleString('en-US');
+      return {
+        name: r.name, state, color,
+        src: num(r.src), tgt: num(tgt),
+        onlySrc: num(onlySrc), onlyTgt: num(onlyTgt), differ: num(differ),
+        subtasks: pending ? '0(0)/4' : '4(0)/4',
+        started: pending ? '—' : this.agoText(e.ts),
+        hasDiff: !pending && r.diff,
+        viewDiff: (ev) => { ev && ev.stopPropagation && ev.stopPropagation(); this.showToast(r.name + ' — diff file: ' + onlySrc.toLocaleString('en-US') + ' rows only on source, ' + onlyTgt.toLocaleString('en-US') + ' only on target, ' + differ.toLocaleString('en-US') + ' differing. Each difference is written as an INSERT, UPDATE, or DELETE.'); },
+        duration: pending ? '—' : dur + 's',
+        speed: pending ? '—' : (dur ? Math.round(r.src / dur / 1000) + 'K rows/s' : '—'),
+      };
+    });
   }
 
   connBaseNames() {
@@ -2248,6 +3285,10 @@ class Component extends DCLogic {
         sid: nc.sid, tns: nc.tns, rawHost: nc.host, rawPort: nc.port, isOracleRec: isOracle, custom: true,
       };
       this.setState(st => ({ newConns: (st.newConns || []).concat([rec]) }));
+      this.logEvent({ type: 'LOCATION', kind: 'blue', state: 'DONE', location: nameRaw,
+        text: 'Connection ' + nameRaw + ' created — ' + nc.type + ' ' + rec.role + ' · ' + (nc.mode === 'agent' ? 'agent ' + (nc.agentHost || 'unset') + ':' + nc.agentPort : 'agentless')
+          + ' · ' + (picked.length ? 'attached to ' + picked.length + ' pipeline' + (picked.length === 1 ? '' : 's') : 'unattached')
+          + ' · ' + (nc.testConn ? 'tested before save' : 'saved untested') });
       this.showToast(nameRaw + ' created — ' + nc.type + ' · ' + (nc.mode === 'agent' ? 'via agent ' + (nc.agentHost || 'unset') + ':' + nc.agentPort : 'agentless, hub-direct')
         + ' · ' + (picked.length ? 'attached to ' + picked.length + ' pipeline' + (picked.length === 1 ? '' : 's') : 'saved unattached — attach it to a pipeline whenever you are ready')
         + '. Enrolling until its first heartbeat. Recorded in the event ledger.');
@@ -2445,6 +3486,26 @@ class Component extends DCLogic {
     const selEvents = this.eventsData().filter(e => e.pipe === selRaw.id).slice(0, 4).map(e => ({ ...e, pill: this.pill(e.kind) }));
 
     // tables view
+    const tblRaw = s.tableSel ? this.tablesData().find(t => t.identity === s.tableSel) : null;
+    const tblDropped = (s.droppedCols || {})[s.tableSel] || {};
+    const tblVM = tblRaw ? this.tableDetailVM(tblRaw, s.ddlView, tblDropped, (s.colEdits || {})[s.tableSel] || {}) : null;
+    const tbl = tblVM ? { ...tblVM,
+      cols: tblVM.cols.map(c => ({ ...c, canDrop: !c.isKey,
+        toggleDrop: () => this.toggleDropColumn(tblRaw, c),
+        openEdit: () => this.setState({ colForm: { table: tblRaw.identity, orig: c.orig, name: c.name, tname: c.dropped || c.excl ? c.tname : c.tname, type: c.type, ttype: c.ttype, nullable: c.nullable, key: c.key === '—' ? '' : c.key, note: c.note } }) })),
+      showSourceDdl: () => this.setState({ ddlView: 'source' }),
+      showTargetDdl: () => this.setState({ ddlView: 'target' }) } : null;
+    const colF = s.colForm;
+    const setCf = (k) => (e) => this.setState(st => ({ colForm: { ...st.colForm, [k]: e.target.value } }));
+    const colM = colF ? {
+      ...colF, table: colF.table,
+      srcDialect: tblRaw ? this.tableDialects(tblRaw.pipeline)[0] : '', tgtDialect: tblRaw ? this.tableDialects(tblRaw.pipeline)[1] : '',
+      setName: setCf('name'), setTname: setCf('tname'), setType: setCf('type'), setTtype: setCf('ttype'),
+      setNullable: setCf('nullable'), setKey: setCf('key'), setNote: setCf('note'),
+      close: () => this.setState({ colForm: null }),
+      reset: () => this.resetColumnEdit(tblRaw, colF.orig),
+      save: () => this.saveColumnEdit(tblRaw, colF),
+    } : null;
     const q = s.tableSearch.toLowerCase();
     const tableRows = this.tablesData()
       .filter(t => s.tableFilter === 'all' || t.pipeline === s.tableFilter)
@@ -2453,6 +3514,23 @@ class Component extends DCLogic {
         ...t,
         refreshPill: this.pill(t.refreshKind), comparePill: this.pill(t.compareKind),
         spark: this.spark(t.vol, 72, 22),
+        openTable: () => this.setState({ screen: 'tabledetail', tableSel: t.identity, ddlView: 'source' }),
+        editTable: () => {
+          this.logEvent({ type: 'DEFINITION CHANGE', kind: 'violet', pipe: t.pipeline, location: t.nameSource, artifact: 'plan diff',
+            text: 'Table ' + t.identity + ' definition changed', details: [['object', 'table'], ['change', 'column mappings and key updated'], ['applies', 'as a plan on next activation']] });
+          this.showToast(t.identity + ' definition change staged as a plan — column mappings and key. Recorded in the event ledger; Undo and Export are available on the event.');
+        },
+        dropColumn: () => {
+          const col = t.identity.toLowerCase() + '_legacy_code';
+          this.logEvent({ type: 'DEFINITION CHANGE', kind: 'violet', pipe: t.pipeline, location: t.nameSource, artifact: 'plan diff',
+            text: 'Column ' + col + ' removed from ' + t.identity, details: [['object', 'column'], ['removed', col], ['target', 'column dropped on next apply cycle']] });
+          this.showToast('Column ' + col + ' removed from ' + t.identity + ' — the target column is dropped on the next apply cycle. Recorded in the event ledger.');
+        },
+        removeTable: () => {
+          this.logEvent({ type: 'DEFINITION CHANGE', kind: 'violet', pipe: t.pipeline, location: t.nameSource, artifact: 'plan diff',
+            text: 'Table ' + t.identity + ' removed from ' + t.pipeline, details: [['object', 'table'], ['removed', t.identity], ['target rows', 'left in place'], ['capture', 'stops at the next checkpoint']] });
+          this.showToast(t.identity + ' removed from ' + t.pipeline + ' — capture stops at the next checkpoint and target rows are left in place. Recorded in the event ledger.');
+        },
         openRefresh: () => this.showToast(t.identity + ' — recent refresh: ' + t.refresh + '. Row links to the run record.'),
         openCompare: () => this.showToast(t.compare === 'DONE/INCONCLUSIVE'
           ? t.identity + ' — INCONCLUSIVE: in-flight window closed with 214 rows unresolved. Opens the compare report explaining why.'
@@ -2672,6 +3750,9 @@ class Component extends DCLogic {
         save: () => {
           const name = cdRaw.name;
           this.setState(st => ({ agentModalOpen: false, connAgentOv: { ...(st.connAgentOv || {}), [name]: { mode: st.agentForm.mode, host: st.agentForm.host, port: st.agentForm.port, user: st.agentForm.user } } }));
+          this.logEvent({ type: 'AGENT', kind: 'blue', location: name,
+            text: name + (f.mode === 'direct' ? ' switched to agentless (hub-direct)' : ' agent settings changed — ' + (f.host || 'unset') + ':' + (f.port || '4343'))
+              + ' · ' + (f.testFirst ? 'tested before save' : 'saved untested') });
           this.showToast(name + (f.mode === 'direct' ? ' switched to agentless (hub-direct)' : ' agent settings saved')
             + (f.testFirst ? ' — connection test passed · 38ms before save.' : ' — saved WITHOUT testing; the next heartbeat validates it.') + ' Recorded in the event ledger.');
         },
@@ -2703,6 +3784,8 @@ class Component extends DCLogic {
             if (isOracle && fm.mode === 'local') { ov.db = fm.sid; }
             return { dbModalOpen: false, connDbOv: { ...(st.connDbOv || {}), [name]: ov } };
           });
+          this.logEvent({ type: 'LOCATION', kind: 'blue', location: name,
+            text: name + ' database connection changed — credentials re-vaulted · ' + (df.testFirst ? 'tested before save' : 'saved untested') });
           this.showToast(name + ' database connection saved — credentials vaulted'
             + (df.testFirst ? ' · connection test passed · 51ms before save.' : ' · saved WITHOUT testing; the next capability check validates it.') + ' Recorded in the event ledger.');
         },
@@ -2763,6 +3846,8 @@ class Component extends DCLogic {
         save: () => {
           const name = cdRaw.name;
           this.setState(st => ({ propModalOpen: false, connPropOv: { ...(st.connPropOv || {}), [name]: { ...st.propForm } } }));
+          this.logEvent({ type: 'LOCATION', kind: 'blue', location: name,
+            text: name + ' capture/integrate properties changed — method ' + (pp.method || 'unchanged') + ' · validated against the capability matrix' });
           this.showToast(name + ' source/target properties saved — validated against the capability matrix'
             + (pp.testFirst ? ' · connection test passed · 47ms before save.' : ' · saved WITHOUT testing; the next capability check validates it.') + ' Recorded in the event ledger.');
         },
@@ -2797,10 +3882,19 @@ class Component extends DCLogic {
     // jobs
     const stateKind = { RUNNING: 'green', PENDING: 'gray', WAITING: 'gray', SUSPENDED: 'amber', DISABLED: 'red', RETRY: 'amber', ALERTING: 'red', SUCCEEDED: 'green', FAILED: 'red' };
     const jobRows = this.jobsData().filter(j => inScope(j.pipeline)).map(j => {
-      const set = (state, msg) => () => { this.setState(st => ({ jobStates: { ...st.jobStates, [j.id]: state } })); this.showToast(msg); };
+      const set = (state, msg) => () => {
+        this.setState(st => ({ jobStates: { ...st.jobStates, [j.id]: state } }));
+        const type = state === 'SUSPENDED' ? 'SUSPEND' : state === 'DISABLED' ? 'DISABLE' : 'START';
+        this.logEvent({ type, kind: state === 'SUSPENDED' ? 'amber' : state === 'DISABLED' ? 'red' : 'green',
+          pipe: j.pipeline, text: 'Job ' + j.name + ' → ' + state,
+          details: [['job', j.name], ['job type', j.kind || '—'], ['previous state', j.state], ['new state', state]] });
+        this.showToast(msg);
+      };
       const terminal = j.state === 'SUCCEEDED' || j.state === 'FAILED';
+      const kindColor = { CAPTURE: 'blue', INTEGRATE: 'violet', COMPARE: 'green', REFRESH: 'amber' };
       return {
         ...j,
+        kindPill: this.pill(kindColor[j.kind] || 'gray'),
         pill: this.pill(stateKind[j.state] || 'gray'),
         canSuspend: !terminal && (j.state === 'RUNNING' || j.state === 'WAITING' || j.state === 'RETRY'),
         canResume: j.state === 'SUSPENDED',
@@ -2814,11 +3908,28 @@ class Component extends DCLogic {
     });
 
     // events
-    const eventRows = this.eventsData().filter(e => !e.pipe || inScope(e.pipe)).map(e => ({
-      ...e,
-      pill: this.pill(e.kind),
-      openArtifact: (ev) => { ev && ev.preventDefault && ev.preventDefault(); this.showToast('Event ' + e.id + ' — ' + e.artifact + ' attached. Every link in the chain resolves: alert → run → event → artifact.'); },
-    }));
+    const eventVals = this.eventVals(inScope, accent);
+
+    // Event-driven work (compare, refresh) holds a job in the scheduler for as long as its event
+    // is running or scheduled. Canceling the event drains the job and it leaves this list.
+    const evOv = s.evStateOv || {};
+    const evJobs = (s.eventLog || []).concat(this.eventsData())
+      .map(e => (evOv[e.id] ? { ...e, state: evOv[e.id].state } : e))
+      .filter(e => (e.type === 'COMPARE' || e.type === 'REFRESH')
+        && (e.state === 'CURRENT' || e.state === 'WAITING')
+        && (e.vf ? e.vf === s.currentHub : true) && (!e.pipe || inScope(e.pipe)))
+      .map(e => {
+        const suffix = e.type === 'COMPARE' ? '-cmp' : '-rfr';
+        return {
+          id: 'ev-' + e.id, name: (e.pipe || s.currentHub) + suffix + '-' + String(e.ts).slice(-4),
+          pipeline: e.pipe, shape: 'acyclic', state: e.state === 'WAITING' ? 'WAITING' : 'RUNNING',
+          kind: e.type, trigger: 'event-driven', kindPill: this.pill(e.type === 'COMPARE' ? 'green' : 'amber'),
+          detail: e.text + ' — event-driven; cancel it from Events',
+          pill: this.pill(e.state === 'WAITING' ? 'gray' : 'green'),
+          canSuspend: false, canResume: false, canDisable: false, canEnable: false, eventDriven: true,
+          openEvent: () => this.setState(st => ({ screen: 'events', evOpen: { ...(st.evOpen || {}), [e.id]: true } })),
+        };
+      });
 
     const doSignIn = () => {
       const st = this.state;
@@ -2832,7 +3943,10 @@ class Component extends DCLogic {
       const land = this.landingFor(u.user, st);
       const where = land.screen === 'global' ? 'Global Fleet' : land.screen === 'fleetview' ? 'Fleet · ' + land.fleetSel : 'Virtual Fleet · ' + land.currentHub;
       localStorage.setItem('repl-session', u.user);
-      this.setState({ me: u.user, meName: u.fullName, meEmail: u.email, signInUser: '', signInPass: '', signInErr: null, userMenuOpen: false, ...land }, () => this.loadEnvPrefs());
+      this.setState({ me: u.user, meName: u.fullName, meEmail: u.email, signInUser: '', signInPass: '', signInErr: null, userMenuOpen: false, ...land }, () => {
+        this.loadEnvPrefs();
+        this.logEvent({ type: 'SIGNIN', kind: 'gray', vf: null, user: u.fullName, text: u.fullName + ' (' + u.email + ') signed in — ' + u.auth + ' · highest grant ' + this.myTopRole(u.user) });
+      });
       this.showToast('Signed in as ' + u.fullName + ' — your highest grant lands you at ' + where + '.');
     };
 
@@ -2858,6 +3972,7 @@ class Component extends DCLogic {
       savePrefs: () => {
         const name = s.prefName.trim() || s.meName;
         const email = s.prefEmail.trim() || s.meEmail;
+        this.logEvent({ type: 'USER', kind: 'blue', vf: null, text: 'Profile updated — ' + name + ' · ' + email });
         this.setState(st => ({
           prefsModalOpen: false,
           meName: name,
@@ -2874,8 +3989,16 @@ class Component extends DCLogic {
         } catch (e) {}
         this.showToast('Profile updated for ' + s.me + ' — recorded in the event ledger.');
       },
-      resetMyPwd: () => { this.setState({ userMenuOpen: false }); this.showToast('Password reset link issued for ' + s.me + ' — recorded in the event ledger.'); },
-      signOut: () => { localStorage.removeItem('repl-session'); this.setState({ me: null, userMenuOpen: false, signInUser: '', signInPass: '', signInErr: null }); },
+      resetMyPwd: () => {
+        this.setState({ userMenuOpen: false });
+        this.logEvent({ type: 'USER', kind: 'amber', vf: null, text: 'Password reset link issued for ' + (s.meName || s.me) });
+        this.showToast('Password reset link issued for ' + s.me + ' — recorded in the event ledger.');
+      },
+      signOut: () => {
+        this.logEvent({ type: 'SIGNOUT', kind: 'gray', vf: null, text: (s.meName || s.me) + ' signed out — session ended' });
+        localStorage.removeItem('repl-session');
+        this.setState({ me: null, userMenuOpen: false, signInUser: '', signInPass: '', signInErr: null });
+      },
       setEnvLabel: (e) => {
         const v = e.target.value;
         this.setState(st => ({ envLabels: { ...st.envLabels, [accent]: v } }), () => this.saveEnvPrefs());
@@ -2967,7 +4090,7 @@ class Component extends DCLogic {
         ? 'Connections used by pipeline ' + selRaw.id
         : 'Every database and store in virtual fleet ' + s.currentHub,
       showPipeAdmin: s.screen === 'pipeadmin',
-      deactivatePipe: () => this.showToast('Deactivate ' + selRaw.id + ' — plan preview first: jobs drain at checkpoints, file-log frames kept until acked, target untouched. Confirm to proceed. (Not wired in this prototype.)'),
+      deactivatePipe: () => { this.logEvent({ type: 'DEACTIVATE', kind: 'amber', state: 'CURRENT', pipe: selRaw.id, artifact: 'plan diff', text: 'Deactivation planned for stream ' + selRaw.id, details: [['jobs', 'drain at checkpoints'], ['file-log frames', 'kept until acked'], ['target', 'untouched']] }); return this.showToast('Deactivate ' + selRaw.id + ' — plan preview first: jobs drain at checkpoints, file-log frames kept until acked, target untouched. Confirm to proceed. (Not wired in this prototype.)'); },
       adminTitle: s.adminLevel === 'global' ? 'Global Fleet Admin' : s.adminLevel === 'fleet' ? 'Fleet Admin · ' + s.fleetSel : 'Virtual Fleet Admin · ' + s.currentHub,
       adminCapNote: s.adminLevel === 'global'
         ? 'Global Admins can edit any account, create fleets, and edit any connection, table, monitoring, jobs, and events — everywhere.'
@@ -2979,21 +4102,39 @@ class Component extends DCLogic {
       ...this.globalVals(hasFleetViewer),
       showFleet: s.screen === 'fleet', showPipelines: s.screen === 'pipelines', showDetail: s.screen === 'detail',
       showConnections: s.screen === 'connections', showTables: s.screen === 'tables', showMonitoring: s.screen === 'monitoring',
+      showTableDetail: s.screen === 'tabledetail' && !!tblRaw, tbl,
+      colModalOpen: !!colM, colM,
+      backToTables: () => this.setState({ screen: 'tables' }),
       showConnDetail: s.screen === 'conndetail' && !!connD, connD, backToConnections: go('connections'),
       agentModalOpen: !!s.agentModalOpen && !!agentM, agentM,
       dbModalOpen: !!s.dbModalOpen && !!dbM, dbM,
       propModalOpen: !!s.propModalOpen && !!propM, propM,
       showJobs: s.screen === 'jobs', showEvents: s.screen === 'events', showAdmin: s.screen === 'admin',
+      eventSearch: s.eventSearch || '', setEventSearch: (e) => this.setState({ eventSearch: e.target.value }),
+      ...eventVals,
+      eventScopeNote: s.selected ? 'Events for stream ' + selRaw.id : 'Events for virtual fleet ' + s.currentHub,
       backToPipelines: go('fleet'),
       goTables: (ev) => { ev && ev.preventDefault && ev.preventDefault(); this.setState({ screen: 'tables', tableFilter: selRaw.id }); },
       pauseLabel: s.paused[selRaw.id] ? 'Resume' : 'Pause',
       togglePause: () => {
         const now = !s.paused[selRaw.id];
         this.setState(st => ({ paused: { ...st.paused, [selRaw.id]: now } }));
+        this.logEvent({ type: now ? 'SUSPEND' : 'START', kind: now ? 'amber' : 'green', pipe: selRaw.id,
+          text: selRaw.id + (now ? ' suspended by operator — jobs drain gracefully at their checkpoints' : ' resumed — jobs return to PENDING and cycle on their triggers') });
         this.showToast(now ? selRaw.id + ' suspending — capture and apply jobs drain gracefully at their checkpoints.' : selRaw.id + ' resuming — jobs return to PENDING and cycle on their triggers.');
       },
-      runCompare: () => this.showToast('POST /pipelines/' + selRaw.id + '/compare → event 8815 created, state ACTIVE. Job ' + selRaw.id + '-cmp is PENDING; follow progress on Events.'),
-      runRefresh: () => this.showToast('Refresh scoped to ' + selRaw.id + ' — plan preview first: snapshot guarantee, scope, and target implications before anything applies.'),
+      runCompare: () => {
+        const rec = this.logEvent({ type: 'COMPARE', kind: 'green', state: 'CURRENT', pipe: selRaw.id, location: selRaw.captureName + ' ≈ ' + selRaw.applyName, artifact: 'compare report',
+          text: 'Bulk compare of ' + selRaw.tables + ' tables in ' + selRaw.id,
+          details: [['granularity', 'bulk — table checksums only'], ['online compare', 'off'], ['parallel sessions', '4'], ['tables', String(selRaw.tables)], ['read location', selRaw.captureName], ['write location', selRaw.applyName]] });
+        this.showToast('Compare started on ' + selRaw.id + ' — event ' + new Date(rec.ts).toISOString() + ' is CURRENT and its job is running. Follow it on Events.');
+      },
+      runRefresh: () => {
+        const rec = this.logEvent({ type: 'REFRESH', kind: 'amber', state: 'CURRENT', pipe: selRaw.id, location: selRaw.captureName + ' → ' + selRaw.applyName, artifact: 'run log',
+          text: 'Bulk refresh of ' + selRaw.tables + ' tables in ' + selRaw.id,
+          details: [['granularity', 'bulk'], ['parallel sessions', '4'], ['tables', String(selRaw.tables)], ['snapshot guarantee', 'consistent moment'], ['read location', selRaw.captureName], ['write location', selRaw.applyName]] });
+        this.showToast('Refresh started on ' + selRaw.id + ' — event ' + new Date(rec.ts).toISOString() + ' is CURRENT and its job is running. Follow it on Events.');
+      },
       newPipeline: () => this.showToast('The creation wizard is the front door for a new pipeline — connection groups, table registration, structured settings, plan-based activation. (Not wired in this prototype.)'),
       newConnection: () => this.setState({
         screen: 'newconn',
@@ -3002,11 +4143,17 @@ class Component extends DCLogic {
               role: null, method: null, flags: {}, pipes: {}, attach: 'none', typeTab: 'all' },
       }),
       ...this.newConnVals(accent),
+      addTable: () => {
+        const pipe = s.tableFilter !== 'all' ? s.tableFilter : selRaw.id;
+        this.logEvent({ type: 'DEFINITION CHANGE', kind: 'violet', pipe, artifact: 'plan diff',
+          text: 'Table added to ' + pipe, details: [['object', 'table'], ['added', 'selected from the source catalogue'], ['next step', 'refresh to load the initial data']] });
+        this.showToast('Table added to ' + pipe + ' — pick it from the source catalogue, then refresh to load initial data. Recorded in the event ledger. (Selection not wired in this prototype.)');
+      },
       tableSearch: s.tableSearch,
       setTableSearch: (e) => this.setState({ tableSearch: e.target.value }),
       tableFilter: s.tableFilter,
       setTableFilter: (e) => this.setState({ tableFilter: e.target.value }),
-      pipelineOptions, tableRows, connections, connHeaders, connEmpty, connGrid, connColOpts, connColsOpen, toggleConnCols, alerts, noAlerts: monAlerts.length === 0, hubs, jobRows, eventRows,
+      pipelineOptions, tableRows, connections, connHeaders, connEmpty, connGrid, connColOpts, connColsOpen, toggleConnCols, alerts, noAlerts: monAlerts.length === 0, hubs, jobRows: evJobs.concat(jobRows), jobsEmpty: evJobs.length + jobRows.length === 0,
       toast: s.toast,
       ...this.permVals(accent),
       ...this.userVals(accent),
@@ -3054,6 +4201,10 @@ class Component extends DCLogic {
       toggleFreeze: () => {
         const nowFrozen = !hub.frozen;
         this.setState(st => ({ hubsList: st.hubsList.map(h => h.id === hub.id ? { ...h, frozen: nowFrozen } : h), hubMenuOpen: false }));
+        this.logEvent({ type: 'HUB', kind: nowFrozen ? 'amber' : 'green', vf: hub.id,
+          text: 'Virtual fleet ' + hub.id + (nowFrozen ? ' frozen' : ' unfrozen'),
+          details: [['previous state', hub.frozen ? 'frozen' : 'running'], ['new state', nowFrozen ? 'frozen' : 'running'],
+                    ['scheduler', nowFrozen ? 'stopped — every job in the fleet halts at its checkpoint' : 'resumed — jobs return to PENDING and cycle on their triggers']] });
         this.showToast(nowFrozen
           ? hub.id + ' frozen — scheduler and all jobs stopped at their checkpoints; state, history, and configuration preserved.'
           : hub.id + ' unfrozen — jobs return to the state they held at the freeze point and cycle on their triggers.');
@@ -3067,6 +4218,11 @@ class Component extends DCLogic {
       deleteHub: () => {
         if (!s.hubDeleteArmed) { this.setState({ hubDeleteArmed: true }); return; }
         const remaining = s.hubsList.filter(h => h.id !== hub.id);
+        // Logged before the fleet goes, and scoped to the fleet rather than the virtual fleet it deletes.
+        this.logEvent({ type: 'HUB', kind: 'red', vf: null, fleet: hub.fleet || s.fleetSel,
+          text: 'Virtual fleet ' + hub.id + ' deleted',
+          details: [['virtual fleet', hub.id], ['sequence', 'frozen first, then removed'],
+                    ['removed', 'all definitions, jobs, events, statistics, and on-disk state'], ['backup', 'the export taken before deletion']] });
         this.setState({ hubsList: remaining, currentHub: remaining[0] ? remaining[0].id : '', hubMenuOpen: false, hubDeleteArmed: false });
         this.showToast(hub.id + ' deleted — frozen first, then all definitions, jobs, events, statistics, and on-disk state removed. The export you (hopefully) took is the backup.');
       },
@@ -3102,6 +4258,7 @@ class Component extends DCLogic {
           hubsList: st.hubsList.concat({ id: name, desc: s.newHubDesc.trim() || '—', creator: s.me, email: s.meEmail, created: 'just now', frozen: false, backlog: '0 MB', agents: 0, gc: '—' }),
           grants: st.grants.concat({ id: 'g' + Date.now(), user: s.me, scope: name, perm: 'HubOwner', grants: 'Full control of ' + name + ' (implied by HubCreation)', granted: 'just now', initials: 'RR' }),
         }));
+        this.logEvent({ type: 'HUB', kind: 'blue', vf: name, text: 'Virtual fleet ' + name + ' created — HubOwner granted to its creator' });
         this.showToast(name + ' created and set as current hub — HubOwner granted to you; both are ledger events.');
       },
       snapshotModalOpen: s.snapshotModalOpen,
@@ -3120,6 +4277,10 @@ class Component extends DCLogic {
       pickEncrypt: () => this.setState({ snapClassified: 'encrypt' }),
       saveSnapshot: () => {
         this.setState({ snapshotModalOpen: false });
+        this.logEvent({ type: 'SNAPSHOT', kind: 'blue', vf: s.currentHub, artifact: 'snapshot',
+          text: 'Snapshot of ' + s.currentHub + ' exported',
+          details: [['classification', s.snapClassified === 'encrypt' ? 'encrypted — single-use transport key issued' : 'secrets redacted'],
+                    ['reason', s.snapReason || '—'], ['contents', 'fleet configuration, channel and location definitions']] });
         this.showToast('Snapshot of ' + s.currentHub + ' saved' + (s.snapClassified === 'encrypt' ? ' — encrypted; copy the single-use transport key now, it will not be shown again.' : ' — secrets redacted; safe to hand across the air gap.') + ' Download link ready.');
       },
     };
@@ -3254,6 +4415,8 @@ class Component extends DCLogic {
         toggleStyle: 'border:1px solid var(--border); font-size:11px; font-weight:600; padding:4px 10px; border-radius:6px; cursor:pointer;' + (disabled ? '' : ' color:var(--danger);'),
         toggle: () => {
           this.setState(st => ({ userStates: { ...st.userStates, [u.id]: disabled ? 'Active' : 'Disabled' } }));
+          this.logEvent({ type: 'USER', kind: disabled ? 'green' : 'amber', vf: null,
+            text: (u.fullName || u.user) + (disabled ? ' enabled — existing grants reactivate' : ' disabled — sign-in blocked; grants retained') });
           this.showToast(disabled ? u.user + ' enabled — existing grants reactivate.' : u.user + ' disabled — sign-in blocked; grants retained in Permissions.');
         },
       };
@@ -3372,6 +4535,8 @@ class Component extends DCLogic {
           users: st.users.concat(rec),
           grants: scoped ? st.grants.concat(grant) : st.grants,
         }));
+        this.logEvent({ type: 'USER', kind: 'blue', vf: null,
+          text: 'User ' + (rec.fullName || rec.email) + ' created — ' + rec.email + ' · ' + rec.auth + (scoped ? ' · granted ' + grant.perm + ' on ' + grant.scope : ' · inherits All Users ReadOnly') });
         try {
           const cu = JSON.parse(localStorage.getItem('repl-custom-users') || '[]');
           const cg = JSON.parse(localStorage.getItem('repl-custom-grants') || '[]');
@@ -3443,6 +4608,8 @@ class Component extends DCLogic {
       lastActive: u ? u.lastActive : '—',
       revoke: () => {
         this.setState(st => ({ grants: st.grants.filter(x => x.id !== g.id) }));
+        this.logEvent({ type: 'GRANT', kind: 'amber', vf: g.scope && g.scope.indexOf('hubsrv-') !== 0 && g.scope !== 'repository' ? g.scope : null,
+          text: 'Revoked ' + g.perm + ' from ' + g.user + ' on ' + g.scope });
         this.showToast('Revoked ' + g.perm + ' from ' + g.user + ' — recorded in the event ledger with the acting user.');
       },
     }; });
@@ -3514,6 +4681,8 @@ class Component extends DCLogic {
             initials: user === 'All Users' ? '∗' : user.split(/[.\-]/).map(x => x[0]).join('').slice(0, 2).toUpperCase(),
           }),
         }));
+        this.logEvent({ type: 'GRANT', kind: 'blue', vf: isRepo ? null : s.permHub,
+          text: 'Granted ' + s.permType + ' to ' + user + (isRepo ? ' (repository-wide)' : ' on ' + s.permHub) });
         this.showToast('Granted ' + s.permType + ' to ' + user + (isRepo ? ' (repository)' : ' on ' + s.permHub) + ' — one event in the ledger.');
       },
     };
@@ -3672,6 +4841,7 @@ class Component extends DCLogic {
           pinnedFleets: { ...st.pinnedFleets, [name]: true },
           grants: st.grants.concat({ id: 'g' + Date.now(), user: s.me, scope: name, perm: 'HubOwner', grants: 'Fleet Admin of ' + name + ' (first admin, implied by creation)', granted: 'just now', initials: 'RR' }),
         }));
+        this.logEvent({ type: 'FLEET', kind: 'blue', vf: null, fleet: name, text: 'Fleet ' + name + ' enrolled — token issued, hub server joins with mTLS; creator is its first Fleet Admin' });
         this.showToast(name + ' created — enrollment token issued; the hub server joins with mTLS. You are its first Fleet Admin. Both are ledger events.');
       },
       newVfFromFleet: () => {

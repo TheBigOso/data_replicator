@@ -56,7 +56,7 @@ These are load-bearing; the prototype is designed to make each one visible rathe
 
 Four levels — **Global Fleet → Fleet (hub server) → Virtual Fleet → Stream (pipeline)**. Each screen sits at the level that owns the objects it shows: the **virtual fleet** owns Connections, Jobs, and Events; each **stream** owns Tables, Monitoring, and Admin. Under a virtual fleet the sidebar lists its streams alphabetically, then Jobs, Events, and Connections. The sidebar is a searchable, expandable tree with a resizable width that persists per user, and it shows only what the signed-in operator's grants reach.
 
-Screens: Global fleet console, Browse fleets, Fleet view, Virtual fleet overview, Pipelines list, Pipeline detail, Pipeline admin, Connections, Connection detail, New connection wizard, Tables, Monitoring, Jobs, Events, and Admin at three levels (global, fleet, virtual fleet).
+Screens: Global fleet console, Browse fleets, Fleet view, Virtual fleet overview, Pipelines list, Pipeline detail, Pipeline admin, Connections, Connection detail, New connection wizard, Tables, Table detail, Monitoring, Jobs, Events, and Admin at three levels (global, fleet, virtual fleet).
 
 Every virtual-fleet screen is scoped by where it was opened from — from a stream it narrows to that stream, from the virtual fleet it covers all of them — and the counts published in the Global fleet console are derived from the same data those screens read, so a number you click matches what you land on.
 
@@ -139,6 +139,10 @@ Every visible header sorts (click to reverse, with a visible indicator; default 
 
 Pipeline list and detail with replication status, latency, and volume; per-pipeline Tables with the verified-status model; Monitoring with alerts surfaced as sidebar badges; Jobs; and the Events ledger. Admin exists at global, fleet, and virtual-fleet level with capability-gated create, edit, and delete.
 
+**Tables and table structure** — specified in full in [`tables-ui.md`](uploads/repidata/Documents/tables-ui.md). The Tables list covers every table across every pipeline (identity, pipeline, name in source, group, recent refresh, recent compare, change sparkline). Clicking a table name opens **table detail**: a facts strip (dialect per side, row estimate, changes today, capture method and the supplemental logging it requires, apply latency), the **columns grid** — source name, target name, source type, nullability, key, mapped target type, notes — keys and indexes, replication rules, a **Source / Target DDL** pane rendering real dialect-correct DDL, and definition history.
+
+Columns are editable per row: source name, target name, both types, nullability, key membership, and notes. **Source and target column names are independent in both directions** — renaming one side never moves the other, because both hang off a column identity rather than off each other (`tables.md` §3.1). Columns can be dropped and restored; the primary key cannot be dropped. Every change re-derives the grid, the rules panel, and both DDL panes, and lands in the event ledger.
+
 Destructive and structural actions are modelled as **plans**: the console states what would happen — jobs draining at checkpoints, file-log frames retained until acknowledged, target left untouched — before anything is confirmed.
 
 ---
@@ -167,7 +171,8 @@ Each specification carries a phased test plan, test procedures, and numbered acc
 | `location.md` | Location model, capability matrix, credential envelope, configuration-time validation |
 | `connections.md` | The operator-facing connection surface — list, detail, dialogs, testing |
 | `channel.md` | What to replicate: table selection, identity derivation, mappings |
-| `tables.md` | Fleet-wide table surface, verified status (including honest INCONCLUSIVE), drift check |
+| `tables.md` | Fleet-wide table surface, verified status (including honest INCONCLUSIVE), drift check, per-side column names |
+| `tables-ui.md` | The console surface for tables: list, table detail, columns grid, column editor, DDL panes |
 | `replication-topologies.md` | Broadcast, consolidation, cascade; the topology view |
 | `scheduler.md` | Continuous CDC, scheduled refresh, scheduled compare |
 | `refresh.md` | Online refresh without suspending integrate |

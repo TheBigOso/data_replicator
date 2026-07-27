@@ -29,6 +29,20 @@ One table, everything about it. The header carries the naming block — identity
 
 **The history tabs** — Compare History and Refresh History — are the per-table view of the event ledger: every compare and refresh event that touched this table, with event state, the per-table state (the same model as §2, INCONCLUSIVE included), rows selected on each side, duration, and **speed (rows/second)** — the column that turns history into capacity data. Each row links to its Event Details (artifacts, report) and its connections' detail pages. Nothing here is a new store: it is one filtered ledger query, which means it is also one API call and one CLI command.
 
+### 3.1 Column names are per side — source name ≠ target name
+
+A column, like a table, has an **identity** and a **physical name per side**, and the two need not agree. `MFG.WORKORDERS.WORKORDER_ID` may land on Databricks as `workorder_id`, on Snowflake as `WORKORDER_ID`, and in a curated Postgres mart as `work_order_key` — all the same column, all at once, in the same pipeline. The mapping is directional and independent in both directions: renaming the source column (out-of-band DDL, or an adopted drift) does not rename the target column, and renaming the target column never touches the source catalogue. The platform is a reader of the source and a writer of the target; it owns neither name.
+
+**What holds the relationship together is the identity, not the string.** Frames on the file log, per-column settings, key membership, compare column pairing, and the metrics series all key on the column identity. That is what makes divergent names cheap: capture reads `WORKORDER_ID`, the frame carries the identity, apply writes whatever the target side's physical name is. A rename on either side is a versioned definition edit against an unchanged identity — the same CHA-24 property tables already have, applied one level down.
+
+**Defaults, so the common case needs no decision.** On import, the target physical name defaults from the source name under the target's naming convention (case-folding per DBMS — lower for Postgres/Databricks/Parquet, as-is for Snowflake, plus reserved-word and length handling), so the vast majority of columns are mapped without anyone typing anything. Divergence is opt-in and always visible: the Tables detail grid shows **Column** (source physical name) and **Target column** side by side, and a column whose two names differ reads as a rename in the Replication rules panel rather than hiding in a settings file.
+
+**Editing.** The column editor takes both names, both types, nullability, key membership, and notes in one dialog, because those are the fields that answer "what is this column, and what does it become". Both names are free text; validation is per side — the source name must resolve in the source catalogue (a name that does not is drift, and routes to §4), and the target name must be legal for the target DBMS and unique within the target table after mapping. A change to either name is staged as a plan with its ripple: a target rename implies a target `ALTER … RENAME COLUMN` under the creation policy (or a recreate where the target has no rename), a source rename implies a capture-registration refresh; neither implies a refresh of the data.
+
+**Collisions and the honest refusals.** Two source columns mapping to one target name is a validation refusal naming both. A target rename that collides with a column the creation policy would add (`OP_TYPE`, `OP_TS`, slice or partition helpers) is a refusal, not a silent suffix. A rename of a key column carries the key with it — the apply's matching predicate is rebuilt from the identity, so the key follows the column rather than the string.
+
+**Where names must not diverge.** Compare pairs columns by identity, so divergent names compare correctly and the report prints both — `WORKORDER_ID / work_order_key` — because an operator reading a difference report is holding two databases open, not one. Definition export/import carries both names; a table definition moved to another pipeline keeps its source name and re-defaults its target name only when the destination's target DBMS differs.
+
 ## 4. Definition Drift — check and adopt
 
 The registered table definition (what the pipeline believes) and the actual database table (what exists) can diverge — out-of-band DDL on either side, a hold-and-alert DDL policy queuing a change, a target someone "fixed" by hand. Two operations handle it, both new to our spec set via this page:
@@ -66,6 +80,7 @@ The start-page pointer HVR ends with is our creation wizard's front door (channe
 | Columns tab: definition type, KEY, actual type in source/target | Same grid — the published type-mapping table rendered per column, with per-column settings click-through and provenance | Kept; the appendix moved to the row |
 | Context column preview (extra_col appears when context enabled) | Context preview toggle rendering effective structure per named context | Kept |
 | Add/edit/delete column with before/after placement | Versioned definition edits with visible ripple plans and constraint refusals; ordering definitional | Kept, plan-governed |
+| Column base name per location (name in source / name in target) | Column identity + physical name per side, defaulted from the source name under the target's naming convention, editable in either direction, both shown in the grid (§3.1) | Kept; divergence disclosed on the row, not in a settings file |
 | Compare/Refresh History tabs with duration and speed | Per-table filtered ledger query with rows/side, duration, rows/sec, event and connection links | Kept; one query, also an API call |
 
 ## 7. Test Plan
@@ -113,6 +128,7 @@ Phased; standing rule applies. TBL procedures reuse the Playwright harness, the 
 | TBL-03 | Adopt-from-actual previews as a complete minimal plan, applies as one versioned event with verified ripple, refuses constraint-breaking adoptions with named reasons, and never exceeds its scope |
 | TBL-04 | Table-scoped operations use the selection as their exact scope, delete is plan-governed, table-definition subsets round-trip, and all operations are UI/CLI equivalent |
 | TBL-05 | The columns grid renders the published type-mapping table exactly per cell with settings provenance; physical renames are versioned edits and identity renames use a self-retiring, evented alias window with replication uninterrupted; column edits are plan-governed with constraint refusals; the history tabs equal the event ledger |
+| TBL-06 | Column source and target physical names are independently editable against one identity: a rename on either side leaves the other untouched, replication continues uninterrupted, compare pairs by identity and prints both names, and colliding or reserved target names are refused with both names given |
 
 ## 10. Open Questions
 
