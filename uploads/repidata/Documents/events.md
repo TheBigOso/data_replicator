@@ -3,12 +3,13 @@
 **Project:** Enterprise CDC Replication Platform
 **Document type:** Concept and design specification
 **Status:** v1 design; the audit ledger
+**Related:** `events-ui.md` (the console surface — filters, the expandable record, artifacts, planned retention/export/diff upgrades)
 
 ---
 
 ## 1. Purpose and Positioning
 
-The event system is the platform's **ledger**: an append-only record of what happened, who did it, and what changed. HVR's event system serves two purposes and both are kept: it is the **audit trail** of user activity (this document's core), and it is the **state holder for long-running operations** (the event-driven task pattern, specified in the Jobs document, section 3 — referenced here, not restated). Every "versioned, attributed" promise made across this document set — channel definition changes, applied activation plans, job transitions, drift verdicts — resolves to a row in this ledger.
+The event system is the platform's **ledger**: an append-only record of what happened, who did it, and what changed. HVR's event system serves two purposes and both are kept: it is the **audit trail** of user activity (this document's core), and it is the **state holder for long-running operations** (the event-driven task pattern, specified in the Jobs document, section 3 — referenced here, not restated). Every "versioned, attributed" promise made across this document set — stream definition changes, applied activation plans, job transitions, drift verdicts — resolves to a row in this ledger.
 
 For the regulated enterprises this platform targets, the ledger is not plumbing; it is a requirement with a name. An ATO package, an ITAR audit, a SOX control test all ask the same question the ledger exists to answer instantly: *who changed what, when, and what exactly did it change?*
 
@@ -16,17 +17,17 @@ For the regulated enterprises this platform targets, the ledger is not plumbing;
 
 **Every state-changing operation creates exactly one audit event**, regardless of surface. Because the web UI, CLI, and GitOps apply all speak the one public REST API, there is a single enforcement point — the API layer — rather than HVR's enumerated list of commands that happen to write events. If it mutates the repository or commands the runtime (definition changes, activation plans, job start/suspend/disable, hub creation or freeze, location changes, alert configuration, imports), it is evented. Structurally, nothing state-changing can bypass the ledger, and EVT-01 sweeps the entire API surface to prove it.
 
-**What doesn't create audit events**, kept from HVR because the reasoning is sound: read-only activity (views, exports, list calls — though data-preview reads *are* separately audited under the RBAC regime, SLC-13/compare report access, because reading row data is different in kind from reading configuration); and the routine activity of replication jobs themselves, which belongs in run logs (Jobs, section 5), not the ledger — a busy channel would otherwise drown the audit trail in heartbeats.
+**What doesn't create audit events**, kept from HVR because the reasoning is sound: read-only activity (views, exports, list calls — though data-preview reads *are* separately audited under the RBAC regime, SLC-13/compare report access, because reading row data is different in kind from reading configuration); and the routine activity of replication jobs themselves, which belongs in run logs (Jobs, section 5), not the ledger — a busy stream would otherwise drown the audit trail in heartbeats.
 
 **Operational events** are the deliberate departure. Job state transitions, fired alerts, drift verdicts, agent enrollments and upgrades — HVR scatters these across log files; we record them as a second **event class** in the same ledger, because the 2 AM question is almost always a *joined* question: "the alert fired at 2:04 — what changed before that?" One timeline, filterable by class (`audit` / `operational`), answers it in one query instead of a log-correlation exercise.
 
 ## 3. The Event Record
 
-Every event carries: a **unique monotonic event ID** plus timestamp (HVR identifies events by microsecond timestamp alone — an identifier that can collide and encodes nothing; ours is an ID that happens to have a timestamp); the **type** (from the published type catalog); the **actor** — a user identity, an API token identity, or a GitOps commit reference, so automation is attributed as precisely as humans; the **scope** — hub (or repository-wide for the few operations above hub level), channel, locations, and tables affected; and the **payload** — for definition changes, the field-level diff (the same diff the channel version history shows: one mechanism, surfaced twice); for plans, the applied plan; for task events, the linkage to job, run log, and artifacts.
+Every event carries: a **unique monotonic event ID** plus timestamp (HVR identifies events by microsecond timestamp alone — an identifier that can collide and encodes nothing; ours is an ID that happens to have a timestamp); the **type** (from the published type catalog); the **actor** — a user identity, an API token identity, or a GitOps commit reference, so automation is attributed as precisely as humans; the **scope** — hub (or repository-wide for the few operations above hub level), stream, locations, and tables affected; and the **payload** — for definition changes, the field-level diff (the same diff the stream version history shows: one mechanism, surfaced twice); for plans, the applied plan; for task events, the linkage to job, run log, and artifacts.
 
 ### 3.1 Worked example — the auditor's question
 
-*"Who changed the ORDERS channel in March, and what exactly changed?"* One filtered query: scope = channel ORDERS, class = audit, time = March. The answer is a short list of events, each with actor, timestamp, and field-level diff — including the one applied via GitOps, attributed to its commit. No log archaeology, no "we think it was the migration script." The same query is one screen in the UI's Events page and one CLI call, because they are the same API call.
+*"Who changed the ORDERS stream in March, and what exactly changed?"* One filtered query: scope = stream ORDERS, class = audit, time = March. The answer is a short list of events, each with actor, timestamp, and field-level diff — including the one applied via GitOps, attributed to its commit. No log archaeology, no "we think it was the migration script." The same query is one screen in the UI's Events page and one CLI call, because they are the same API call.
 
 ## 4. Event States
 
@@ -102,7 +103,7 @@ Completeness is tested as a **surface sweep**: a harness enumerates every endpoi
 **Evidence:** Three event records.
 
 ### EVT-07 — Scope accuracy
-**Steps:** (1) Perform operations at each scope: repository-level (hub creation), hub-level (calendar change), channel-level (definition change), location-pair-level (a refresh event naming source and target), table-level (per-table override). (2) Verify each event's scope fields; query by each scope dimension.
+**Steps:** (1) Perform operations at each scope: repository-level (hub creation), hub-level (calendar change), stream-level (definition change), location-pair-level (a refresh event naming source and target), table-level (per-table override). (2) Verify each event's scope fields; query by each scope dimension.
 **Expected:** Scope fields exact per operation; scope queries return exactly the right events.
 **Evidence:** Scope field audit, query results vs expectation.
 
@@ -116,7 +117,7 @@ Completeness is tested as a **surface sweep**: a harness enumerates every endpoi
 | EVT-04 | Same-job pending events are superseded with the successor named; interrupted task events resume from checkpoint with visible history and identical final artifacts |
 | EVT-05 | Syslog, webhook, and file-drop forwarders deliver every event with dedupable IDs; gaps are detected and alerted; file drop works fully air-gapped |
 | EVT-06 | Actors are attributed precisely across UI users, API tokens, and GitOps commit references |
-| EVT-07 | Event scope (repository, hub, channel, locations, tables) is recorded and queryable exactly |
+| EVT-07 | Event scope (repository, hub, stream, locations, tables) is recorded and queryable exactly |
 
 > **Update (2026-07):** `fleet-hierarchy.md` adds fleet-level scopes and evented operations: fleet creation/enrollment, grant/revoke at every admin level, user create/disable/delete, and credential resets are all ledger events; denied cross-scope admin attempts are evented too (FLT-06, FLT-08).
 

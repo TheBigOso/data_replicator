@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#f4f3ef; font-family:'IBM Plex Sans',sans-serif; color:#1a1c1e; }
+    a { color:#1a6e50; } a:hover { color:#14523c; }
+  </style>
+</helmet>
+<div data-screen-label="Global fleet wireflow" style="padding:36px 40px; min-width:1720px;">
+  <div style="font-size:22px; font-weight:700;">Global Fleet console — wireflow</div>
+  <div style="display:flex; align-items:flex-start; gap:10px; background:#fbf3ec; border:1.5px dashed #b3541e; border-radius:8px; padding:9px 13px; margin:10px 0 4px; max-width:1180px;">
+    <span style="flex:none; font-size:9.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; border:1px solid #b3541e; border-radius:4px; padding:2px 7px; background:#fff;">MAP</span>
+    <span style="font-size:11px; color:#6d7278; line-height:1.55;">This is the <b>level map</b> for the Global Fleet console — the access gate, KPI row, triage strip, and fleet matrix. Sub-flows drawn in summary here are specified in full elsewhere: <b>Global Admin Wireflow</b> (the ⚙ surface) and <b>Users Permissions Wireflow</b> (grants and accounts). Where they differ, the deep-dive file wins.</span>
+  </div>
+  <div style="font-size:13px; color:#6d7278; margin:6px 0 14px;">Replicator console · the top of the hierarchy: access gate → overview → triage → fleet matrix → drill-down, plus the global log · docs: global-fleet-ui.md, fleet-hierarchy.md</div>
+  <div style="display:flex; gap:16px; align-items:center; font-size:11.5px; color:#6d7278; margin-bottom:26px;">
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1px solid #c9c6bf; border-radius:3px;"></span>screen / section</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1.5px dashed #b3541e; border-radius:3px;"></span>branch / sub-flow</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px; height:10px; background:#fbe9e7; border:1px solid #b3261e; border-radius:99px;"></span>access gate</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:3px;"></span>outcome / drill-down</span>
+  </div>
+
+  <!-- ===== row 1: entry → gate → overview → triage ===== -->
+  <div style="display:flex; align-items:flex-start; gap:0;">
+
+    <!-- entry -->
+    <div style="width:210px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:8px;">ENTRY POINTS</div>
+        <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; margin-bottom:6px; text-align:center;">Tree · Global Fleet (root)</div>
+        <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Sign-in landing (highest granted scope)</div>
+        <div style="font-size:10.5px; color:#6d7278; margin-top:8px; line-height:1.5;">Audience: super admins and executive staff. One screen over <b>every enrolled fleet</b> — read-only across systems; operating means switching into a fleet.</div>
+      </div>
+    </div>
+    <div style="width:40px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- gate -->
+    <div style="width:230px; flex:none;">
+      <div style="background:#fbe9e7; border:1px solid #b3261e; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3261e; margin-bottom:2px;">GATE · FLEETVIEWER</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">Repository-level permission</div>
+        <div style="font-size:10.5px; color:#6d7278; line-height:1.55;">No FleetViewer → locked card: 🔒 "requires FleetViewer — ask a SysAdmin on Admin → Permissions."<br><br>With it, <b>visibility still follows grants</b>: fleets with no grant stay hidden. Zero visible fleets → empty state.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Branch:</b> sight, not touch — every mutating action requires switching into the owning fleet or VF first.</div>
+    </div>
+    <div style="width:40px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- overview -->
+    <div style="width:300px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">LAYER 1 · OVERVIEW</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">KPI hero row — is anything wrong?</div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:5px; margin-bottom:8px;">
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 7px; font-size:9px;"><span style="color:#6d7278;">Fleets</span><br><b style="font-size:12px;">3</b><br><span style="color:#8a8f98;">3 enrolled</span></div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 7px; font-size:9px;"><span style="color:#6d7278;">Virtual fleets</span><br><b style="font-size:12px;">7</b><br><span style="color:#8a8f98;">all reachable</span></div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 7px; font-size:9px;"><span style="color:#6d7278;">Streams</span><br><b style="font-size:12px;">21/24</b><br><span style="color:#8a8f98;">running / total</span></div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 7px; font-size:9px;"><span style="color:#6d7278;">Worst P95</span><br><b style="font-size:12px; color:#b3261e;">96s</b><br><span style="color:#8a8f98;">db2-mfg</span></div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 7px; font-size:9px;"><span style="color:#6d7278;">Rows/min</span><br><b style="font-size:12px;">3.4M</b><br><span style="color:#8a8f98;">org-wide</span></div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 7px; font-size:9px;"><span style="color:#6d7278;">Attention</span><br><b style="font-size:12px; color:#b3261e;">4</b><br><span style="color:#8a8f98;">needs triage</span></div>
+        </div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5;">Six tiles over <b>visible fleets only</b>. Attention, VF errors, and Worst P95 &gt; 60s go danger-red.</div>
+      </div>
+    </div>
+    <div style="width:40px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- triage -->
+    <div style="width:330px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">LAYER 2 · ATTENTION AREAS</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Needs-triage strip — org-wide</div>
+        <div style="border:1px solid #f3d1cf; border-radius:7px; padding:5px 8px; font-size:9px; margin-bottom:5px; display:flex; gap:6px; align-items:center;"><span style="background:#fbe9e7; color:#b3261e; font-weight:700; border-radius:99px; padding:1px 6px;">Crit</span><span style="font-family:'IBM Plex Mono',monospace; color:#6d7278;">stream-east / db2-mfg</span><span style="font-weight:600;">capture halted — log read error</span><span style="margin-left:auto; color:#8a8f98;">Jul 31 · 09:14 · 22m</span></div>
+        <div style="border:1px solid #f3d1cf; border-radius:7px; padding:5px 8px; font-size:9px; margin-bottom:5px; display:flex; gap:6px; align-items:center;"><span style="background:#fbf3ec; color:#b3541e; font-weight:700; border-radius:99px; padding:1px 6px;">Warn</span><span style="font-family:'IBM Plex Mono',monospace; color:#6d7278;">stream-corp / agt-04</span><span style="font-weight:600;">DB2-MFG — CPU 92%</span><span style="margin-left:auto; color:#8a8f98;">Jul 31 · 08:41 · 55m</span></div>
+        <div style="border:1px solid #f3d1cf; border-radius:7px; padding:5px 8px; font-size:9px; display:flex; gap:6px; align-items:center;"><span style="background:#fbf3ec; color:#b3541e; font-weight:700; border-radius:99px; padding:1px 6px;">Warn</span><span style="font-family:'IBM Plex Mono',monospace; color:#6d7278;">stream-west / erp-fanout</span><span style="font-weight:600;">alert delivery failed · 8 attempts</span><span style="margin-left:auto; color:#8a8f98;">Jul 30 · 23:02 · 10h</span></div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5; margin-top:8px;">One row per hot issue: stream errors, high stream latency, CPU/mem &gt; 80% · IO &gt; 320 MB/s (wobble-free values), failed deliveries. Fixed columns + deterministic sort — rows never jump on live ticks. Renders only when something is hot.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Every row deep-links:</b> stream error → stream dashboard · CPU/mem/IO → connection's Server health panel · delivery failure → the alert rule. Fleet/VF context switches automatically.</div>
+    </div>
+    <div style="width:40px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- matrix -->
+    <div style="width:330px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">LAYER 3 · ACTION ZONE</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Fleet health matrix</div>
+        <div style="display:flex; gap:5px; margin-bottom:6px; font-size:9.5px;">
+          <div style="flex:1; border:1px solid #e3e1dc; border-radius:6px; padding:4px 7px; color:#8a8f98;">Search fleets, divisions, VFs…</div>
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:4px 7px; font-weight:600;">All states ▾</div>
+        </div>
+        <div style="border:1px solid #e3e1dc; border-left:3px solid #b3261e; border-radius:7px; padding:6px 8px; font-size:9.5px; margin-bottom:5px;">
+          <div style="display:flex; gap:6px; align-items:center;"><span style="color:#1a6e50;">▸</span><span style="border:1px solid #e3e1dc; border-radius:4px; padding:0 4px; font-size:8px; font-weight:700; color:#6d7278;">FLEET</span><b>stream-east</b><span style="color:#6d7278;">Manufacturing</span><span style="background:#fbe9e7; color:#b3261e; border-radius:99px; padding:0 6px; font-size:8.5px; font-weight:700;">⚠ 2 concerns</span><span style="margin-left:auto; font-weight:600; color:#1a6e50;">Open fleet →</span></div>
+          <div style="color:#6d7278; font-size:8.5px; margin-left:16px;">3 VFs · 7/8 streams running · worst 96s · 1.1M rows/min · ⌖ pin</div>
+        </div>
+        <div style="border:1px solid #e3e1dc; border-left:3px solid #7c6ce0; border-radius:7px; padding:6px 8px; font-size:9.5px; margin-bottom:6px;">
+          <div style="display:flex; gap:6px; align-items:center;"><span style="color:#1a6e50;">▾</span><span style="border:1px solid #e3e1dc; border-radius:4px; padding:0 4px; font-size:8px; font-weight:700; color:#6d7278;">FLEET</span><b>stream-corp</b><span style="color:#6d7278;">Corporate</span><span style="margin-left:auto; font-weight:600; color:#1a6e50;">Open fleet →</span></div>
+          <div style="display:grid; grid-template-columns:1.3fr .8fr .6fr .6fr .9fr; gap:5px; font-size:8.5px; color:#6d7278; margin:5px 0 2px 16px;"><span>Virtual fleet</span><span>State</span><span>Pipes</span><span>P95</span><span>Your access</span></div>
+          <div style="display:grid; grid-template-columns:1.3fr .8fr .6fr .6fr .9fr; gap:5px; font-size:8.5px; margin-left:16px;"><span style="font-family:'IBM Plex Mono',monospace;">vf-finance</span><span style="color:#1a6e50;">Live</span><span>4</span><span>3.2s</span><span>Admin · <b style="color:#1a6e50;">Switch</b></span></div>
+        </div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5;">Triage-first ordering: hot fleets sort to the top with a red left edge and ⚠ badge; healthy fleets keep their environment accent. Expand = VF table; <b>Switch</b> appears only where granted.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Branch:</b> pin ⌖ keeps a fleet in the sidebar tree · search + state filter (All / Errors / Frozen / Live) compose · empty result keeps the header and shows the shown-count at 0.</div>
+    </div>
+  </div>
+
+  <!-- ===== row 2: below the matrix ===== -->
+  <div style="display:flex; align-items:flex-start; gap:0; margin-top:30px;">
+    <!-- global admin -->
+    <div style="width:210px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">⚙ GLOBAL ADMIN</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">Header button · SuperAdmin / SysAdmin only</div>
+        <div style="display:flex; gap:4px; margin-bottom:8px; font-size:9px;">
+          <span style="border-bottom:2px solid #1a6e50; font-weight:600; padding:2px 6px;">Overview</span>
+          <span style="color:#6d7278; padding:2px 6px;">Users</span>
+          <span style="color:#6d7278; padding:2px 6px;">Permissions</span>
+        </div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.6;">The only place the console mutates: edit <b>any</b> account, create fleets, edit any connection, table, alerts, jobs, events — everywhere. Users tab = every account across every fleet; Permissions = one row per grant attachment. <b>New fleet</b> (header) enrolls a system — Global Admins only.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3261e; background:#fbe9e7; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#b3261e; line-height:1.5;"><b>Gate:</b> without SysAdmin/SuperAdmin the tree entry shows 🔒 and a toast points to Admin → Permissions.</div>
+    </div>
+    <div style="width:40px; flex:none; display:grid; place-items:center; padding-top:46px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- facts -->
+    <div style="width:230px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">ORG-WIDE FACTS</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:8px;">Inventory strip</div>
+        <div style="font-size:10.5px; color:#6d7278; line-height:1.7;">• Virtual fleets connected<br>• Agents enrolled (+ version stragglers)<br>• Users active<br>• Events · 24h<br>• License model</div>
+      </div>
+    </div>
+    <div style="width:40px; flex:none; display:grid; place-items:center; padding-top:46px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- global log -->
+    <div style="width:420px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">GLOBAL LOG</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:6px;">global.out — one log of every fleet system</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5; margin-bottom:8px;">The single org-wide record: <b>every fleet system appends here</b>. Each fleet merges its virtual fleets, each VF merges its streams, connections, jobs, events and alerts — so one tail shows everything happening anywhere, time-ordered, each line prefixed with its <span style="font-family:'IBM Plex Mono',monospace; font-size:9.5px;">fleet/vf/stream</span> origin.</div>
+        <div style="background:#1b1d20; border-radius:7px; padding:7px 9px; font-family:'IBM Plex Mono',monospace; font-size:8.5px; color:#c9c6bf; line-height:1.7; margin-bottom:8px;">09:14:02 <span style="color:#b48ead;">stream-east/vf-mfg/db2-mfg:</span> <span style="color:#e06c75;">capture halted — log read error</span><br>09:14:00 <span style="color:#b48ead;">stream-corp/vf-fin/gl-feed:</span> integrate cycle 512 rows<br>09:13:58 <span style="color:#b48ead;">stream-west/vf-ops/agt-04:</span> <span style="color:#e5c07b;">memory 84% — concern raised</span><br>09:13:57 <span style="color:#b48ead;">stream-west/vf-erp/erp-fanout:</span> checkpoint advanced<br>09:13:52 <span style="color:#b48ead;">stream-east/vf-mfg:</span> job compare-q3 finished OK<br><span style="color:#6d7278;">■ following — every fleet in the organization appends here</span></div>
+        <div style="display:flex; gap:4px; margin-bottom:8px; font-size:8.5px;">
+          <span style="border:1px solid #2f3237; background:#1b1d20; color:#c9c6bf; border-radius:99px; padding:2px 8px; font-weight:600;">Capture</span>
+          <span style="border:1px solid #2f3237; background:#1b1d20; color:#c9c6bf; border-radius:99px; padding:2px 8px; font-weight:600;">Integrate</span>
+          <span style="border:1px solid #2f3237; background:#1b1d20; color:#c9c6bf; border-radius:99px; padding:2px 8px; font-weight:600;">Latency</span>
+          <span style="border:1px solid #e06c75; background:#1b1d20; color:#e06c75; border-radius:99px; padding:2px 8px; font-weight:600;">Errors</span>
+          <span style="margin-left:auto; border:1px solid #2f3237; background:#1b1d20; color:#c9c6bf; border-radius:99px; padding:2px 8px; font-weight:600;">⇱ Overlay</span>
+        </div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5;">Docked 240px panel at the bottom of the console — the executive "heartbeat" view. Filter chips narrow to error/latency lines across all systems at once; follow mode tails live; <b>⇱ Overlay</b> reopens it in the floating viewer alongside any fleet/VF/stream log tabs for side-by-side comparison. Read-only like the rest of the console: acting on a line means following it into its fleet.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Hierarchy:</b> <span style="font-family:'IBM Plex Mono',monospace; font-size:9.5px;">&lt;stream&gt;.out → &lt;vf&gt;.vf.out → &lt;fleet&gt;.fleet.out → global.out</span> — each level merges everything below it, time-ordered. global.out is the top: the union of every fleet's log, hence of every VF, stream, job, event and alert in the organization.</div>
+    </div>
+    <div style="width:40px; flex:none; display:grid; place-items:center; padding-top:46px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- drill-down outcome -->
+    <div style="width:330px; flex:none;">
+      <div style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:8px;">DRILL-DOWN · WHERE EACH CLICK LANDS</div>
+        <div style="font-size:11px; line-height:1.8;">
+          • <b>Open fleet →</b> Fleet view: VF list · fleet log · fleet timeline<br>
+          • <b>VF row / Switch</b> → VF dashboard: needs-attention · KPIs · streams · VF log<br>
+          • <b>Triage: stream error</b> → stream dashboard, error surfaced<br>
+          • <b>Triage: CPU / memory / IO</b> → connection detail, Server health panel expanded<br>
+          • <b>Triage: delivery failure</b> → the alert rule's log<br>
+          • <b>⇱ Overlay</b> → floating log viewer, global.out tab added
+        </div>
+      </div>
+      <div style="margin-top:10px; background:#fff; border:1px solid #e3e1dc; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#6d7278; line-height:1.5;"><b style="color:#1a1c1e;">Then:</b> the target fleet/VF becomes the working context — the console itself never mutates anything. Back-link "← Global fleet manager" returns here.</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

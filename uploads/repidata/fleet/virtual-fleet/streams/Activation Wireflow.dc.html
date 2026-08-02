@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#f4f3ef; font-family:'IBM Plex Sans',sans-serif; color:#1a1c1e; }
+    a { color:#1a6e50; } a:hover { color:#14523c; }
+  </style>
+</helmet>
+<div data-screen-label="Activation and stream log wireflow" style="padding:36px 40px; min-width:2080px;">
+  <div style="font-size:22px; font-weight:700;">Activate replication &amp; stream log — wireflow</div>
+  <div style="display:flex; align-items:flex-start; gap:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:8px; padding:9px 13px; margin:10px 0 4px; max-width:1180px;">
+    <span style="flex:none; font-size:9.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; border:1px solid #1a6e50; border-radius:4px; padding:2px 7px; background:#fff;">CANONICAL</span>
+    <span style="font-size:11px; color:#6d7278; line-height:1.55;">Canonical for <b>Activate replication</b> — the plan/apply cycle, component checklist, capture-start options, guard rails — and for the <b>stream log</b>. Summarised as branch B of the <b>Virtual Fleet Wireflow</b> and ② of the <b>Stream Wireflow</b>. Spec: <b>activation-ui.md</b>, <b>stream.md</b> §6.</span>
+  </div>
+  <div style="font-size:13px; color:#6d7278; margin:6px 0 14px;">Replicator console · Activate replication is the stream's primary action — refresh only runs chained off the activation snapshot so capture and load meet with no gap · plus the live stream-log process: tabs, overlay, filters, export</div>
+  <div style="display:flex; gap:10px; align-items:stretch; margin-bottom:14px;">
+    <div style="border:1.5px solid #1a6e50; background:#e8f2ed; border-radius:9px; padding:8px 12px; font-size:11px; line-height:1.5; width:250px; box-sizing:border-box;"><b style="color:#1a6e50;">NEW · Activate replaces Refresh</b><br>Plan-based dialog computes components against live locations; refresh is the chained initial load — never standalone</div>
+    <div style="border:1.5px solid #1a6e50; background:#e8f2ed; border-radius:9px; padding:8px 12px; font-size:11px; line-height:1.5; width:250px; box-sizing:border-box;"><b style="color:#1a6e50;">NEW · Table-scoped activation</b><br>Pick any subset of hundreds of tables — filter box, select all / unselect all — and reactivate just those</div>
+    <div style="border:1.5px solid #1a6e50; background:#e8f2ed; border-radius:9px; padding:8px 12px; font-size:11px; line-height:1.5; width:250px; box-sizing:border-box;"><b style="color:#1a6e50;">NEW · 5 capture starts</b><br>Now · oldest open txn (fetch again) · rewind interval · recovery via target integrate sequence · custom rewind + emit policy</div>
+    <div style="border:1.5px solid #1a6e50; background:#e8f2ed; border-radius:9px; padding:8px 12px; font-size:11px; line-height:1.5; width:250px; box-sizing:border-box;"><b style="color:#1a6e50;">NEW · Truncate or leave target</b><br>Chained load is bulk (stage + atomic swap) or row-wise repair; target tables left untouched or truncate-and-load</div>
+    <div style="border:1.5px solid #1a6e50; background:#e8f2ed; border-radius:9px; padding:8px 12px; font-size:11px; line-height:1.5; width:250px; box-sizing:border-box;"><b style="color:#1a6e50;">NEW · Stream log panel</b><br>Per-stream tabs that persist, dock ⇄ overlay ⇄ minimize, Copy / Download, and Capture · Integrate · Latency · Errors filters</div>
+  </div>
+  <div style="display:flex; gap:16px; align-items:center; font-size:11.5px; color:#6d7278; margin-bottom:26px;">
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1px solid #c9c6bf; border-radius:3px;"></span>screen / dialog step</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1.5px dashed #b3541e; border-radius:3px;"></span>branch / sub-flow</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px; height:10px; background:#fbe9e7; border:1px solid #b3261e; border-radius:99px;"></span>validation gate</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:3px;"></span>outcome</span>
+  </div>
+
+  <!-- ===== row 1 · activation flow ===== -->
+  <div style="display:flex; align-items:flex-start; gap:0;">
+
+    <div style="width:225px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:8px;">ENTRY POINTS</div>
+        <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; margin-bottom:6px; text-align:center;">Stream header · Activate…</div>
+        <div style="background:#fff; border:1px solid #1a6e50; color:#1a6e50; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Stream admin · Activate replication…</div>
+        <div style="font-size:10.5px; color:#6d7278; margin-top:8px; line-height:1.5;">Scoped to the <b>virtual fleet you're in</b> (static label, no fleet picker). A <b>Stream</b> select lists the fleet's streams alphabetically — deep-linking from a stream preselects it.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Branch:</b> there is <b>no Refresh button</b> anymore — a reload is always this dialog's chained load, so it can't run against an unpositioned capture.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:285px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">DIALOG · SCOPE</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Stream, then tables</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 8px; font-size:10px; margin-bottom:6px;">stream-east · Stream <span style="font-family:'IBM Plex Mono',monospace; border:1px solid #e3e1dc; border-radius:4px; padding:1px 6px;">db2-mfg-copy ▾</span> · Route <span style="font-family:'IBM Plex Mono',monospace;">DB2-MFG → DATABRICKS-LH</span> · <span style="border:1px solid #e3e1dc; border-radius:99px; padding:1px 7px; font-size:9px;">active — verify + reload plan</span></div>
+        <div style="font-size:10px; font-weight:700; color:#6d7278; margin-bottom:4px;">TABLES — 61 OF 63 SELECTED</div>
+        <div style="display:flex; gap:4px; margin-bottom:4px;">
+          <span style="flex:1; border:1px solid #e3e1dc; border-radius:5px; padding:3px 7px; font-size:9.5px; color:#6d7278; font-family:'IBM Plex Mono',monospace;">Filter tables…</span>
+          <span style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 7px; font-size:9.5px;">Select all</span>
+          <span style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 7px; font-size:9.5px;">Unselect all</span>
+        </div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; font-size:9.5px; font-family:'IBM Plex Mono',monospace;">
+          <div style="padding:3px 8px; border-bottom:1px solid #f0efeb;">☑ BOM_COMPONENTS <span style="color:#8a8f98;">· MFGDB.MFG</span></div>
+          <div style="padding:3px 8px; border-bottom:1px solid #f0efeb;">☑ MACHINE_EVENTS</div>
+          <div style="padding:3px 8px; border-bottom:1px solid #f0efeb; color:#8a8f98;">☐ QUALITY_CHECKS</div>
+          <div style="padding:3px 8px; color:#8a8f98;">scrolls — hundreds of tables, alphabetical</div>
+        </div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Branch:</b> partial selection scopes <i>everything</i> — plan, chained load, CLI <span style="font-family:'IBM Plex Mono',monospace; font-size:9.5px;">--tables</span>, and both ledger events. Zero tables selected blocks apply.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:300px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">DIALOG · COMPUTED PLAN</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Replication components</div>
+        <div style="font-size:10px; border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; margin-bottom:3px; display:flex; align-items:baseline; gap:6px;"><span>☑ <b>Jobs</b> — capture + integrate under the scheduler</span><span style="margin-left:auto; flex:none; border:1px solid #e3e1dc; border-radius:99px; padding:0 6px; font-size:8.5px; color:#6d7278; white-space:nowrap;">always applied</span></div>
+        <div style="font-size:10px; border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; margin-bottom:3px;">☑ <b>Table enrollment</b> — dictionary snapshot, per-table incremental<br><span style="color:#6d7278; margin-left:14px;">└ ☐ replace all old enrollment</span></div>
+        <div style="font-size:10px; border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; margin-bottom:3px;">☑ <b>Supplemental logging</b> — idempotent, verifies fast</div>
+        <div style="font-size:10px; border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; margin-bottom:3px;">☑/held <b>State tables</b> — created on first activation; kept on verify (recreate is destructive, own guarded row)</div>
+        <div style="font-size:10px; border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px;">☑/held <b>Capture position</b> — set on first activation; a verify plan never resets it</div>
+        <div style="font-size:10px; color:#6d7278; margin-top:6px; line-height:1.5;">Status pills flip by stream state: <span style="border:1px solid #b3541e; color:#b3541e; border-radius:99px; padding:0 6px; font-size:8.5px;">will snapshot / will create / will set</span> on first activation vs <span style="border:1px solid #e3e1dc; border-radius:99px; padding:0 6px; font-size:8.5px;">verified · current / in place — kept / held</span> on an active stream.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Branch:</b> every row is clickable full-width (label, description, or pill) — fixed rows (Jobs, held rows) just don't toggle.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:305px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">DIALOG · CAPTURE START <span style="color:#6d7278; font-weight:400;">(first activation only)</span></div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Where capture begins</div>
+        <div style="border:1.5px solid #1a6e50; background:#f2f7f4; border-radius:6px; padding:4px 8px; font-size:10px; margin-bottom:3px;">◉ <b>Now</b> — current source position; chained refresh reads as-of the same position</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; font-size:10px; color:#6d7278; margin-bottom:3px;">○ <b>Oldest open transaction</b>, emit from now — “source has <b>2</b> open txns” + <span style="border:1px solid #e3e1dc; border-radius:5px; padding:0 6px; font-size:9px;">Fetch again</span></div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; font-size:10px; color:#6d7278; margin-bottom:3px;">○ <b>Rewind an interval</b> — minutes <span style="font-family:'IBM Plex Mono',monospace;">2</span>, emit only changes committed from now</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; font-size:10px; color:#6d7278; margin-bottom:3px;">○ <b>Recovery rewind</b> to the target's integrate sequence — <span style="border:1px solid #e3e1dc; border-radius:5px; padding:0 6px; font-size:9px;">Fetch sequence…</span></div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; font-size:10px; color:#6d7278;">○ <b>Custom rewind…</b> <span style="font-family:'IBM Plex Mono',monospace; font-size:9px;">YYYY-MM-DD HH:MM</span> · emit: after rewind time / from now / delayed until a source position</div>
+        <div style="font-size:10px; color:#6d7278; margin-top:6px; line-height:1.5;">On an <b>active</b> stream this section reads “Held — already positioned; a rewind is its own guarded plan on the Stream Timeline.”</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Sub-flow · Fetch sequence:</b> reads the last-applied position from the target's state tables (hub-failover safe). Options: <b>previous stream/location names</b> for renamed setups + per-location previous-name fields; <b>integrate-location checklist</b> — multiple targets rewind to the <i>oldest</i> sequence. Result pins next to the radio: <span style="font-family:'IBM Plex Mono',monospace; font-size:9.5px;">seq 0x3A81F2 · committed 22:41 · state table on databricks-lh</span>.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:290px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">DIALOG · INITIAL LOAD + START</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Refresh chained after activation</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; font-size:10px; margin-bottom:3px;">☑ Load the target after activation — refresh the 61 selected tables</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; font-size:10px; margin-bottom:3px;">◉ <b>Bulk</b> — stage + atomic swap &nbsp;·&nbsp; ○ <b>Row-wise</b> — repair only differences</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; font-size:10px; margin-bottom:6px;">Target tables: <b>leave untouched ▾</b> / truncate and load</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5; margin-bottom:6px;">Reads as-of snapshot position <b>S</b> from activation; integrate keeps running and skips captured changes ≤ S per refreshed table — <b>no gap, no double-apply, nothing suspended</b>.</div>
+        <div style="border-top:1px solid #f0efeb; padding-top:6px; font-size:10px;">START POLICY &nbsp; ◉ Start jobs after apply &nbsp;·&nbsp; ○ Leave suspended</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; color:#6d7278; border:1px solid #e3e1dc; border-radius:5px; padding:3px 6px; margin-top:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">repl activate stream-east db2-mfg-copy --components jobs,enroll,suplog --tables bom_components,… --refresh bulk --target untouched --start</div>
+      </div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:250px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3261e; margin-bottom:8px;">GATES ON APPLY</div>
+        <div style="border:1px solid #b3261e; background:#fbe9e7; border-radius:6px; padding:4px 8px; font-size:10px; margin-bottom:3px;">≥ 1 table selected</div>
+        <div style="border:1px solid #b3261e; background:#fbe9e7; border-radius:6px; padding:4px 8px; font-size:10px; margin-bottom:3px;">custom rewind → position set</div>
+        <div style="border:1px solid #b3261e; background:#fbe9e7; border-radius:6px; padding:4px 8px; font-size:10px; margin-bottom:3px;">recovery → sequence fetched</div>
+        <div style="border:1px solid #b3261e; background:#fbe9e7; border-radius:6px; padding:4px 8px; font-size:10px;">interval → minutes &gt; 0</div>
+        <div style="font-size:10px; color:#6d7278; margin-top:8px; line-height:1.5;">Each failure is a toast naming the fix — the dialog stays open, nothing is applied.</div>
+      </div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:270px; flex:none;">
+      <div style="border:1.5px solid #1a6e50; background:#e8f2ed; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:8px;">OUTCOME · LEDGER + RUNTIME</div>
+        <div style="font-size:10.5px; line-height:1.6;">
+          <div style="margin-bottom:4px;"><span style="border:1px solid #1a6e50; color:#1a6e50; border-radius:99px; padding:0 7px; font-size:9px; font-weight:600;">ACTIVATE</span> event — plan, tables, components, capture start, load, start policy, equivalent CLI</div>
+          <div style="margin-bottom:4px;"><span style="border:1px solid #b3541e; color:#b3541e; border-radius:99px; padding:0 7px; font-size:9px; font-weight:600;">REFRESH</span> event — chained, “snapshot position S… integrate skips ≤ S per table”</div>
+          <div style="margin-bottom:4px;">Paused stream resumes when start policy says start; toast summarizes the handshake.</div>
+          <div>Both land at the top of the stream's <b>Recent events</b> (live actions merge with the seeded ledger, newest first) and on Events.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== row 2 · stream log process ===== -->
+  <div style="font-size:15px; font-weight:700; margin:34px 0 4px;">Stream log — how the live log process works</div>
+  <div style="font-size:12px; color:#6d7278; margin-bottom:16px;">Docked on the stream page below Tables (above Compare history) · one tab per visited stream, persisted · the same tabbed chrome floats as an overlay</div>
+  <div style="display:flex; align-items:flex-start; gap:0;">
+
+    <div style="width:265px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">SOURCE · TWO JOBS WRITE IT</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Capture → hub → integrate</div>
+        <div style="font-size:10px; border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; margin-bottom:3px;"><span style="color:#7a5ea8; font-family:'IBM Plex Mono',monospace; font-size:9px;">…-cap-db2-mfg:</span> Captured 177 rows from 96s ago for 'OPERATORS' (89 upd, 88 ins). This took 4.50 seconds.</div>
+        <div style="font-size:10px; border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; margin-bottom:3px;"><span style="color:#7a5ea8; font-family:'IBM Plex Mono',monospace; font-size:9px;">…-cap-db2-mfg:</span> Capture cycle scanned 2 transactions (226,435 bytes)… routed 3,008 bytes (compression=95.5%) into 1 location. Capture cycle 426.</div>
+        <div style="font-size:10px; border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px;"><span style="color:#7a5ea8; font-family:'IBM Plex Mono',monospace; font-size:9px;">…-integ-databricks-lh:</span> Integrated 211 changes… for 'OPERATORS', 'MACHINE_EVENTS'. This took 0.015 seconds — <b>end-to-end latency 96s</b>.</div>
+        <div style="font-size:10px; color:#6d7278; margin-top:6px; line-height:1.5;">Every line: timestamp · job name · rows + table · duration · latency on integrated lines. Errors and suspensions render amber.</div>
+      </div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:280px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">PANEL · TABS</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">One tab per stream</div>
+        <div style="display:flex; gap:4px; margin-bottom:6px; font-family:'IBM Plex Mono',monospace; font-size:9px;">
+          <span style="border:1px solid #c9c6bf; border-radius:5px; padding:2px 7px; color:#6d7278;">db2-mfg.out ✕</span>
+          <span style="border:1px solid #1a1c1e; background:#1a1c1e; color:#fff; border-radius:5px; padding:2px 7px;">db2-mfg-copy.out ✕</span>
+        </div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.6;">Visiting a stream page opens (and activates) its tab · click switches, ✕ closes · the set persists across reloads (<span style="font-family:'IBM Plex Mono',monospace; font-size:9px;">repl-stream-logs</span>) · tail renders newest-at-bottom, column-reversed so it sticks to the tail.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Branch:</b> the overlay shows whichever tab is active — you can watch stream A's log while working on stream B's page.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:300px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">PANEL · CONTROL ROW</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Second row, under the tabs</div>
+        <div style="display:flex; gap:4px; flex-wrap:wrap; margin-bottom:6px; font-size:9.5px;">
+          <span style="border:1px solid #c9c6bf; border-radius:5px; padding:2px 8px; font-weight:600;">⇱ Overlay</span>
+          <span style="border:1px solid #c9c6bf; border-radius:5px; padding:2px 8px; font-weight:600;">Copy</span>
+          <span style="border:1px solid #c9c6bf; border-radius:5px; padding:2px 8px; font-weight:600;">Download</span>
+          <span style="border:1px solid #c9c6bf; border-radius:5px; padding:2px 8px; font-weight:600;">⏸ Pause</span>
+          <span style="margin-left:auto;"></span>
+          <span style="border:1px solid #1a1c1e; background:#1a1c1e; color:#fff; border-radius:5px; padding:2px 8px; font-weight:600;">✓ Capture</span>
+          <span style="border:1px solid #1a1c1e; background:#1a1c1e; color:#fff; border-radius:5px; padding:2px 8px; font-weight:600;">✓ Integrate</span>
+          <span style="border:1px solid #1a1c1e; background:#1a1c1e; color:#fff; border-radius:5px; padding:2px 8px; font-weight:600;">✓ Latency</span>
+          <span style="border:1px solid #1a1c1e; background:#1a1c1e; color:#fff; border-radius:5px; padding:2px 8px; font-weight:600;">✓ Errors</span>
+        </div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.6;">Far left: <b>⇱ Overlay / ⇲ Dock in page</b>. <b>Copy</b> flips to “✓ Copied” + toast · <b>Download</b> saves <span style="font-family:'IBM Plex Mono',monospace; font-size:9px;">&lt;stream&gt;.out.log</span> · <b>Pause</b> freezes the tail, ▶ Follow resumes. Right: four filter chips, all on by default — a line shows if <i>any</i> of its tags is on; all off shows a hint. Copy/Download export exactly what's visible.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Filters:</b> Capture = captured/scanned/routed lines · Integrate = integrate cycles + waiting · Latency = end-to-end latency lines · Errors = capture-stopped / suspension lines.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:290px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">MODES · DOCK ⇄ OVERLAY ⇄ MIN</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Where the panel lives</div>
+        <div style="font-size:10px; border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; margin-bottom:3px;"><b>Docked</b> (default) — 265px panel on the stream page, below Tables, above Compare history</div>
+        <div style="font-size:10px; border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; margin-bottom:3px;"><b>Overlay</b> — fixed bottom strip spanning sidebar edge → screen right (tracks sidebar resize); follows across screens; page gets bottom padding so content still scrolls clear</div>
+        <div style="font-size:10px; border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; margin-bottom:6px;"><b>Minimized</b> — ▼ collapses the overlay to its tab bar; ▲ restores</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5;">Mode and minimized state persist (<span style="font-family:'IBM Plex Mono',monospace; font-size:9px;">repl-stream-log-mode / -min</span>); while floating, the page shows a dashed “⇲ Dock in page” placeholder.</div>
+      </div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:265px; flex:none;">
+      <div style="border:1.5px solid #1a6e50; background:#e8f2ed; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:8px;">OUTCOME · ONE READING SURFACE</div>
+        <div style="font-size:10.5px; line-height:1.6;">Activation's chained refresh, capture cycles, integrate cycles, latency, and errors all narrate into the same per-stream log — filterable, exportable, and watchable from any screen. Suspended and stopped streams explain themselves in-line (<span style="font-family:'IBM Plex Mono',monospace; font-size:9.5px;">stream suspended — jobs drained at their checkpoints…</span>) instead of going silent.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Relations:</b> latency here is the same figure as the stream header's Latency card; the ACTIVATE / REFRESH ledger events link the plan to what the log then narrates.</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

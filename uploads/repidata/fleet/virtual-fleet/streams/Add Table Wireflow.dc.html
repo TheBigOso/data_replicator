@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#f4f3ef; font-family:'IBM Plex Sans',sans-serif; color:#1a1c1e; }
+    a { color:#1a6e50; } a:hover { color:#14523c; }
+  </style>
+</helmet>
+<div data-screen-label="Add table wireflow" style="padding:36px 40px; min-width:1620px;">
+  <div style="font-size:22px; font-weight:700;">Add table — wireflow</div>
+  <div style="display:flex; align-items:flex-start; gap:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:8px; padding:9px 13px; margin:10px 0 4px; max-width:1180px;">
+    <span style="flex:none; font-size:9.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; border:1px solid #1a6e50; border-radius:4px; padding:2px 7px; background:#fff;">CANONICAL</span>
+    <span style="font-size:11px; color:#6d7278; line-height:1.55;">Canonical for the <b>Add table</b> flow — source catalogue, pick → review, flag guardrails, registration semantics. Summarised as ⑤ of the <b>Stream Wireflow</b>. Spec: <b>stream-ui.md</b> §4 (which absorbed the former stream-ui.md), <b>tables.md</b>.</span>
+  </div>
+  <div style="font-size:13px; color:#6d7278; margin:6px 0 14px;">Replicator console · catalogue → pick → review → register, plus the bring-online lifecycle and the remove flow · docs: tables.md, tables-ui.md</div>
+  <div style="display:flex; gap:16px; align-items:center; font-size:11.5px; color:#6d7278; margin-bottom:26px;">
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1px solid #c9c6bf; border-radius:3px;"></span>screen / dialog step</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1.5px dashed #b3541e; border-radius:3px;"></span>branch / sub-flow</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px; height:10px; background:#fbe9e7; border:1px solid #b3261e; border-radius:99px;"></span>validation gate</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:3px;"></span>outcome</span>
+  </div>
+
+  <!-- ===== main flow ===== -->
+  <div style="display:flex; align-items:flex-start; gap:0;">
+
+    <!-- entry -->
+    <div style="width:215px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:8px;">ENTRY POINTS</div>
+        <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; margin-bottom:6px; text-align:center;">Tables toolbar · Add table</div>
+        <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Stream dashboard · Tables · Add table</div>
+        <div style="font-size:10.5px; color:#6d7278; margin-top:8px; line-height:1.5;">The dialog is scoped to <b>one stream</b>: the active stream filter, else the selected stream. Registration keys on <span style="font-family:'IBM Plex Mono',monospace; font-size:10px;">stream·identity</span>, so a duplicate registers its own copy.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Branch:</b> filter = All streams → the selected stream is used; from a stream dashboard it is always that stream.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- context -->
+    <div style="width:250px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">DIALOG · CONTEXT</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Add tables to <span style="font-family:'IBM Plex Mono',monospace; font-size:12px;">ora-erp</span></div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:8px;">
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 7px; font-size:9.5px;"><span style="color:#6d7278;">SOURCE SYSTEM</span><br><span style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:10px;">ORA-ERP01</span><br><span style="color:#6d7278;">Oracle · db ERPPRD</span></div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 7px; font-size:9.5px;"><span style="color:#6d7278;">TARGET</span><br><span style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:10px;">SNOWFLAKE-PRD</span><br><span style="color:#6d7278;">objects on first refresh</span></div>
+        </div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5;">Read from the <b>source catalogue</b> — every table in the stream's source schema. Tables already registered in this stream are not listed; a real schema holds far more than a stream replicates (~50 candidates).</div>
+      </div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- step 1: pick -->
+    <div style="width:300px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">STEP 1 · PICK</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Search the catalogue</div>
+        <div style="display:flex; gap:5px; margin-bottom:6px; font-size:9.5px;">
+          <div style="flex:1; border:1px solid #e3e1dc; border-radius:6px; padding:4px 7px; color:#8a8f98;">Search the source catalogue…</div>
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:4px 7px; font-weight:600;">Select all 47</div>
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:4px 7px; font-weight:600;">Clear</div>
+        </div>
+        <div style="border:1px solid #e3e1dc; border-radius:7px; overflow:hidden; margin-bottom:6px;">
+          <div style="display:flex; gap:7px; padding:4px 8px; border-bottom:1px solid #f0eeea; font-size:10px; color:#6d7278;"><span style="flex:1;">SOURCE CATALOGUE</span><span>47 tables in ERPPRD.ERP</span></div>
+          <div style="display:flex; gap:7px; padding:4px 8px; border-bottom:1px solid #f0eeea; font-size:10px;"><span style="color:#1a6e50;">☑</span><span style="font-family:'IBM Plex Mono',monospace; flex:1;">GL_PERIODS</span><span style="color:#6d7278;">45k · 14 cols</span></div>
+          <div style="display:flex; gap:7px; padding:4px 8px; border-bottom:1px solid #f0eeea; font-size:10px;"><span style="color:#1a6e50;">☑</span><span style="font-family:'IBM Plex Mono',monospace; flex:1;">CURRENCY_RATES</span><span style="color:#6d7278;">12k · 8 cols</span></div>
+          <div style="padding:4px 8px; border-bottom:1px solid #f0eeea; font-size:10px;">
+            <div style="display:flex; gap:7px;"><span style="color:#1a6e50;">☑</span><span style="font-family:'IBM Plex Mono',monospace; flex:1;">AP_HOLDS</span><span style="color:#6d7278;">88k · 11 cols</span></div>
+            <div style="font-size:9px; color:#b3541e; margin-left:17px;">⚠ no primary key — apply would match on all columns</div>
+          </div>
+          <div style="display:flex; gap:7px; padding:4px 8px; font-size:10px;"><span style="color:#8a8f98;">☐</span><span style="font-family:'IBM Plex Mono',monospace; flex:1;">TAX_CODES</span><span style="color:#6d7278;">3k · 6 cols</span></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:9.5px; color:#6d7278;"><span>3 selected · 47 of 47 shown</span><span style="background:#1a6e50; color:#fff; font-weight:600; border-radius:5px; padding:3px 8px;">Review 3 tables →</span></div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Branch:</b> flagged tables (no key, no supplemental logging) stay registrable — warned here, warned again in review, flagged in the event.</div>
+      <div style="margin-top:10px; border:1.5px dashed #b3261e; background:#fbe9e7; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#b3261e; line-height:1.5;"><b>Gate:</b> ≥1 table selected → Review; otherwise a toast. Empty catalogue reads "Nothing left to add — every table in this schema is already registered."</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- step 2: review -->
+    <div style="width:300px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">STEP 2 · REVIEW</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:2px;">Confirm what goes online</div>
+        <div style="font-size:10px; color:#6d7278; margin-bottom:8px;">3 tables will be registered in ora-erp · 1 needs attention before it replicates cleanly.</div>
+        <div style="border:1px solid #e3e1dc; border-radius:7px; overflow:hidden; margin-bottom:8px; font-size:9.5px;">
+          <div style="padding:5px 8px; border-bottom:1px solid #f0eeea;">
+            <div style="display:flex; gap:6px;"><b style="font-family:'IBM Plex Mono',monospace;">GL_PERIODS</b><span style="color:#6d7278;">45k rows · 14 cols</span><span style="margin-left:auto; color:#b3261e; font-weight:600; border:1px solid #e3e1dc; border-radius:5px; padding:0 6px;">Remove</span></div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; color:#6d7278;">ERPPRD.ERP.GL_PERIODS → SNOWFLAKE_PRD.ERP.GL_PERIODS</div>
+          </div>
+          <div style="padding:5px 8px;">
+            <div style="display:flex; gap:6px;"><b style="font-family:'IBM Plex Mono',monospace;">AP_HOLDS</b><span style="color:#6d7278;">88k rows · 11 cols</span><span style="margin-left:auto; color:#b3261e; font-weight:600; border:1px solid #e3e1dc; border-radius:5px; padding:0 6px;">Remove</span></div>
+            <div style="font-size:9px; color:#b3541e;">⚠ no primary key — apply would match on all columns</div>
+          </div>
+        </div>
+        <div style="background:#f7f6f2; border:1px solid #eceae5; border-radius:6px; padding:6px 8px; font-size:9.5px; color:#6d7278; line-height:1.5; margin-bottom:8px;">On confirm: the definition is written, capture starts at the next checkpoint, target objects are created on the first refresh — <b>nothing is copied until that refresh runs</b>.</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:9.5px;"><span style="color:#6d7278;">← Back to the catalogue</span><span style="background:#1a6e50; color:#fff; font-weight:600; border-radius:5px; padding:3px 8px;">Register 3 tables</span></div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Branch:</b> Remove here only unpicks — back to the catalogue keeps the remaining checkboxes. Cancel / ✕ at any step discards the selection; nothing is registered.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- outcome -->
+    <div style="width:265px; flex:none;">
+      <div style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:8px;">REGISTERED</div>
+        <div style="font-size:11px; line-height:1.7;">
+          • rows land in the Tables grid — state <b>Queued</b>, refresh <b>PENDING</b>, compare <b>NONE</b>, volume —<br>
+          • DEFINITION CHANGE event carries the list, source schema, capture start, initial-load requirement, and any flagged tables<br>
+          • toast: "capture starts at the next checkpoint; run a refresh to load the initial data"<br>
+          • persisted (<span style="font-family:'IBM Plex Mono',monospace; font-size:10px;">repl-added-tables</span>) — survives reload, removable like any seeded table
+        </div>
+      </div>
+      <div style="margin-top:10px; background:#fff; border:1px solid #e3e1dc; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#6d7278; line-height:1.5;"><b style="color:#1a1c1e;">Then:</b> run a refresh (initial load) → capture goes live → compare to verify. Registration is a definition change, never a data copy.</div>
+    </div>
+  </div>
+
+  <!-- ===== sub-flow: bring-online lifecycle ===== -->
+  <div style="margin-top:34px; margin-left:262px;">
+    <div style="width:2px; height:26px; background:#b3541e; margin-left:130px; margin-bottom:10px;"></div>
+    <div style="border:1.5px dashed #b3541e; border-radius:12px; padding:16px 18px; background:#fdfbf8; width:1150px;">
+      <div style="font-size:12px; font-weight:700; color:#8a5a2a; margin-bottom:12px;">SUB-FLOW · From registered to replicating — what the operator does after the dialog closes</div>
+      <div style="display:flex; align-items:flex-start; gap:0;">
+        <div style="width:230px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">REGISTERED ROW · TABLES GRID</div>
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 8px; font-size:9px; font-family:'IBM Plex Mono',monospace;">GL_PERIODS · ora-erp<br><span style="color:#6d7278;">refresh </span><span style="background:#f0eeea; border-radius:99px; padding:0 6px;">PENDING</span><span style="color:#6d7278;"> · compare —  · vol —</span></div>
+          <div style="font-size:9.5px; color:#6d7278; margin-top:5px; line-height:1.5;">Capture is armed at the next checkpoint, but the target object does not exist yet and no rows have moved.</div>
+        </div>
+        <div style="width:36px; flex:none; display:grid; place-items:center; padding-top:30px; color:#8a8f98; font-size:17px;">→</div>
+        <div style="width:230px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">RUN REFRESH · INITIAL LOAD</div>
+          <div style="font-size:10px; line-height:1.6;">The refresh creates the target objects (per-dialect DDL, keys chosen from surviving columns) and bulk-loads the rows — the standard refresh flow, backgroundable like any job.</div>
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:4px 7px; font-size:8.5px; font-family:'IBM Plex Mono',monospace; color:#6d7278; margin-top:6px;">ora-erp-rfr ▮▮▮░░ BUSY · 3 tables</div>
+        </div>
+        <div style="width:36px; flex:none; display:grid; place-items:center; padding-top:30px; color:#8a8f98; font-size:17px;">→</div>
+        <div style="width:230px; flex:none; background:#e8f2ed; border:1px solid #1a6e50; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:6px;">CAPTURE LIVE</div>
+          <div style="font-size:10px; line-height:1.6;">• state → <b>Replicating</b>, refresh DONE, sparkline starts filling<br>• changes flow with the rest of the stream — no per-table job<br>• compare when settled to verify the load</div>
+        </div>
+        <div style="width:36px; flex:none; display:grid; place-items:center; padding-top:30px; color:#8a8f98; font-size:17px;">→</div>
+        <div style="width:230px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">UNDO · STOP AND REMOVE</div>
+          <div style="font-size:10px; line-height:1.6;">Remove on the row → arm → stop dialog → STOP event. The full remove flow is the sub-flow below — removal is an operational stop, not a list edit.</div>
+        </div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3261e; background:#fbe9e7; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#b3261e; line-height:1.5;"><b>Gate:</b> a registered table that is never refreshed stays PENDING with volume — forever; the guardrail is visibility, not a blocked register.</div>
+    </div>
+  </div>
+
+  <!-- ===== sub-flow: remove a table ===== -->
+  <div style="margin-top:30px; margin-left:262px;">
+    <div style="border:1.5px dashed #b3541e; border-radius:12px; padding:16px 18px; background:#fdfbf8; width:1180px;">
+      <div style="font-size:12px; font-weight:700; color:#8a5a2a; margin-bottom:12px;">SUB-FLOW · Remove a table — stop, then remove (two steps, because removal is an operational stop and not a list edit)</div>
+      <div style="display:flex; align-items:flex-start; gap:0;">
+        <div style="width:210px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">1 · ARM</div>
+          <div style="display:flex; gap:5px; margin-bottom:6px;">
+            <span style="border:1px solid #e3e1dc; border-radius:5px; padding:2px 8px; font-size:9.5px; font-weight:600; color:#6d7278;">Remove</span>
+            <span style="color:#8a8f98; font-size:10px;">→</span>
+            <span style="border:1px solid #b3261e; color:#b3261e; border-radius:5px; padding:2px 8px; font-size:9.5px; font-weight:700;">Confirm</span>
+          </div>
+          <div style="font-size:9.5px; color:#6d7278; line-height:1.5;">The row's Remove button re-labels in place — no dialog yet. Clicking anywhere else disarms it. Same flow from the Tables screen and the stream dashboard's Tables section.</div>
+        </div>
+        <div style="width:36px; flex:none; display:grid; place-items:center; padding-top:30px; color:#8a8f98; font-size:17px;">→</div>
+        <div style="width:280px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">2 · STOP DIALOG</div>
+          <div style="font-size:11px; font-weight:600; margin-bottom:4px;">Stop replication for GL_PERIODS?</div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 8px; font-size:8.5px; font-family:'IBM Plex Mono',monospace; color:#6d7278; margin-bottom:6px;">stream&nbsp;&nbsp;ora-erp<br>source&nbsp;&nbsp;ERPPRD.ERP.GL_PERIODS<br>target&nbsp;&nbsp;SNOWFLAKE_PRD.ERP.GL_PERIODS</div>
+          <div style="font-size:9px; font-weight:700; letter-spacing:.06em; color:#6d7278; margin-bottom:3px;">STOP SEQUENCE</div>
+          <div style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 7px; font-size:9.5px; margin-bottom:3px;"><span style="color:#1a6e50;">☑</span> <b>Drain in-flight changes</b> — captured changes finish applying; off discards them at the checkpoint</div>
+          <div style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 7px; font-size:9.5px; color:#6d7278;"><span style="color:#8a8f98;">☐</span> <b style="color:#1a1c1e;">Drop the target table</b> — off leaves the target and its rows in place, the usual choice</div>
+        </div>
+        <div style="width:36px; flex:none; display:grid; place-items:center; padding-top:30px; color:#8a8f98; font-size:17px;">→</div>
+        <div style="width:250px; flex:none; background:#e8f2ed; border:1px solid #1a6e50; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:6px;">3 · STOPPED AND REMOVED</div>
+          <div style="font-size:10px; line-height:1.6;">• capture for the table ends at the next checkpoint — no other table in the stream is interrupted<br>• a <b>STOP</b> event records every choice (drain, drop)<br>• the registration goes; the stream's registered count drops<br>• persisted (<span style="font-family:'IBM Plex Mono',monospace; font-size:9px;">repl-removed-tables</span>) — survives reload</div>
+        </div>
+        <div style="width:36px; flex:none; display:grid; place-items:center; padding-top:30px; color:#8a8f98; font-size:17px;">→</div>
+        <div style="width:210px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">RE-ADD LATER</div>
+          <div style="font-size:10px; line-height:1.6;">The table reappears in the Add-table catalogue — registering it again is the standard add flow, and the initial load is a fresh refresh (or a repair-scope refresh if the target rows were kept).</div>
+        </div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3261e; background:#fbe9e7; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#b3261e; line-height:1.5;"><b>Gate:</b> removal is scoped per stream (<span style="font-family:'IBM Plex Mono',monospace; font-size:10px;">stream·identity</span>) — removing a table from a duplicate leaves the original's registration intact. Cancel / ✕ in the dialog stops nothing.</div>
+    </div>
+  </div>
+
+  <!-- ===== branch: warning taxonomy ===== -->
+  <div style="margin-top:30px; margin-left:262px;">
+    <div style="border:1.5px dashed #b3541e; border-radius:12px; padding:16px 18px; background:#fdfbf8; width:790px;">
+      <div style="font-size:12px; font-weight:700; color:#8a5a2a; margin-bottom:10px;">BRANCH · what the catalogue flags (registrable, but warned — the guardrail the product sells)</div>
+      <div style="display:grid; grid-template-columns:170px 1fr; gap:6px 14px; font-size:11px;">
+        <div style="font-weight:600;">No primary key</div><div>Apply would match on all columns — slow and unsafe on updates/deletes. Fix: add a key or choose a unique index before heavy use.</div>
+        <div style="font-weight:600;">No supplemental logging</div><div>The source can't produce before-images — capture registers but can't emit full change rows until <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px;">ADD SUPPLEMENTAL LOG GROUP</span> (or the dialect's equivalent) runs. The table-detail DDL pane shows the exact statement.</div>
+        <div style="font-weight:600;">Already registered</div><div>Hidden from the catalogue entirely — the list is only what can still be added to <i>this</i> stream; a duplicate stream keeps its own list.</div>
+        <div style="font-weight:600; color:#6b4fa1;">Flag propagation</div><div>Warnings travel: picker row → review list → "flagged" field on the DEFINITION CHANGE event, so the ledger names what needed attention at registration time.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

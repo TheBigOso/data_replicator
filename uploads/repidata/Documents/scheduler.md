@@ -8,15 +8,15 @@
 
 ## 1. Purpose and Positioning
 
-The scheduler is the hub component that owns every job's lifecycle — capture, integrate, refresh, and compare — across all logical hubs (one scheduler instance per logical hub). HVR's scheduler design is fundamentally sound and its shape is kept; what this platform adds is the elevation of *scheduled full refresh* from buried plumbing to a first-class pipeline mode, plus the operational controls (calendars, overlap policy) that HVR makes users fight for.
+The scheduler is the hub component that owns every job's lifecycle — capture, integrate, refresh, and compare — across all logical hubs (one scheduler instance per logical hub). HVR's scheduler design is fundamentally sound and its shape is kept; what this platform adds is the elevation of *scheduled full refresh* from buried plumbing to a first-class stream mode, plus the operational controls (calendars, overlap policy) that HVR makes users fight for.
 
-## 2. Pipeline Modes
+## 2. Stream Modes
 
-Chosen at pipeline creation, changeable later; same UI, same pipeline concept, one selector:
+Chosen at stream creation, changeable later; same UI, same stream concept, one selector:
 
 **Mode 1 — Continuous CDC.** Log-based capture and continuous/burst integrate; the platform's core.
 
-**Mode 2 — Scheduled refresh.** No log capture at all. On a schedule, the source tables are snapshot and fully reloaded to the target (the "SELECT * on a timer" the market keeps asking for). This mode requires only a SELECT-capable account, which matters twice: it covers sources where log access is unobtainable (unwilling DBAs, third-party application vendors, read replicas), and it gives every engagement a soft start — deploy in an afternoon with read-only privileges, upgrade pipelines to CDC as access and trust mature. Any database reachable by SELECT becomes a valid source location in this mode, expanding the source universe far beyond the log-based connector list.
+**Mode 2 — Scheduled refresh.** No log capture at all. On a schedule, the source tables are snapshot and fully reloaded to the target (the "SELECT * on a timer" the market keeps asking for). This mode requires only a SELECT-capable account, which matters twice: it covers sources where log access is unobtainable (unwilling DBAs, third-party application vendors, read replicas), and it gives every engagement a soft start — deploy in an afternoon with read-only privileges, upgrade streams to CDC as access and trust mature. Any database reachable by SELECT becomes a valid source location in this mode, expanding the source universe far beyond the log-based connector list.
 
 **Mode 3 — CDC plus scheduled compare.** Continuous replication with a compare job on a cadence (nightly, weekly) proving source-equals-target and alerting on drift. Falls out of the same scheduler for free and turns audit-readiness into a checkbox.
 
@@ -28,9 +28,9 @@ A job performs one task: capture, integrate, refresh, or compare. Jobs are cycli
 
 **Cron with timezones.** Recurring jobs are scheduled by cron expression evaluated in an explicit named timezone (DST-correct), with human-readable presets ("every night at 2:00 AM Pacific," "hourly on weekdays") so nobody has to hand-roll cron. The schedule editor shows a next-five-runs preview so a misread expression is caught before deployment, not at 3 AM.
 
-**Blackout calendars.** Named maintenance windows during which no scheduled jobs launch, attachable per hub or per pipeline. Patch weekends, quarter-close freezes, and change-moratorium periods are configuration, not a fight with the scheduler. Jobs already running when a blackout begins follow a per-calendar policy: run to completion (default) or checkpoint-and-pause.
+**Blackout calendars.** Named maintenance windows during which no scheduled jobs launch, attachable per hub or per stream. Patch weekends, quarter-close freezes, and change-moratorium periods are configuration, not a fight with the scheduler. Jobs already running when a blackout begins follow a per-calendar policy: run to completion (default) or checkpoint-and-pause.
 
-**Overlap policy.** If a trigger fires while the previous run is still executing, the behavior is explicit per pipeline — skip (default), queue one, or kill-and-restart. Never ambiguous, never accidental double-runs.
+**Overlap policy.** If a trigger fires while the previous run is still executing, the behavior is explicit per stream — skip (default), queue one, or kill-and-restart. Never ambiguous, never accidental double-runs.
 
 **Retry policy.** Exponential backoff with a configurable ceiling and a hard failure threshold that trips an alert and stops retrying. Slice-level retries (see the Slicing specification) nest inside job-level policy.
 
@@ -44,7 +44,7 @@ A naive scheduled `SELECT *` reload has two classic failure modes; both are desi
 
 **Slicing.** Large-table refreshes divide into parallel slices per the Slicing specification — strategy selection, per-slice checkpointing and retry, and the slice map all apply to scheduled refreshes exactly as to activation refreshes.
 
-**One transport.** Refresh data flows through the same file log, hub relay, compression/encryption, and bulk-apply path as CDC bursts. One pipeline concept, one transport, two capture modes — no parallel machinery to build, test, or explain.
+**One transport.** Refresh data flows through the same file log, hub relay, compression/encryption, and bulk-apply path as CDC bursts. One stream concept, one transport, two capture modes — no parallel machinery to build, test, or explain.
 
 ## 6. HVR Parity Matrix
 
@@ -54,7 +54,7 @@ A naive scheduled `SELECT *` reload has two classic failure modes; both are desi
 | Job types: capture/integrate/refresh/compare | Same | Kept |
 | Cyclic and acyclic jobs | Same | Kept |
 | States: PENDING/RUNNING/ALERTING/RETRY/HANGING | Same machine | Kept, fully surfaced in API |
-| Recurring refresh via job attributes | Scheduled refresh as a pipeline mode | First-class, UI-native |
+| Recurring refresh via job attributes | Scheduled refresh as a stream mode | First-class, UI-native |
 | — | Cron + timezone + presets + next-run preview | New |
 | — | Blackout calendars | New |
 | — | Explicit overlap policy | New |
@@ -88,7 +88,7 @@ Timing procedures (SCH-01 through SCH-05, SCH-10, SCH-11) run on the virtual clo
 **Evidence:** Fire-time diff (empty), policy-case log.
 
 ### SCH-02 — Blackout calendars honored
-**Steps:** (1) Attach hub-level and pipeline-level calendars including windows edge-aligned to trigger times. (2) Simulate 30 days with dense triggers. (3) Assert zero launches inside any window; assert the first post-window trigger fires.
+**Steps:** (1) Attach hub-level and stream-level calendars including windows edge-aligned to trigger times. (2) Simulate 30 days with dense triggers. (3) Assert zero launches inside any window; assert the first post-window trigger fires.
 **Expected:** Zero in-window launches over the full simulation; boundary triggers behave per the documented inclusive/exclusive rule.
 **Evidence:** Launch log vs calendar overlay.
 
@@ -108,7 +108,7 @@ Timing procedures (SCH-01 through SCH-05, SCH-10, SCH-11) run on the virtual clo
 **Evidence:** Retry timeline, alert record.
 
 ### SCH-06 — Mode 2 with SELECT-only account
-**Steps:** (1) Pipeline in scheduled-refresh mode against the SELECT-only lab location, nightly virtual schedule. (2) Run three cycles with data mutations between cycles. (3) Compare after each cycle.
+**Steps:** (1) Stream in scheduled-refresh mode against the SELECT-only lab location, nightly virtual schedule. (2) Run three cycles with data mutations between cycles. (3) Compare after each cycle.
 **Expected:** Three clean compares; source session audit shows SELECT-class statements only.
 **Evidence:** Compare reports, session audit.
 
@@ -123,7 +123,7 @@ Timing procedures (SCH-01 through SCH-05, SCH-10, SCH-11) run on the virtual clo
 **Evidence:** Reader observation log, post-kill table state.
 
 ### SCH-09 — Drift detection (Mode 3)
-**Steps:** (1) CDC pipeline with nightly scheduled compare (virtual clock). (2) Manually mutate 50 target rows across 3 tables. (3) Advance to the next compare cycle.
+**Steps:** (1) CDC stream with nightly scheduled compare (virtual clock). (2) Manually mutate 50 target rows across 3 tables. (3) Advance to the next compare cycle.
 **Expected:** Compare detects exactly the seeded differences and raises the drift alert within one cycle; report identifies tables and difference counts.
 **Evidence:** Compare report vs seed list, alert record.
 
@@ -146,7 +146,7 @@ Timing procedures (SCH-01 through SCH-05, SCH-10, SCH-11) run on the virtual clo
 | SCH-03 | Blackout beginning mid-run: run-to-completion and checkpoint-and-pause policies each behave as configured |
 | SCH-04 | Overlap policies: a deliberately slow refresh under a fast trigger produces exactly the configured behavior for skip, queue-one, and kill-and-restart |
 | SCH-05 | Retry backoff follows the configured curve; the failure threshold trips exactly one alert and halts retries |
-| SCH-06 | Mode 2 pipeline with a SELECT-only account completes recurring reloads; compare verifies each against source |
+| SCH-06 | Mode 2 stream with a SELECT-only account completes recurring reloads; compare verifies each against source |
 | SCH-07 | Snapshot consistency: refresh under concurrent TPC-C updates yields a target coherent as-of one SCN (cross-table FK audit) |
 | SCH-08 | Stage-and-swap: target readers polling throughout a refresh never observe a missing or partial table; a killed refresh leaves prior data intact |
 | SCH-09 | Mode 3: seeded drift (manual target mutation) is detected by the scheduled compare and alerts within one cycle |

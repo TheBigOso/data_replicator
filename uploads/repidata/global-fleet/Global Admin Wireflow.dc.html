@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#f4f3ef; font-family:'IBM Plex Sans',sans-serif; color:#1a1c1e; }
+    a { color:#1a6e50; } a:hover { color:#14523c; }
+  </style>
+</helmet>
+<div data-screen-label="Global admin wireflow" style="padding:36px 40px; min-width:1760px;">
+  <div style="font-size:22px; font-weight:700;">Global Fleet Admin — wireflow</div>
+  <div style="display:flex; align-items:flex-start; gap:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:8px; padding:9px 13px; margin:10px 0 4px; max-width:1180px;">
+    <span style="flex:none; font-size:9.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; border:1px solid #1a6e50; border-radius:4px; padding:2px 7px; background:#fff;">CANONICAL</span>
+    <span style="font-size:11px; color:#6d7278; line-height:1.55;">Canonical for the <b>Global Admin</b> surface — the SuperAdmin/SysAdmin gate, hub management, and org-wide settings. Summarised in the <b>Global Fleet Wireflow</b>. Spec: <b>users-permissions-ui.md</b>, <b>fleet-hierarchy.md</b>.</span>
+  </div>
+  <div style="font-size:13px; color:#6d7278; margin:6px 0 14px;">Replicator console · the only place the top level mutates: gate → Overview → Current hub → Users → Permissions → New fleet · docs: global-fleet-ui.md, users-permissions-ui.md, fleet-hierarchy.md</div>
+  <div style="display:flex; gap:16px; align-items:center; font-size:11.5px; color:#6d7278; margin-bottom:26px;">
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1px solid #c9c6bf; border-radius:3px;"></span>screen / tab</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1.5px dashed #b3541e; border-radius:3px;"></span>branch / rule</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px; height:10px; background:#fbe9e7; border:1px solid #b3261e; border-radius:99px;"></span>access gate</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:3px;"></span>outcome</span>
+  </div>
+
+  <!-- ===== row 1 ===== -->
+  <div style="display:flex; align-items:flex-start; gap:0;">
+
+    <!-- entry -->
+    <div style="width:215px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:8px;">ENTRY POINTS</div>
+        <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; margin-bottom:6px; text-align:center;">Tree · Global Admin ⚙</div>
+        <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Global fleet console · ⚙ Global Admin</div>
+        <div style="font-size:10.5px; color:#6d7278; margin-top:8px; line-height:1.5;">The Global Fleet console is read-only; <b>this surface is where the top level edits</b>. Header shows the capability note: "Global Admins can edit any account, create fleets, and edit any connection, table, alerts, jobs, and events — everywhere."</div>
+      </div>
+    </div>
+    <div style="width:40px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- gate -->
+    <div style="width:235px; flex:none;">
+      <div style="background:#fbe9e7; border:1px solid #b3261e; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3261e; margin-bottom:2px;">GATE · SUPERADMIN / SYSADMIN</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">Repository-level grant required</div>
+        <div style="font-size:10.5px; color:#6d7278; line-height:1.6;">Without it the tree entry renders 🔒 and clicking shows a toast: "Global Admin requires a repository-level grant (SysAdmin or SuperAdmin). Ask a SysAdmin on Admin → Permissions."</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Hierarchy:</b> the same Admin screen also opens at Fleet and VF level with narrower scope — this flow is the <b>global</b> level; editing is strictly downward.</div>
+    </div>
+    <div style="width:40px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- overview tab -->
+    <div style="width:300px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">TAB 1 · OVERVIEW</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">License · hubs · the API</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:6px;">
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 7px; font-size:9px;"><b>License</b><br><span style="color:#6d7278;">Enterprise flat · perpetual<br>no metering · no telemetry<br>signed offline file<br>maintenance thru 2027-06-30</span></div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 7px; font-size:9px;"><b>Hubs</b><br><span style="color:#6d7278;">every VF with repo + agent counts, state dots</span></div>
+        </div>
+        <div style="border:1px solid #e3e1dc; background:#1b1d20; border-radius:6px; padding:5px 8px; font-family:'IBM Plex Mono',monospace; font-size:8.5px; color:#c9c6bf; margin-bottom:6px;">GET /api/v1/streams · POST /api/v1/streams/ora-erp/compare</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5;"><b>Everything is the API:</b> every view is documented REST rendered — the CLI and UI are the same client.</div>
+      </div>
+    </div>
+    <div style="width:40px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- current hub tab -->
+    <div style="width:290px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">TAB 2 · CURRENT HUB</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">One VF's card, properties, tuning</div>
+        <div style="font-size:10.5px; color:#6d7278; line-height:1.7; margin-bottom:6px;">• hub selector ▾ picks which VF the tab shows<br>• <b>Freeze/Unfreeze</b> — stops scheduler + all jobs, preserves state; frozen banner warns capture may not resume after source logs are cleared<br>• <b>New hub</b> · ⋯ menu: export definition, import…, save snapshot…, delete<br>• hub card: state, creator, access · properties list<br>• <b>Statistics tuning</b>: granularity/cycle selects + retention estimate (applies after the job restarts)</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5;">At global level any hub is selectable; Fleet/VF levels see only their own.</div>
+      </div>
+    </div>
+    <div style="width:40px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- users tab -->
+    <div style="width:290px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">TAB 3 · USERS</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Every account in the system</div>
+        <div style="font-size:10.5px; color:#6d7278; line-height:1.7; margin-bottom:6px;">• sortable: name · email · auth · status · last active · created<br>• actions: <b>Edit · Reset credential · Enable/Disable</b><br>• Add user (inherits every <b>All Users</b> grant)<br>• multi-select → delete<br>• service accounts badged; sign-in is email-based, no usernames</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5;">Accounts only — access lives on the next tab. Disable revokes nothing.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Detail flow:</b> the full Users + Permissions mechanics have their own diagram — <b>Users Permissions Wireflow</b>.</div>
+    </div>
+    <div style="width:40px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- permissions tab -->
+    <div style="width:290px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">TAB 4 · PERMISSIONS</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Every grant, editable</div>
+        <div style="font-size:10.5px; color:#6d7278; line-height:1.7; margin-bottom:6px;">• one row per grant attachment (user × scope × tier)<br>• global level edits <b>everything</b> — including repository grants no lower level can touch<br>• <b>Add access</b>: principal → scope → tier<br>• Revoke per row; only self-SuperAdmin is locked (no self-lockout)</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5;">Tiers: SuperAdmin · SysAdmin · HubCreation · ReadStatistics · FleetViewer (repository) — HubOwner · ReadWrite · ReadExecRefresh · ReadExec · ReadOnly (hub).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== row 2: new fleet + outcome ===== -->
+  <div style="display:flex; align-items:flex-start; gap:0; margin-top:30px;">
+    <div style="width:215px; flex:none;"></div>
+    <div style="width:40px; flex:none;"></div>
+
+    <!-- new fleet dialog -->
+    <div style="width:235px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">DIALOG · NEW FLEET</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">Enroll a system</div>
+        <div style="font-size:10.5px; color:#6d7278; line-height:1.7;">Fields: fleet name (e.g. <span style="font-family:'IBM Plex Mono',monospace; font-size:9.5px;">streamsrv-defense</span>) · division/organization.<br><br>A fleet is a hub-server registration — enrollment produces its URL and mTLS identity; virtual fleets are created inside it afterwards. The creator becomes its first Fleet Admin.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3261e; background:#fbe9e7; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#b3261e; line-height:1.5;"><b>Gate:</b> only Global Admins create fleets. Name is required.</div>
+    </div>
+    <div style="width:40px; flex:none; display:grid; place-items:center; padding-top:46px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- outcome -->
+    <div style="width:300px; flex:none;">
+      <div style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:8px;">OUTCOMES · ALL LEDGER-RECORDED</div>
+        <div style="font-size:11px; line-height:1.8;">
+          • new fleet → appears in the Global Fleet matrix and the tree; creator holds Fleet Admin<br>
+          • user/grant edits → visibility, Switch buttons, admin entries, and the FleetViewer gate re-evaluate immediately<br>
+          • every create, edit, grant, revoke, enable, disable is an event in the ledger<br>
+          • back to the console: ← Global fleet (read-only again)
+        </div>
+      </div>
+      <div style="margin-top:10px; background:#fff; border:1px solid #e3e1dc; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#6d7278; line-height:1.5;"><b style="color:#1a1c1e;">Related diagrams:</b> Global Fleet Wireflow (the console) · Users Permissions Wireflow (tab mechanics).</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

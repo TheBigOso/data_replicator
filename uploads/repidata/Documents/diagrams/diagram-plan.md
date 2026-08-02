@@ -16,23 +16,23 @@
 
 4. ⬜ **Six topology thumbnails** — one-to-one, broadcast, consolidation, cascade, bidirectional (v2), multidirectional (deferred), each with its verdict badge and the origin-lineage hop chain drawn on the cascade. (replication-topologies.md)
 
-## Location & Agent
+## Connection & Agent
 
-5. ⬜ **Reachability modes** — agent-on-host vs agentless vs agent-initiated (air-gap) connection patterns, one panel each, firewall lines drawn. (location.md; agent.md)
+5. ⬜ **Reachability modes** — agent-on-host vs agentless vs agent-initiated (air-gap) connection patterns, one panel each, firewall lines drawn. (connection.md; agent.md)
 6. ⬜ **Agent enrollment sequence** — UML sequence: token issue → first start → keypair → pin → mTLS established; upgrade orchestration as a second lane. (agent.md)
 
 ## Scheduler & Jobs
 
-7. ⬜ **Three pipeline modes** — three lanes (continuous CDC / scheduled refresh / CDC + scheduled compare) with their job compositions and the soft-landing (SELECT-only) path marked on Mode 2. (scheduler.md)
+7. ⬜ **Three stream modes** — three lanes (continuous CDC / scheduled refresh / CDC + scheduled compare) with their job compositions and the soft-landing (SELECT-only) path marked on Mode 2. (scheduler.md)
 8. ✅ **Job & Event State Machine** — the published transition diagram JOB-01 tests against: every state, every edge with its cause, HANGING as a flag on RUNNING, the two terminals with cause fields. *Lucid: https://lucid.app/lucidchart/fd094715-5f79-4f54-8570-29501a4d9d49/edit* (jobs.md §2, §4; events.md §4)
 
-## Channel
+## Stream
 
-9. ⬜ **Channel structure** — location groups, table set, table groups, and the four-level settings ladder with a provenance callout. (channel.md §2)
-10. ⬜ **Creation wizard flow** — five steps as a horizontal flow, each step's validation surfaces called out, ending in the plan preview. (channel.md §5.1)
-11. ⬜ **Activation sequence** — the ten-step first-activation walkthrough as a sequence diagram; the step-8 zero-downtime handshake highlighted. (channel.md §6.5)
-12. 🖼 **Channel detail page** — wireframe: summary/graphs/jobs panes + management menu. *Captured: Screenshot 2026-07-12 (fleet + drill-down pair covers the pattern).* (channel.md §7)
-13. ⬜ **Replication styles side-by-side** — the same DML sequence materialized through standard replica / soft delete / TimeKey, three columns, the worked example of §3.1 drawn. (channel.md §3)
+9. ⬜ **Stream structure** — location groups, table set, table groups, and the four-level settings ladder with a provenance callout. (stream.md §2)
+10. ⬜ **Creation wizard flow** — five steps as a horizontal flow, each step's validation surfaces called out, ending in the plan preview. (stream.md §5.1)
+11. ⬜ **Activation sequence** — the ten-step first-activation walkthrough as a sequence diagram; the step-8 zero-downtime handshake highlighted. (stream.md §6.5)
+12. 🖼 **Stream detail page** — wireframe: summary/graphs/jobs panes + management menu. *Captured: Screenshot 2026-07-12 (fleet + drill-down pair covers the pattern).* (stream.md §7)
+13. ⬜ **Replication styles side-by-side** — the same DML sequence materialized through standard replica / soft delete / TimeKey, three columns, the worked example of §3.1 drawn. (stream.md §3)
 
 ## Refresh & Compare
 

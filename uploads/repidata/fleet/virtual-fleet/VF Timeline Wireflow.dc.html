@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#f4f3ef; font-family:'IBM Plex Sans',sans-serif; color:#1a1c1e; }
+    a { color:#1a6e50; } a:hover { color:#14523c; }
+  </style>
+</helmet>
+<div data-screen-label="VF timeline wireflow" style="padding:36px 40px; min-width:2120px;">
+  <div style="font-size:22px; font-weight:700;">VF Timeline — wireflow</div>
+  <div style="display:flex; align-items:flex-start; gap:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:8px; padding:9px 13px; margin:10px 0 4px; max-width:1180px;">
+    <span style="flex:none; font-size:9.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; border:1px solid #1a6e50; border-radius:4px; padding:2px 7px; background:#fff;">CANONICAL</span>
+    <span style="font-size:11px; color:#6d7278; line-height:1.55;">Canonical for the <b>VF timeline</b> — combined bands, the combining rule, markers, cursor, diagnosis, and infra cards. Summarised as branch E of the <b>Virtual Fleet Wireflow</b>. Spec: <b>timeline.md</b>.</span>
+  </div>
+  <div style="font-size:13px; color:#6d7278; margin:6px 0 14px;">Replicator console · the answer to "why?" at virtual-fleet scope: range → three combined bands → event markers → scrub cursor → diagnosis → per-stream table → infrastructure cards. Every stream in the VF on one time axis · docs: timeline.md, virtual-fleet-ui.md, jobs-ui.md, events.md</div>
+  <div style="display:flex; gap:16px; align-items:center; font-size:11.5px; color:#6d7278; margin-bottom:26px; flex-wrap:wrap;">
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1px solid #c9c6bf; border-radius:3px;"></span>screen / section</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1.5px dashed #b3541e; border-radius:3px;"></span>branch / sub-flow</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px; height:10px; background:#fbe9e7; border:1px solid #b3261e; border-radius:99px;"></span>rule / guard</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:3px;"></span>outcome / drill-down</span>
+  </div>
+
+  <!-- ===== row 0: the premise ===== -->
+  <div style="display:flex; align-items:stretch; gap:18px; margin-bottom:32px;">
+    <div style="flex:1; background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:16px 18px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:4px;">THE PREMISE</div>
+      <div style="font-size:15px; font-weight:600; margin-bottom:9px;">A latency number without a cause is just a number</div>
+      <div style="font-size:11px; color:#6d7278; line-height:1.65;">Every other screen reports <b>state</b>: this stream is lagging, that agent is hot, this job is retrying. None of them say <b>when it started</b> or <b>what else was happening at the same moment</b>. The timeline is the only surface where a throughput dip, a capture stall, an activation, and an agent restart can be seen to be <b>the same event</b>.<br><br>That is why every "why?" link in the console lands here, and why Jobs and Events both link in at their own timestamp. The timeline is the join between the open set and the closed set.</div>
+      <div style="display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-top:12px;">
+        <span style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 10px; font-size:10px;">Stream timeline<br><span style="color:#8a8f98;">one stream, three stages</span></span>
+        <span style="color:#8a8f98;">↑</span>
+        <span style="border:1.5px solid #1a6e50; background:#e8f2ed; border-radius:6px; padding:5px 10px; font-size:10px; font-weight:600; color:#1a6e50;">VF timeline<br><span style="font-weight:400; color:#6d7278;">every stream in the VF, combined</span></span>
+        <span style="color:#8a8f98;">↑</span>
+        <span style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 10px; font-size:10px;">Fleet timeline<br><span style="color:#8a8f98;">every VF, as cards</span></span>
+        <span style="color:#8a8f98;">↑</span>
+        <span style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 10px; font-size:10px;">Global<br><span style="color:#8a8f98;">every fleet</span></span>
+      </div>
+    </div>
+    <div style="width:470px; flex:none; background:#fbe9e7; border:1px solid #b3261e; border-radius:10px; padding:16px 18px;">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3261e; margin-bottom:6px;">THE COMBINING RULE — NOT ALL SUMS</div>
+      <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Each band combines the way its metric actually behaves</div>
+      <div style="font-size:10.5px; color:#6d7278; line-height:1.6;">
+        <div style="margin-bottom:5px;"><b style="color:#1a1c1e;">Throughput → sum.</b> Rows/min across streams genuinely add up.</div>
+        <div style="margin-bottom:5px;"><b style="color:#1a1c1e;">Capture lag → worst-of.</b> Averaging lag is a lie: nine healthy streams and one stalled one is not "mildly behind", it is <b>broken</b>. The band tracks the worst stream at every point.</div>
+        <div><b style="color:#1a1c1e;">Backlog → sum.</b> Megabytes on the hub file store are real bytes and do add.</div>
+      </div>
+      <div style="background:#fff; border:1px solid #f3d1cf; border-radius:7px; padding:8px 10px; font-size:9.5px; color:#b3261e; line-height:1.5; margin-top:9px;">Getting this wrong is the classic dashboard failure — an averaged fleet metric that stays green while one stream is dead.</div>
+    </div>
+  </div>
+
+  <!-- ===== row 1 ===== -->
+  <div style="display:flex; align-items:flex-start; gap:0;">
+
+    <div style="width:216px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:8px;">ENTRY POINTS</div>
+        <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:8px;">
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">VF header · VF timeline</div>
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Tree · VF → VF Timeline</div>
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Fleet timeline · VF timeline →</div>
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Jobs / Events · timeline →</div>
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Global triage · system card</div>
+        </div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.55;">Arriving from a Job or Event <b>lands the cursor at that record's timestamp</b> rather than at "now" — the operator is looking for that moment, not the present.</div>
+      </div>
+    </div>
+    <div style="width:30px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:700px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">LAYER 1 · THE THREE BANDS</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:7px;">One shared time axis, one shared cursor</div>
+        <div style="display:flex; gap:5px; margin-bottom:8px; align-items:center;">
+          <span style="border:1px solid #1a6e50; background:#e8f2ed; color:#1a6e50; border-radius:5px; padding:3px 9px; font-size:9px; font-weight:600;">1h</span>
+          <span style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 9px; font-size:9px; font-weight:600;">6h</span>
+          <span style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 9px; font-size:9px; font-weight:600;">24h</span>
+          <span style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 9px; font-size:9px; font-weight:600;">7d</span>
+          <span style="margin-left:auto; font-size:9px; color:#6d7278;">cursor <b style="color:#1a1c1e;">14:22</b></span>
+        </div>
+        <div style="border:1px solid #e3e1dc; border-radius:7px; padding:8px 10px; margin-bottom:5px;">
+          <div style="display:flex; align-items:baseline; gap:8px; font-size:9px; margin-bottom:2px;"><b>Total throughput</b><span style="color:#8a8f98;">sum</span><span style="margin-left:auto; color:#1a6e50; font-weight:600;">521k/min</span></div>
+          <svg width="100%" height="34" viewBox="0 0 400 34" preserveAspectRatio="none"><path d="M0,24 L40,20 L80,25 L120,14 L160,18 L200,9 L240,26 L280,30 L320,17 L360,12 L400,15" fill="none" stroke="#1a6e50" stroke-width="1.4"></path><line x1="240" y1="0" x2="240" y2="34" stroke="#1a1c1e" stroke-width="1" stroke-dasharray="2 2"></line></svg>
+        </div>
+        <div style="border:1px solid #e3e1dc; border-radius:7px; padding:8px 10px; margin-bottom:5px;">
+          <div style="display:flex; align-items:baseline; gap:8px; font-size:9px; margin-bottom:2px;"><b>Worst capture lag</b><span style="color:#b3261e; font-weight:600;">worst-of, never averaged</span><span style="margin-left:auto; color:#2a5fd6; font-weight:600;">96s</span></div>
+          <svg width="100%" height="34" viewBox="0 0 400 34" preserveAspectRatio="none"><path d="M0,28 L40,27 L80,28 L120,26 L160,27 L200,25 L240,6 L280,5 L320,8 L360,10 L400,9" fill="none" stroke="#2a5fd6" stroke-width="1.4"></path><line x1="240" y1="0" x2="240" y2="34" stroke="#1a1c1e" stroke-width="1" stroke-dasharray="2 2"></line></svg>
+        </div>
+        <div style="border:1px solid #e3e1dc; border-radius:7px; padding:8px 10px; margin-bottom:6px;">
+          <div style="display:flex; align-items:baseline; gap:8px; font-size:9px; margin-bottom:2px;"><b>Total file-log backlog</b><span style="color:#8a8f98;">sum</span><span style="margin-left:auto; color:#b3541e; font-weight:600;">340 MB</span></div>
+          <svg width="100%" height="34" viewBox="0 0 400 34" preserveAspectRatio="none"><path d="M0,29 L40,29 L80,28 L120,29 L160,28 L200,27 L240,12 L280,4 L320,7 L360,14 L400,18" fill="none" stroke="#b3541e" stroke-width="1.4"></path><line x1="240" y1="0" x2="240" y2="34" stroke="#1a1c1e" stroke-width="1" stroke-dasharray="2 2"></line></svg>
+        </div>
+        <div style="position:relative; height:20px; border-top:1px solid #e3e1dc; padding-top:5px;">
+          <div style="display:flex; justify-content:space-between; font-size:7.5px; color:#8a8f98;"><span>13:00</span><span>13:30</span><span>14:00</span><span>14:30</span><span>15:00</span></div>
+          <span style="position:absolute; left:24%; top:2px; width:7px; height:7px; border-radius:99px; background:#b3261e;"></span>
+          <span style="position:absolute; left:60%; top:2px; width:7px; height:7px; border-radius:99px; background:#b3541e;"></span>
+          <span style="position:absolute; left:72%; top:2px; width:7px; height:7px; border-radius:99px; background:#6a3fb5;"></span>
+          <span style="position:absolute; left:88%; top:2px; width:7px; height:7px; border-radius:99px; background:#1a6e50;"></span>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.55; margin-top:7px;"><b style="color:#1a1c1e;">One cursor across all three bands.</b> Dragging it reads all three metrics at the same instant — the whole point. A dip in throughput <i>at the same x</i> as a spike in lag and backlog is one incident, not three.</div>
+      </div>
+    </div>
+    <div style="width:30px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:340px; flex:none;">
+      <div style="background:#fff; border:1.5px dashed #b3541e; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; margin-bottom:2px;">LAYER 2 · MARKERS</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:7px;">What happened, plotted on the same axis</div>
+        <div style="display:flex; flex-direction:column; gap:4px; margin-bottom:8px;">
+          <div style="display:flex; gap:6px; align-items:center; font-size:8.5px;"><span style="width:7px; height:7px; border-radius:99px; background:#b3261e; flex:none;"></span><b>CAPTURE STALL</b><span style="color:#6d7278; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">sensor-ingest — archive log gap</span><span style="margin-left:auto; color:#8a8f98;">13:24</span></div>
+          <div style="display:flex; gap:6px; align-items:center; font-size:8.5px;"><span style="width:7px; height:7px; border-radius:99px; background:#b3541e; flex:none;"></span><b>INBOUND BURST</b><span style="color:#6d7278; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">mfg-workorders — backlog growing</span><span style="margin-left:auto; color:#8a8f98;">14:12</span></div>
+          <div style="display:flex; gap:6px; align-items:center; font-size:8.5px;"><span style="width:7px; height:7px; border-radius:99px; background:#6a3fb5; flex:none;"></span><b>ACTIVATE</b><span style="color:#6d7278; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">flight-plans — plan applied</span><span style="margin-left:auto; color:#8a8f98;">14:28</span></div>
+          <div style="display:flex; gap:6px; align-items:center; font-size:8.5px;"><span style="width:7px; height:7px; border-radius:99px; background:#1a6e50; flex:none;"></span><b>COMPARE</b><span style="color:#6d7278; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">flight-telemetry — DONE/IDENTICAL</span><span style="margin-left:auto; color:#8a8f98;">14:51</span></div>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.6;">
+          <div><b style="color:#1a1c1e;">Two sources, one lane.</b> Ledger events (activate, compare, refresh, suspend) <i>and</i> derived incidents (capture stall, inbound burst, suspension) share the marker lane — an operator does not care which system noticed.</div>
+          <div style="margin-top:5px;"><b style="color:#1a1c1e;">Click a marker to jump the cursor</b> to its instant; the three band readouts update together.</div>
+          <div style="margin-top:5px;"><b style="color:#1a1c1e;">Capped and time-sorted</b> so a busy window stays readable rather than becoming a wall of dots.</div>
+        </div>
+      </div>
+    </div>
+    <div style="width:30px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:340px; flex:none;">
+      <div style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">LAYER 3 · THE DIAGNOSIS</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:7px;">The console says what it thinks</div>
+        <div style="background:#fff; border:1px solid #e3e1dc; border-radius:7px; padding:9px 11px; font-size:9.5px; line-height:1.6; margin-bottom:8px;">
+          <span style="background:#fbe9e7; color:#b3261e; border-radius:99px; padding:1px 7px; font-size:8px; font-weight:700;">Errors</span>
+          <div style="margin-top:5px;">8 streams: 5 healthy, 1 lagging, 1 in error, 1 suspended. <b>Worst: sensor-ingest</b> — capture stopped, archive log gap; its held position drives the VF's worst capture lag.</div>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.6;">
+          <div>One sentence, computed — not a static caption. It names the counts, then <b>the single worst stream and why it is worst</b>, and connects that stream to the band it is driving.</div>
+          <div style="margin-top:5px;">A clean VF gets an equally explicit sentence: <i>"Nothing needs attention — total throughput follows the usual daily shape."</i> Silence is never the answer.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== row 2 ===== -->
+  <div style="display:flex; align-items:flex-start; gap:16px; margin-top:32px;">
+
+    <div style="width:640px; flex:none;">
+      <div style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:10px; padding:13px 15px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">LAYER 4 · PER-STREAM TABLE</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:7px;">From the combined view back down to the culprit</div>
+        <div style="display:grid; grid-template-columns:1.5fr .8fr .7fr .8fr .8fr 1.1fr; gap:5px; font-size:7.5px; color:#6d7278; border-bottom:1px solid #cfe0d7; padding-bottom:3px; margin-bottom:3px;">
+          <span>Stream</span><span>Status</span><span>Latency</span><span>Backlog</span><span>At cursor</span><span>Shape</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1.5fr .8fr .7fr .8fr .8fr 1.1fr; gap:5px; font-size:8.5px; align-items:center; padding:4px 0;">
+          <b>sensor-ingest → s3-telem</b><span style="color:#b3261e;">Error</span><span>—</span><span style="color:#b3261e;">840 MB</span><span>0/min</span>
+          <svg width="100%" height="16" viewBox="0 0 100 16" preserveAspectRatio="none"><path d="M0,6 L20,7 L40,5 L55,6 L60,15 L100,15" fill="none" stroke="#8a8f98" stroke-width="1.2"></path></svg>
+        </div>
+        <div style="display:grid; grid-template-columns:1.5fr .8fr .7fr .8fr .8fr 1.1fr; gap:5px; font-size:8.5px; align-items:center; padding:4px 0; border-top:1px solid #dfeae4;">
+          <b>mfg-workorders → databricks</b><span style="color:#b3541e;">Lagging</span><span>96s</span><span style="color:#b3541e;">340 MB</span><span>210k/min</span>
+          <svg width="100%" height="16" viewBox="0 0 100 16" preserveAspectRatio="none"><path d="M0,8 L20,7 L40,9 L55,4 L70,10 L85,6 L100,7" fill="none" stroke="#8a8f98" stroke-width="1.2"></path></svg>
+        </div>
+        <div style="display:grid; grid-template-columns:1.5fr .8fr .7fr .8fr .8fr 1.1fr; gap:5px; font-size:8.5px; align-items:center; padding:4px 0; border-top:1px solid #dfeae4;">
+          <b>flight-telemetry → snowflake</b><span style="color:#1a6e50;">Healthy</span><span>2.1s</span><span>61 MB</span><span>374k/min</span>
+          <svg width="100%" height="16" viewBox="0 0 100 16" preserveAspectRatio="none"><path d="M0,8 L20,6 L40,9 L55,5 L70,8 L85,4 L100,6" fill="none" stroke="#8a8f98" stroke-width="1.2"></path></svg>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.6; margin-top:8px;"><b style="color:#1a1c1e;">"At cursor" is the column that matters.</b> Current status tells you the present; the cursor column tells you what that stream was doing <i>at the moment you are investigating</i> — which is how a combined dip is attributed to one stream. Each row opens that stream's own timeline, cursor position preserved.</div>
+      </div>
+    </div>
+
+    <div style="width:600px; flex:none;">
+      <div style="background:#fff; border:1.5px dashed #b3541e; border-radius:10px; padding:13px 15px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; margin-bottom:2px;">LAYER 5 · INFRASTRUCTURE CARDS</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:7px;">Is the platform itself the cause?</div>
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:8px;">
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:6px 8px; font-size:8px;"><b>Hub system</b><br><span style="color:#6d7278;">rk-prod · replhub</span><br><span style="color:#1a6e50;">Healthy</span> · CPU 41%</div>
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:6px 8px; font-size:8px;"><b>Repo database</b><br><span style="color:#6d7278;">pg-repo · rk-prod</span><br><span style="color:#1a6e50;">Healthy</span> · CPU 22%</div>
+          <div style="border:1px solid #f3d1cf; background:#fdf7f6; border-radius:6px; padding:6px 8px; font-size:8px;"><b>Source agent</b><br><span style="color:#6d7278;">ORA-SENSORS</span><br><span style="color:#b3261e;">Unreachable</span> · no heartbeat</div>
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:6px 8px; font-size:8px;"><b>Target agent</b><br><span style="color:#6d7278;">SNOWFLAKE-RKT</span><br><span style="color:#8a8f98;">agentless</span> · hub-direct</div>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.6;">
+          <div>Always the same four classes, in this order: <b>hub · repo database · every source agent · every target agent</b>. Deduplicated — an agent serving three streams appears once.</div>
+          <div style="margin-top:5px;"><b style="color:#1a1c1e;">This is the row that closes the loop.</b> An unreachable source agent next to a stalled capture band is the whole diagnosis, on one screen, without opening a log.</div>
+          <div style="margin-top:5px;">Agentless targets say so plainly rather than reporting fake host metrics. Each card links to that connection's Server health panel.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="width:400px; flex:none;">
+      <div style="background:#fbe9e7; border:1px solid #b3261e; border-radius:10px; padding:13px 15px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3261e; margin-bottom:2px;">DETERMINISM</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:7px;">Zooming must not rewrite history</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.6;">
+          <div>Series are <b>deterministic per stream</b> and incidents sit at <b>absolute wall-clock times</b>, not at positions relative to the window.</div>
+          <div style="margin-top:6px;">So switching 6h → 24h moves the same stall to a new x-coordinate — it does not <b>invent a different stall</b>. An operator can zoom out to find context and zoom back in without losing the thing they were looking at.</div>
+          <div style="margin-top:6px;">The same discipline as triage ordering: live data may tick, but the <b>story</b> must hold still.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== row 3 ===== -->
+  <div style="display:flex; align-items:stretch; gap:18px; margin-top:32px;">
+    <div style="flex:1; background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:8px;">HOW THIS DIFFERS FROM ITS SIBLINGS</div>
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; font-size:10px; color:#6d7278; line-height:1.55;">
+        <div><b style="color:#1a1c1e;">Stream timeline</b><br>Bands are the <b>three stages</b> of one stream — capture, file log, apply — plus per-table flow profiles and activate/deactivate projections.</div>
+        <div><b style="color:#1a1c1e;">VF timeline (this)</b><br>Bands are <b>combined metrics</b> across every stream in the VF, plus the per-stream attribution table.</div>
+        <div><b style="color:#1a1c1e;">Fleet timeline</b><br>Not a chart — <b>VF cards</b> split triage-first, each with CONCERNS / JOBS / CHECKS counts and condition chips.</div>
+        <div><b style="color:#1a1c1e;">Global</b><br>The triage strip with its 90-day history window. Cross-fleet, read-only, deep-linking down.</div>
+      </div>
+      <div style="font-size:10px; color:#6d7278; line-height:1.55; margin-top:9px;">The shift at fleet level is deliberate: combining metrics across <i>virtual fleets</i> would mean summing unrelated systems. Cards preserve the boundary; charts would erase it.</div>
+    </div>
+    <div style="width:440px; flex:none; background:#fbf3ec; border:1.5px dashed #b3541e; border-radius:10px; padding:14px 16px;">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; margin-bottom:8px;">RULES THIS SCREEN HOLDS TO</div>
+      <div style="font-size:10.5px; color:#8a5a2a; line-height:1.6;">
+        <div>· Lag is worst-of, never averaged.</div>
+        <div>· One cursor across all bands — that is the whole point.</div>
+        <div>· Incidents sit at absolute times; zooming never rewrites the story.</div>
+        <div>· Ledger events and derived incidents share one marker lane.</div>
+        <div>· The diagnosis is a computed sentence, never a static caption.</div>
+        <div>· Arriving from a Job or Event lands the cursor at that timestamp.</div>
+        <div>· Agentless connections say so rather than reporting fake metrics.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

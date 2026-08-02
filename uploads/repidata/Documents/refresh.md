@@ -8,7 +8,9 @@
 
 ## 1. Purpose and Positioning
 
-Refresh is the bulk movement of table data from source to target — reading rows (not logs) and loading them. One engine serves three roles, deliberately: the **initial load** chained from channel activation (channel spec 6.4–6.5), the **scheduled reload** that is pipeline Mode 2 (scheduler spec), and the **repair tool** that puts a damaged or drifted target right without rebuilding the pipeline. HVR ships the same trinity under `hvrrefresh`; our departure is that the mechanics — snapshot consistency, staging, the online handshake — are explained to the operator rather than performed behind a dialog.
+Refresh is the bulk movement of table data from source to target — reading rows (not logs) and loading them. One engine serves three roles, deliberately: the **initial load** chained from stream activation (stream spec 6.4–6.5), the **scheduled reload** that is stream Mode 2 (scheduler spec), and the **repair tool** that puts a damaged or drifted target right without rebuilding the stream. HVR ships the same trinity under `hvrrefresh`; our departure is that the mechanics — snapshot consistency, staging, the online handshake — are explained to the operator rather than performed behind a dialog.
+
+**UI entry point:** the stream's primary action is **Activate replication** (plan-based, stream spec §6), and refresh rides that plan as the chained initial load — activation first establishes the capture position, then the refresh reads as-of that same snapshot, so capture and load meet with no gap. On an already-active stream the same dialog is a verify plan whose chained reload serves the repair role; there is no standalone refresh button.
 
 ## 2. The Two Refresh Methods
 
@@ -40,15 +42,15 @@ Refreshing a table that applications are actively changing is the hard case, and
 2. Capture (running or starting) owns every change committed **after** S.
 3. Integrate knows each table's **refresh boundary**: captured changes at or before S for a refreshed table are skipped — the refresh already delivered that state; changes after S apply normally.
 
-No quiesce, no gap, no overlap — and no "double apply" corruption where a change lands both in the snapshot and as a captured event. The boundary bookkeeping is per table, so a refresh of three tables in a fifty-table channel coordinates only those three. This is what HVR calls online refresh; here the boundary values are visible in the run record, so an operator can verify the handshake rather than trust it.
+No quiesce, no gap, no overlap — and no "double apply" corruption where a change lands both in the snapshot and as a captured event. The boundary bookkeeping is per table, so a refresh of three tables in a fifty-table stream coordinates only those three. This is what HVR calls online refresh; here the boundary values are visible in the run record, so an operator can verify the handshake rather than trust it.
 
-**Coordination with integrate — no suspension, no control files.** HVR's default coordination is blunt: starting a refresh forces the integrate job into SUSPEND and writes block control files on the hub; when a refresh fails, those files can be left behind and integrate cannot restart until an operator finds and deletes them by name from `HVR_CONFIG` — a documented sharp edge. This platform has no equivalent state to leak, because the handshake *is* the coordination: integrate keeps running throughout every refresh, applying captured changes to every table and skipping only what falls at-or-before a refreshed table's boundary. HVR's optional "isolated refresh" (integrate continues for tables outside the refresh) is therefore not an option here — per-table boundaries make it the only behavior. A refresh that dies mid-run simply never installs its boundaries: integrate was never blocked, nothing needs cleanup, and the rerun starts clean (REF-09 proves all of this under load). Refresh-vs-refresh concurrency on the same channel is governed by the scheduler's explicit overlap policy, not by hidden files.
+**Coordination with integrate — no suspension, no control files.** HVR's default coordination is blunt: starting a refresh forces the integrate job into SUSPEND and writes block control files on the hub; when a refresh fails, those files can be left behind and integrate cannot restart until an operator finds and deletes them by name from `HVR_CONFIG` — a documented sharp edge. This platform has no equivalent state to leak, because the handshake *is* the coordination: integrate keeps running throughout every refresh, applying captured changes to every table and skipping only what falls at-or-before a refreshed table's boundary. HVR's optional "isolated refresh" (integrate continues for tables outside the refresh) is therefore not an option here — per-table boundaries make it the only behavior. A refresh that dies mid-run simply never installs its boundaries: integrate was never blocked, nothing needs cleanup, and the rerun starts clean (REF-09 proves all of this under load). Refresh-vs-refresh concurrency on the same stream is governed by the scheduler's explicit overlap policy, not by hidden files.
 
-**Skip policy and broadcast safety.** *Where* do pre-refresh changes get skipped? Our default is HVR's write-side option made structural: boundaries live in each target's integrate bookkeeping, so refreshing one broadcast target never affects what the others receive. The capture-side variant — skip pre-boundary changes at the source, saving network and parser work — exists as an optimization, but the planner gates it: requesting capture-side skip on a channel with other consumers of those changes produces a warning naming the targets that would then need their own refresh. HVR documents this hazard as a paragraph of advice; here it is a computed check. The no-skip resilient variant is kept for context-restricted refreshes (a predicate-scoped reload where pre-refresh changes must still apply normally and only the refresh window's changes need resilient handling).
+**Skip policy and broadcast safety.** *Where* do pre-refresh changes get skipped? Our default is HVR's write-side option made structural: boundaries live in each target's integrate bookkeeping, so refreshing one broadcast target never affects what the others receive. The capture-side variant — skip pre-boundary changes at the source, saving network and parser work — exists as an optimization, but the planner gates it: requesting capture-side skip on a stream with other consumers of those changes produces a warning naming the targets that would then need their own refresh. HVR documents this hazard as a paragraph of advice; here it is a computed check. The no-skip resilient variant is kept for context-restricted refreshes (a predicate-scoped reload where pre-refresh changes must still apply normally and only the refresh window's changes need resilient handling).
 
 ## 5. Scope, Slicing, and Scheduling
 
-A refresh names its scope: whole channel, table subset, or a **filtered subset** of rows (a predicate per table — the repair scenario "reload March for the orders table" is a first-class parameter, not a workaround). Large tables slice per the Slicing specification — strategy selection, per-slice checkpoint and retry, the slice map, and the Advisor all apply identically to refreshes invoked from activation, from a schedule, or ad-hoc. Scheduling-wise a refresh is a job like any other: recurring (Mode 2, cyclic) or ad-hoc (acyclic, run-once), under the scheduler's calendars, overlap policies, and state machine.
+A refresh names its scope: whole stream, table subset, or a **filtered subset** of rows (a predicate per table — the repair scenario "reload March for the orders table" is a first-class parameter, not a workaround). Large tables slice per the Slicing specification — strategy selection, per-slice checkpoint and retry, the slice map, and the Advisor all apply identically to refreshes invoked from activation, from a schedule, or ad-hoc. Scheduling-wise a refresh is a job like any other: recurring (Mode 2, cyclic) or ad-hoc (acyclic, run-once), under the scheduler's calendars, overlap policies, and state machine.
 
 ## 6. Load-Time Target Mechanics
 
@@ -60,7 +62,7 @@ A refresh names its scope: whole channel, table subset, or a **filtered subset**
 
 ## 7. Target Table Creation
 
-Refresh can create or reconcile target tables per the creation-policy set specified in the channel document (6.4): create-missing, create-and-alter-mismatched, recreate-all, with keep-existing-structure, keep-old-rows, and no-index modifiers. One policy engine, referenced here rather than restated — behavior and its tests (CHA-18) are owned by the channel spec; this document owns the data-movement behaviors.
+Refresh can create or reconcile target tables per the creation-policy set specified in the stream document (6.4): create-missing, create-and-alter-mismatched, recreate-all, with keep-existing-structure, keep-old-rows, and no-index modifiers. One policy engine, referenced here rather than restated — behavior and its tests (STR-18) are owned by the stream spec; this document owns the data-movement behaviors.
 
 ## 8. HVR Parity Matrix
 
@@ -73,7 +75,7 @@ Refresh can create or reconcile target tables per the creation-policy set specif
 | Consistent as-of read | Single-position snapshot, recorded and displayed | Kept; position surfaced |
 | Slicing (-S) | Full slicing spec applies | Kept, deepened (see Slicing) |
 | Table/row scope options | Table subset + per-table predicates | Repair scope is first-class |
-| Create-table options (-cb*) | Channel creation-policy engine | Owned by channel spec, one engine |
+| Create-table options (-cb*) | Stream creation-policy engine | Owned by stream spec, one engine |
 | Staging for non-bulk targets | Documented per class in capability matrix | Nothing to discover |
 | Integrate forced to SUSPEND during refresh via block control files; failed refresh can strand them, requiring manual file deletion | No suspension: integrate runs throughout, coordinated by per-table boundaries; no control-file state exists to strand | Sharp edge removed structurally (REF-09) |
 | Isolated refresh as an option (integrate continues for non-refreshed tables) | Per-table boundary bookkeeping — isolation is the only behavior | Default, not option |
@@ -87,13 +89,13 @@ Refresh can create or reconcile target tables per the creation-policy set specif
 | Disable triggers (-f), per-DBMS mechanics | Capability-gated suppression; connection-path caveats in the matrix | Kept; caveats stated, not discovered |
 | TimeKey truncate record (-n) for file/Kafka | Truncate marker in the published TimeKey metadata specification | Kept; part of the public format |
 | Online skip policy -q (read/write, write-only, resilient) | Write-side per-target boundaries structural default; capture-side skip planner-gated on other consumers; resilient kept | Broadcast hazard computed, not documented |
-| Scheduling: now / once / repeatedly / delay-suspended | Scheduler-native; delay = the leave-suspended start policy (channel 6.7) | One scheduler, one pattern |
+| Scheduling: now / once / repeatedly / delay-suspended | Scheduler-native; delay = the leave-suspended start policy (stream 6.7) | One scheduler, one pattern |
 | Refresh task name for naming scripts and jobs | No generated scripts exist; jobs are internally named and queryable | Nothing to name |
-| Entry points across seven pages incl. Repeat Refresh from event | Scoped-surface pre-fill and idempotent repeat, same as activation (channel 6.7) | Same pattern everywhere |
+| Entry points across seven pages incl. Repeat Refresh from event | Scoped-surface pre-fill and idempotent repeat, same as activation (stream 6.7) | Same pattern everywhere |
 
 ## 9. Test Plan
 
-Phased plan; the standing rule applies (procedure executed, results observed, evidence archived — no procedure, no pass); full REF suite reruns on merges touching the refresh engine. Boundary-owned criteria referenced from other specs (SCH-07/08 snapshot and swap under the scheduler, CHA-18 creation policies, SLC-* slicing) are not duplicated here; the matrix links them.
+Phased plan; the standing rule applies (procedure executed, results observed, evidence archived — no procedure, no pass); full REF suite reruns on merges touching the refresh engine. Boundary-owned criteria referenced from other specs (SCH-07/08 snapshot and swap under the scheduler, STR-18 creation policies, SLC-* slicing) are not duplicated here; the matrix links them.
 
 | Phase | Focus | Criteria | Environment | Entry condition | Exit condition |
 |---|---|---|---|---|---|
@@ -108,7 +110,7 @@ Movement tests verify the bulk path per target class (native bulk interface and 
 ## 10. Test Procedures
 
 ### REF-01 — Bulk refresh correctness and swap atomicity
-**Steps:** (1) Bulk-refresh a 20-table channel while a reader polls live tables at 100ms. (2) Compare all tables. (3) Rerun and kill the refresh at 70%; inspect live tables and staging cleanup.
+**Steps:** (1) Bulk-refresh a 20-table stream while a reader polls live tables at 100ms. (2) Compare all tables. (3) Rerun and kill the refresh at 70%; inspect live tables and staging cleanup.
 **Expected:** Compare clean; reader never observes missing/partial tables; killed run leaves prior data live and staging cleaned per policy.
 **Evidence:** Compare reports, reader log, post-kill audits.
 
@@ -144,24 +146,24 @@ Movement tests verify the bulk path per target class (native bulk interface and 
 **Evidence:** Inside/outside audits, run record.
 
 ### REF-08 — Ad-hoc refresh lifecycle
-**Steps:** (1) Launch an ad-hoc (acyclic) refresh via UI and via CLI. (2) Verify scheduler treatment: PENDING→RUNNING→gone, overlap policy honored against a running cyclic job on the same channel, event trail complete.
+**Steps:** (1) Launch an ad-hoc (acyclic) refresh via UI and via CLI. (2) Verify scheduler treatment: PENDING→RUNNING→gone, overlap policy honored against a running cyclic job on the same stream, event trail complete.
 **Expected:** Acyclic semantics per the scheduler spec; both invocation paths equivalent (parity rule).
 **Evidence:** Job state timeline, event log, CLI transcript.
 
 ### REF-09 — Integrate never suspended; no blocking residue
-**Preconditions:** 20-table channel under full TPC-C; integrate job state pollable via REST at 1s; per-table latency metrics.
+**Preconditions:** 20-table stream under full TPC-C; integrate job state pollable via REST at 1s; per-table latency metrics.
 **Steps:** (1) Run an online refresh scoped to 5 tables to completion. (2) Throughout, record the integrate job's state and the latency series of the 15 non-refreshed tables. (3) Compare all 20 tables after catch-up. (4) Rerun the scoped refresh and kill it at ~50%; verify integrate state through and after the kill; audit the hub store and repository for any blocking artifact; rerun the refresh to completion with no manual intervention; compare again.
 **Expected:** The integrate job never enters a suspended or blocked state in either run; non-refreshed tables' latency stays flat (within normal variance) throughout; both compares clean; the killed refresh leaves zero blocking residue — the rerun starts and completes untouched by the failure.
 **Evidence:** Job-state timeline (1s resolution), latency series, compare reports, post-kill artifact audit.
 
 ### REF-10 — Additive merge, repair filters, truncate marker
-**Steps:** (1) On a burst-capable target seeded with rows the source has since deleted, plus one source key-update case, run an additive merge refresh; assert inserts and updates applied, source-deleted rows and the old-key row still present (the documented non-convergence), the run record flagging the mode, and the next sync report annotating the extra rows with merge-refresh provenance. (2) On a soft-delete-style fixture, run row-wise repair with the no-deletes filter: deletes skipped, inserts/updates applied, active filters named in the run record and absent from the difference output; rerun unfiltered and assert convergence. (3) Bulk-refresh a TimeKey channel into the lab file target with the truncate marker enabled; assert each table's first record is the marker per the published format and a consumer script honoring it reconstructs exactly the post-refresh state. (4) Assert the merge mode is refused for TimeKey tables and on non-burst-capable targets with capability-matrix messages.
+**Steps:** (1) On a burst-capable target seeded with rows the source has since deleted, plus one source key-update case, run an additive merge refresh; assert inserts and updates applied, source-deleted rows and the old-key row still present (the documented non-convergence), the run record flagging the mode, and the next sync report annotating the extra rows with merge-refresh provenance. (2) On a soft-delete-style fixture, run row-wise repair with the no-deletes filter: deletes skipped, inserts/updates applied, active filters named in the run record and absent from the difference output; rerun unfiltered and assert convergence. (3) Bulk-refresh a TimeKey stream into the lab file target with the truncate marker enabled; assert each table's first record is the marker per the published format and a consumer script honoring it reconstructs exactly the post-refresh state. (4) Assert the merge mode is refused for TimeKey tables and on non-burst-capable targets with capability-matrix messages.
 **Expected:** Merge behaves and annotates as documented; filters honored and recorded; marker published-format-exact and consumer-verifiable; refusals correct.
 **Evidence:** Target audits, run records, sync report excerpt, marker decode, consumer reconstruction diff (empty), refusal messages.
 
 ### REF-11 — Skip policy, constraints, and triggers
-**Preconditions:** Broadcast channel (targets A and B) under TPC-C; FK fixture (parent/child tables); trigger fixture (target trigger writing an audit row).
-**Steps:** (1) Online-refresh target A only, default write-side policy; assert target B's integrate receives and applies all changes including pre-boundary ones (compare B clean; B's latency flat). (2) Request capture-side skip on the same channel; assert the planner warns naming target B; then on a single-consumer channel, apply capture-side skip and verify via hub-store audit that pre-boundary changes never leave the source. (3) Bulk-refresh the FK fixture with constraint handling enabled: constraints disabled and re-enabled as visible plan steps; repeat as an online refresh and assert re-enablement defers to the next integrate cycle end with the deferral in the run record; repeat unhandled and assert the plan's stated FK-error expectation. (4) Refresh the trigger fixture with suppression: zero trigger side-effects during the load, trigger active immediately after; compare everywhere.
+**Preconditions:** Broadcast stream (targets A and B) under TPC-C; FK fixture (parent/child tables); trigger fixture (target trigger writing an audit row).
+**Steps:** (1) Online-refresh target A only, default write-side policy; assert target B's integrate receives and applies all changes including pre-boundary ones (compare B clean; B's latency flat). (2) Request capture-side skip on the same stream; assert the planner warns naming target B; then on a single-consumer stream, apply capture-side skip and verify via hub-store audit that pre-boundary changes never leave the source. (3) Bulk-refresh the FK fixture with constraint handling enabled: constraints disabled and re-enabled as visible plan steps; repeat as an online refresh and assert re-enablement defers to the next integrate cycle end with the deferral in the run record; repeat unhandled and assert the plan's stated FK-error expectation. (4) Refresh the trigger fixture with suppression: zero trigger side-effects during the load, trigger active immediately after; compare everywhere.
 **Expected:** Write-side default is broadcast-safe; capture-side skip is gated and effective; FK and trigger handling behave as visible, capability-gated plan steps with the online deferral recorded.
 **Evidence:** Compare reports, planner warning, wire/hub-store audit, plan step captures, deferral record, trigger side-effect audit.
 
@@ -180,7 +182,7 @@ Movement tests verify the bulk path per target class (native bulk interface and 
 | REF-09 | Integrate is never suspended by a refresh: non-refreshed tables replicate with flat latency throughout a scoped online refresh, and a killed refresh leaves no blocking state — the rerun needs no manual cleanup |
 | REF-10 | Additive merge refresh applies inserts/updates only with its non-convergence flagged and sync-report-annotated; repair class filters are honored and recorded; the TimeKey truncate marker is published-format-exact and consumer-verifiable; invalid mode combinations are refused |
 | REF-11 | The write-side skip default is broadcast-safe; capture-side skip is planner-gated when other consumers exist; FK and trigger handling are visible, capability-gated plan steps with online re-enable deferral recorded |
-| — | Snapshot consistency, stage-and-swap under readers: owned by SCH-07, SCH-08. Creation policies: CHA-18. Sliced refresh mechanics: SLC-01..10, SLC-16..17 |
+| — | Snapshot consistency, stage-and-swap under readers: owned by SCH-07, SCH-08. Creation policies: STR-18. Sliced refresh mechanics: SLC-01..10, SLC-16..17 |
 
 ## 12. Open Questions
 

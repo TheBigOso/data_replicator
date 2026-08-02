@@ -85,7 +85,7 @@ Each procedure below verifies one acceptance criterion. A criterion is checked o
 1. On the hub, generate a one-time enrollment token: `replctl agent-token create --location LAB-AG1 --ttl 15m`. Record the token.
 2. On the fresh host, run `replagent enroll --hub https://hub.lab:4340 --token <token>`.
 3. Verify enrollment: on the hub, `replctl agents list` shows LAB-AG1 with a pinned certificate fingerprint; on the agent, the hub client certificate appears in the allowlist store.
-4. Start a trivial pipeline through this agent and confirm a job runs.
+4. Start a trivial stream through this agent and confirm a job runs.
 5. On a second fresh host, attempt `replagent enroll` with the **same token**.
 6. Generate a new token, wait past its TTL, and attempt enrollment with the expired token.
 
@@ -123,10 +123,10 @@ Each procedure below verifies one acceptance criterion. A criterion is checked o
 
 ### AGT-04 — Source-side filtering audit
 
-**Preconditions:** Lab Postgres with the TPC-C schema plus two decoy tables (`DECOY_A`, `DECOY_B`) receiving continuous inserts of a known 64-byte canary pattern at a write rate comparable to the TPC-C change volume; a channel subscribing only to the TPC-C tables; packet-capture sidecar on the capture agent's namespace; a test build with the **diagnostic frame tap** enabled (mirrors framed records to a local file before compression and encryption). Note: because wire traffic is zstd-compressed and AES-256-GCM encrypted, absence of the canary in the raw capture proves nothing by itself — the assertions below are ordered by evidentiary weight.
+**Preconditions:** Lab Postgres with the TPC-C schema plus two decoy tables (`DECOY_A`, `DECOY_B`) receiving continuous inserts of a known 64-byte canary pattern at a write rate comparable to the TPC-C change volume; a stream subscribing only to the TPC-C tables; packet-capture sidecar on the capture agent's namespace; a test build with the **diagnostic frame tap** enabled (mirrors framed records to a local file before compression and encryption). Note: because wire traffic is zstd-compressed and AES-256-GCM encrypted, absence of the canary in the raw capture proves nothing by itself — the assertions below are ordered by evidentiary weight.
 
 **Steps:**
-1. **Baseline window:** run the capture pipeline under TPC-C alone (decoy writers paused) for 15 minutes; record wire bytes shipped to the hub and the agent's frames-emitted counter, normalized per unit of TPC-C work (transactions completed).
+1. **Baseline window:** run the capture stream under TPC-C alone (decoy writers paused) for 15 minutes; record wire bytes shipped to the hub and the agent's frames-emitted counter, normalized per unit of TPC-C work (transactions completed).
 2. **Mixed window:** resume the decoy writers alongside TPC-C at the matched rate for 15 minutes; record the same measurements.
 3. Read the parser filter counters for both windows: redo records inspected, records skipped-before-decode per table, records decoded per table. The decoy tables' skip counts must account for the full decoy write volume; their decoded counts must be zero.
 4. Search the diagnostic tap output from both windows for the canary pattern and for the decoy tables' object identifiers; both must be entirely absent.
@@ -161,23 +161,23 @@ Each procedure below verifies one acceptance criterion. A criterion is checked o
 **Steps:**
 1. Record agent-host disk usage baseline.
 2. Partition the hub for 15 minutes under load.
-3. Observe pipeline state and alerts during the outage; sample agent-host disk usage.
+3. Observe stream state and alerts during the outage; sample agent-host disk usage.
 4. Heal and confirm resume; run compare.
 
-**Expected results:** Pipeline enters the documented stalled state with an alert within one health interval; agent-host disk usage stays flat (no hidden buffering); on heal, capture resumes from checkpoint; compare shows zero loss/duplication (source log retention permitting, per documented behavior).
+**Expected results:** Stream enters the documented stalled state with an alert within one health interval; agent-host disk usage stays flat (no hidden buffering); on heal, capture resumes from checkpoint; compare shows zero loss/duplication (source log retention permitting, per documented behavior).
 
 **Evidence:** Alert record, disk-usage series, compare report.
 
 ### AGT-07 — Orchestrated fleet upgrade with rollback
 
-**Preconditions:** Three enrolled agents (AG1–AG3) running pipelines under live TPC-C load; new agent version staged on the hub; on AG3, arrange for the staged binary to be corrupted (truncated) after download but before swap — via test hook.
+**Preconditions:** Three enrolled agents (AG1–AG3) running streams under live TPC-C load; new agent version staged on the hub; on AG3, arrange for the staged binary to be corrupted (truncated) after download but before swap — via test hook.
 
 **Steps:**
 1. Approve fleet-wide upgrade in the hub UI; record approval audit entry.
 2. Observe rolling upgrade: AG1, AG2 swap, health-check, and report the new version.
 3. Observe AG3: corrupted binary fails health check.
-4. Verify AG3 auto-rolled back to the prior version and its pipelines resumed.
-5. Run compare across all three agents' pipelines.
+4. Verify AG3 auto-rolled back to the prior version and its streams resumed.
+5. Run compare across all three agents' streams.
 
 **Expected results:** AG1/AG2 upgrade with no job failures beyond a bounded reconnect blip; AG3 rolls back automatically within the health-check window and continues on the old version; no data loss anywhere (compare clean); the hub shows accurate per-agent version state including AG3's rollback event.
 
@@ -200,7 +200,7 @@ Each procedure below verifies one acceptance criterion. A criterion is checked o
 **Preconditions:** Single clean host; product install bundle; nothing else.
 
 **Steps:**
-1. Execute the published quick-start tutorial verbatim (this procedure doubles as documentation validation): install hub with embedded agent and SQLite repository, enroll nothing (embedded agent auto-registers), create a Postgres→Postgres pipeline against the bundled lab compose file, activate, generate changes, observe replication, run compare.
+1. Execute the published quick-start tutorial verbatim (this procedure doubles as documentation validation): install hub with embedded agent and SQLite repository, enroll nothing (embedded agent auto-registers), create a Postgres→Postgres stream against the bundled lab compose file, activate, generate changes, observe replication, run compare.
 2. Time the procedure.
 
 **Expected results:** Tutorial completes start-to-finish with no undocumented steps; compare clean; total time within the tutorial's stated estimate.
@@ -224,7 +224,7 @@ Each procedure below verifies one acceptance criterion. A criterion is checked o
 | ID | Criterion |
 |---|---|
 | AGT-01 | Fresh host: enrollment with a one-time token establishes pinned mTLS in one command; a reused token is refused |
-| AGT-02 | Agent-initiated mode: pipeline runs end-to-end with zero inbound firewall rules on the agent host (verified by host firewall config) |
+| AGT-02 | Agent-initiated mode: stream runs end-to-end with zero inbound firewall rules on the agent host (verified by host firewall config) |
 | AGT-03 | A non-pinned hub certificate is rejected by an agent configured with a hub allowlist |
 | AGT-04 | Source-side filtering under a mixed TPC-C + decoy workload: every unsubscribed change is skipped before decode (parser counters), produces zero pre-encryption frame bytes (diagnostic tap), and adds zero wire volume versus a decoy-free baseline (differential measurement within documented tolerance) |
 | AGT-05 | Local spool enabled: hub down for 30 minutes under load — capture continues, spool drains in order on recovery, compare proves zero loss/duplication; disk budget is never exceeded |

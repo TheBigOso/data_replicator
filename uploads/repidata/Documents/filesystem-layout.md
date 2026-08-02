@@ -3,6 +3,7 @@
 **Project:** Enterprise CDC Replication Platform
 **Document type:** Concept and design specification
 **Status:** v1 design; the on-disk contract
+**Related:** `fleet-paths.md` (how the console hierarchy nests inside `filelog/`, `runlogs/`, `checkpoints/` and the rest — the path model)
 
 ---
 
@@ -23,7 +24,7 @@ install/                        (read-only; identical layout for hub and agent p
 ├─ share/
 │  ├─ docs/                     the complete offline documentation bundle (air-gap promise)
 │  ├─ openapi.json              the API contract, versioned with the binary
-│  └─ examples/                 sample channel definitions (GitOps-ready)
+│  └─ examples/                 sample stream definitions (GitOps-ready)
 ├─ MANIFEST.sig                 signed checksum manifest of every file above
 ├─ THIRD-PARTY                  licenses, versions, notices (cargo-deny output, published)
 ├─ RELEASE                      release notes for this build
@@ -38,6 +39,8 @@ One state root per hub or agent process (default beside the install, override by
 
 ### 3.1 Hub state root
 
+The top-level entries are listed here; **how the console hierarchy nests inside them** — which directories carry a virtual-fleet, stream, or connection segment, and which console nodes have no disk presence at all — is specified in `fleet-paths.md`.
+
 ```
 state/
 ├─ config/            ⬛  hub configuration (declarative files the GitOps path also writes)
@@ -45,11 +48,11 @@ state/
 │                        hub TLS key material (HVR's 'wallet', named for what it is)
 ├─ repository/        ⬛  embedded SQLite files (dev/lab mode only; production PostgreSQL
 │                        lives outside this tree and is backed up as a database)
-├─ filelog/           ⬛  the native file log — HVR's 'router' directory, per hub/channel/
+├─ filelog/           ⬛  the native file log — HVR's 'router' directory, per hub/stream/
 │                        consumer, under the ARC-13 quota; ack-based GC owns deletion
 ├─ checkpoints/       ⬛  capture positions and retained recovery checkpoints
 │                        (HVR's capckp + capckpretain)
-├─ enrollment/        ⬛  per-channel table enrollment data (per-table, per CHA-14)
+├─ enrollment/        ⬛  per-stream table enrollment data (per-table, per STR-14)
 ├─ runlogs/           ◼  structured run logs (Jobs §5) + archives, under retention policy
 ├─ reports/           ◼  sync report archive; also the file-drop delivery root (air-gap sink)
 ├─ events-forward/    ◼  file-drop forwarder staging for the event ledger (EVT-05)
@@ -77,8 +80,8 @@ state/
 
 Three HVR directories have no equivalent here because the mechanisms behind them were designed out — the tree is the proof that the specs meant it:
 
-- **`jobgen/` (generated job scripts)** — does not exist. Behavior lives in signed binaries; the channel spec's "Nowhere: generated scripts" rule is visible as a missing directory.
-- **`channels/*/control/` (control files)** — does not exist. Refresh–integrate coordination is per-table boundary state in ordinary bookkeeping (REF-09); there is no blocking-file mechanism to leak.
+- **`jobgen/` (generated job scripts)** — does not exist. Behavior lives in signed binaries; the stream spec's "Nowhere: generated scripts" rule is visible as a missing directory.
+- **`streams/*/control/` (control files)** — does not exist. Refresh–integrate coordination is per-table boundary state in ordinary bookkeeping (REF-09); there is no blocking-file mechanism to leak.
 - **`metering/`** — does not exist. Flat license; nothing to meter.
 
 Also folded rather than removed: HVR's `stats/` state becomes metrics in the repository (one store, one retention policy); `jobcache/` and `jobstate/` become repository rows and event artifacts (query-the-run, not find-the-file); alert configuration is structured settings in the repository, not files.
@@ -93,7 +96,7 @@ Back up ⬛ always, ◼ per your retention posture, ◻ never. A hub restore is:
 |---|---|---|
 | hvr_home: bin, lib, dbms, jre, script, www, plugins | `install/`: three static binaries, docs, OpenAPI, examples | Rust deletes the sprawl |
 | "Changes to hvr_home strictly prohibited" (docs plea) | Signed MANIFEST verified at startup; read-only mount recommended | Prohibition became a check |
-| hvr.3rdparty notices | THIRD-PARTY from the cargo-deny pipeline (ARC-10) | Kept, generated honestly |
+| hvr.3rdparty notices | THIRD-PARTY from the cargo-deny stream (ARC-10) | Kept, generated honestly |
 | hvr_config as the runtime/config root | `state/` root, every path enumerated with a backup class | Kept, classified |
 | wallet (bootstrap security) | `keystore/` — envelope-encrypted, named for what it is | Kept, plainly named |
 | router/ transaction files | `filelog/` under ARC-13 quota with ack-based GC | Kept, governed |
@@ -113,7 +116,7 @@ Phased; standing rule applies. FSL-01's sweep joins the standing no-hidden-objec
 
 | Phase | Focus | Criteria | Environment | Entry condition | Exit condition |
 |---|---|---|---|---|---|
-| A | Layout conformance and integrity | FSL-01, FSL-02 | Fresh installs + full-exercise lab run | Packaging pipeline built | Sweep clean; tampering detected |
+| A | Layout conformance and integrity | FSL-01, FSL-02 | Fresh installs + full-exercise lab run | Packaging stream built | Sweep clean; tampering detected |
 | B | Restore reality | FSL-03 | Lab hub + agents under load | Phase A exit | Documented restore ends compare-clean |
 
 ## 7. Test Procedures

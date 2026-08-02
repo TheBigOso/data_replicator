@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#f4f3ef; font-family:'IBM Plex Sans',sans-serif; color:#1a1c1e; }
+    a { color:#1a6e50; } a:hover { color:#14523c; }
+  </style>
+</helmet>
+<div data-screen-label="Alert rules wireflow" style="padding:36px 40px; min-width:1720px;">
+  <div style="font-size:22px; font-weight:700;">Alert rules — wireflow</div>
+  <div style="display:flex; align-items:flex-start; gap:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:8px; padding:9px 13px; margin:10px 0 4px; max-width:1180px;">
+    <span style="flex:none; font-size:9.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; border:1px solid #1a6e50; border-radius:4px; padding:2px 7px; background:#fff;">CANONICAL</span>
+    <span style="font-size:11px; color:#6d7278; line-height:1.55;">Canonical for <b>alert rules</b> — rule scope, one notification channel per rule, schedule, and the delivery retry/backoff curve. Spec: <b>alerts-ui.md</b>.</span>
+  </div>
+  <div style="font-size:13px; color:#6d7278; margin:6px 0 14px;">Replicator console · Fleet Alerts → New alert rule → conditions → schedule → notification → escalation → policy → saved, plus the alert-manager cycle and rule management · one rule, one notification type</div>
+  <div style="display:flex; gap:10px; align-items:stretch; margin-bottom:14px;">
+    <div style="border:1.5px solid #1a6e50; background:#e8f2ed; border-radius:9px; padding:8px 12px; font-size:11px; line-height:1.5; width:262px; box-sizing:border-box;"><b style="color:#1a6e50;">NEW · Schedule &amp; recurrence</b><br>Manager cycle 5–60 min, set inline · per-rule: every cycle / own interval / daily digest with day chips</div>
+    <div style="border:1.5px solid #1a6e50; background:#e8f2ed; border-radius:9px; padding:8px 12px; font-size:11px; line-height:1.5; width:262px; box-sizing:border-box;"><b style="color:#1a6e50;">NEW · Silence &amp; snooze</b><br>Per rule (30m–24h, ∞, custom hours) or fleet-wide with banner — suppress the send, never the scan</div>
+    <div style="border:1.5px solid #1a6e50; background:#e8f2ed; border-radius:9px; padding:8px 12px; font-size:11px; line-height:1.5; width:262px; box-sizing:border-box;"><b style="color:#1a6e50;">NEW · Test &amp; preview</b><br>Rendered payload against live alerts + simulated delivery trace → DELIVERED / FAILED verdict</div>
+    <div style="border:1.5px solid #1a6e50; background:#e8f2ed; border-radius:9px; padding:8px 12px; font-size:11px; line-height:1.5; width:262px; box-sizing:border-box;"><b style="color:#1a6e50;">NEW · Hub health × thresholds</b><br>Backlog / agents / frozen-hub conditions → threshold-aware cards + live hub alerts</div>
+    <div style="border:1.5px solid #1a6e50; background:#e8f2ed; border-radius:9px; padding:8px 12px; font-size:11px; line-height:1.5; width:262px; box-sizing:border-box;"><b style="color:#1a6e50;">NEW · Escalation tiers</b><br>Unacknowledged alerts climb group by group — team → leads → executives — each after its own wait; + adds tiers without limit</div>
+  </div>
+  <div style="display:flex; gap:16px; align-items:center; font-size:11.5px; color:#6d7278; margin-bottom:26px;">
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1px solid #c9c6bf; border-radius:3px;"></span>screen / dialog step</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1.5px dashed #b3541e; border-radius:3px;"></span>branch / sub-flow</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px; height:10px; background:#fbe9e7; border:1px solid #b3261e; border-radius:99px;"></span>validation gate</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:3px;"></span>outcome</span>
+  </div>
+
+  <!-- ===== main flow ===== -->
+  <div style="display:flex; align-items:flex-start; gap:0;">
+
+    <!-- entry -->
+    <div style="width:215px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:8px;">ENTRY POINTS</div>
+        <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; margin-bottom:6px; text-align:center;">Fleet Alerts · New alert rule</div>
+        <div style="background:#fff; border:1px solid #1a6e50; color:#1a6e50; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; margin-bottom:6px; text-align:center;">Rule name click · Edit</div>
+        <div style="background:#fff; border:1px solid #1a6e50; color:#1a6e50; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">⋮ · Duplicate rule</div>
+        <div style="font-size:10.5px; color:#6d7278; margin-top:8px; line-height:1.5;">Rules live at the <b>virtual-fleet</b> level — the alert manager runs on the hub. Duplicate opens the dialog prefilled with <span style="font-family:'IBM Plex Mono',monospace; font-size:10px;">name_copy</span>.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Branch:</b> a second notification channel (email <i>and</i> Slack) is a second rule — one rule owns exactly one type.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- conditions -->
+    <div style="width:290px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">DIALOG · CONDITIONS</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">What the rule watches</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 8px; font-size:10px; margin-bottom:4px;">☑ Only check specific streams <span style="display:inline-block; white-space:nowrap; border:1px solid #1a6e50; background:#1a6e50; color:#fff; border-radius:99px; padding:1px 8px; font-size:9px; font-weight:600;">ora-erp</span> <span style="display:inline-block; white-space:nowrap; border:1px solid #e3e1dc; border-radius:99px; padding:1px 8px; font-size:9px;">pg-billing</span></div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 8px; font-size:10px; color:#6d7278; margin-bottom:6px;">☐ Only check specific connections</div>
+        <div style="border:1.5px solid #1a6e50; background:#f2f7f4; border-radius:6px; padding:4px 8px; font-size:10px; margin-bottom:3px;">◉ Errors, warnings and high latency</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; font-size:10px; color:#6d7278; margin-bottom:3px;">○ Only errors and high latency</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; font-size:10px; color:#6d7278; margin-bottom:6px;">○ Only high latency <span style="font-size:9px;">(past the stream's latency SLA)</span></div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:9.5px; color:#6d7278; margin-bottom:4px;">
+          <div style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 7px;">SLA extra time <b style="color:#1a1c1e;">120 s</b></div>
+          <div style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 7px;">Ignore <span style="font-family:'IBM Plex Mono',monospace;">F_JT.*|W_JD.*</span></div>
+          <div style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 7px;">Stream inactivity <b style="color:#1a1c1e;">min</b></div>
+          <div style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 7px;">Hub inactivity <b style="color:#1a1c1e;">60 min</b></div>
+          <div style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 7px;">Backlog &gt; <b style="color:#1a1c1e;">256 MB</b></div>
+          <div style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 7px;">Agents &lt; <b style="color:#1a1c1e;">min</b></div>
+          <div style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 7px;">☑ Frozen-hub watch</div>
+        </div>
+        <div style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 7px; font-size:9.5px; color:#6d7278;">☐ Blackout <span style="font-family:'IBM Plex Mono',monospace;">22:00 → 06:00</span> — suppressed, not skipped</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Branch:</b> no scope checked → the whole virtual fleet. Inactivity checks fire on <i>silence</i> — empty capture cycles — not on errors.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- notification -->
+    <div style="width:290px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">DIALOG · NOTIFICATION</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Type picks the form</div>
+        <div style="display:flex; gap:4px; margin-bottom:8px; font-size:9.5px; font-weight:600;">
+          <span style="border:1.5px solid #1a6e50; background:#f2f7f4; border-radius:5px; padding:3px 9px;">Email</span>
+          <span style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 9px; color:#6d7278;">Slack</span>
+          <span style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 9px; color:#6d7278;">SNS</span>
+          <span style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 9px; color:#6d7278;">SNMP</span>
+        </div>
+        <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:7px; padding:7px 9px; font-size:9.5px; line-height:1.7;">
+          Recipients <span style="font-family:'IBM Plex Mono',monospace;">dataops@corp.example</span><br>
+          SMTP server <span style="font-family:'IBM Plex Mono',monospace;">smtp.corp.example</span><br>
+          ☑ Authentication — user + password<br>
+          ☑ STARTTLS — cert pinned on the hub<br>
+          <span style="color:#1a6e50; font-weight:600;">▾ Advanced</span> — from address · port (587 with TLS, else 25)
+        </div>
+        <div style="font-size:10px; color:#6d7278; margin-top:6px; line-height:1.5;">Slack / SNS / SNMP swap in their own panel — see the type matrix below for required fields and defaults.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3261e; background:#fbe9e7; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#b3261e; line-height:1.5;"><b>Gate:</b> name required (always lowercase, spaces → _) · Email needs a recipient · Slack the webhook URL · SNS the topic ARN. SNMP defaults are enough.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- policy -->
+    <div style="width:250px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">DIALOG · SCHEDULE</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">When the rule runs</div>
+        <div style="border:1.5px solid #1a6e50; background:#f2f7f4; border-radius:6px; padding:5px 8px; font-size:10px; margin-bottom:4px;">◉ Every manager cycle <span style="color:#6d7278;">— rides the shared wake-up</span></div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 8px; font-size:10px; color:#6d7278; margin-bottom:4px;">○ On its own interval — 30 min / 1 h / 6 h / 12 h</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 8px; font-size:10px; color:#6d7278; margin-bottom:10px;">○ Daily digest at <span style="font-family:'IBM Plex Mono',monospace;">07:00</span> · day chips <b>Mo–Fr</b> — one bundled notification</div>
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">DIALOG · DELIVERY POLICY</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Noise control</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 8px; font-size:10px; margin-bottom:4px;">Message limit <b>1000</b> <span style="color:#6d7278;">— quoted lines per notification; Slack caps at 40</span></div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 8px; font-size:10px; margin-bottom:4px;">Repeat interval <b>&gt; 1 hour</b> <span style="color:#6d7278;">— the same error stays silent until it expires</span></div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 8px; font-size:10px; color:#6d7278; margin-bottom:4px;">☐ Split events into separate alerts</div>
+        <div style="border:1.5px solid #1a6e50; background:#f2f7f4; border-radius:6px; padding:5px 8px; font-size:10px;">☑ Record an event per notification — the ledger sees what was sent</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Branch:</b> Cancel / ✕ discards the form — nothing saved, nothing scheduled. Edit and Duplicate land back here prefilled.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- outcome -->
+    <div style="width:260px; flex:none;">
+      <div style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:8px;">SAVED</div>
+        <div style="font-size:11px; line-height:1.7;">
+          • written as <span style="font-family:'IBM Plex Mono',monospace; font-size:10px;">&lt;name&gt;.conf</span> under the hub's alerts directory<br>
+          • row appears in the rules list — type pill, last check + schedule, scope, severity + repeat + tier-count summary<br>
+          • DEFINITION CHANGE event carries type, scope, severity, schedule, repeat, escalation ladder, event-per-notification<br>
+          • picked up with no restart — next manager cycle, own interval, or first digest time<br>
+          • persisted (<span style="font-family:'IBM Plex Mono',monospace; font-size:10px;">repl-alert-rules</span>)
+        </div>
+      </div>
+      <div style="margin-top:10px; background:#fff; border:1px solid #e3e1dc; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#6d7278; line-height:1.5;"><b style="color:#1a1c1e;">Then:</b> send a test notification from the ⋮ menu — verify delivery before trusting the real ones.</div>
+    </div>
+  </div>
+
+  <!-- ===== sub-flow: alert manager cycle ===== -->
+  <div style="margin-top:34px; margin-left:259px;">
+    <div style="width:2px; height:26px; background:#b3541e; margin-left:130px; margin-bottom:10px;"></div>
+    <div style="border:1.5px dashed #b3541e; border-radius:12px; padding:16px 18px; background:#fdfbf8; width:1150px;">
+      <div style="font-size:12px; font-weight:700; color:#8a5a2a; margin-bottom:12px;">SUB-FLOW · The alert manager — a scheduler job on a configurable cycle (5–60 min, default 10, set inline on Fleet Alerts), executing every enabled cycle-scheduled rule; own-interval and digest rules run as their own tasks</div>
+      <div style="display:flex; align-items:flex-start; gap:0;">
+        <div style="width:210px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">CYCLE START</div>
+          <div style="background:#1a1c1e; border-radius:6px; padding:6px 8px; font-family:'IBM Plex Mono',monospace; font-size:8.5px; color:#c9c6bf; line-height:1.7;">13:30:26 Checking alert rules.<br>13:30:27 Checked 2 rules for 6 streams in 1 second.</div>
+          <div style="font-size:9.5px; color:#6d7278; margin-top:5px; line-height:1.5;">Visible in the Alert manager log panel on Fleet Alerts. Disabled rules are skipped.</div>
+        </div>
+        <div style="width:36px; flex:none; display:grid; place-items:center; padding-top:30px; color:#8a8f98; font-size:17px;">→</div>
+        <div style="width:230px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">SCAN · SCOPED</div>
+          <div style="font-size:10px; line-height:1.6;">Hub logs are read once per cycle; each rule filters to its streams / connections, severity classes, and ignore pattern. Inactivity checks compare the quiet window against the configured minutes.</div>
+        </div>
+        <div style="width:36px; flex:none; display:grid; place-items:center; padding-top:30px; color:#8a8f98; font-size:17px;">→</div>
+        <div style="width:240px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">MATCH → NOTIFY</div>
+          <div style="font-size:10px; line-height:1.6;">One notification per rule per cycle (or per event, if split). <b>Repeat interval</b> silences repeats of the same issue; <b>blackout</b> suppresses the send, not the scan; <b>message limit</b> caps quoted lines — the rest are counted.</div>
+        </div>
+        <div style="width:36px; flex:none; display:grid; place-items:center; padding-top:30px; color:#8a8f98; font-size:17px;">→</div>
+        <div style="width:230px; flex:none; background:#e8f2ed; border:1px solid #1a6e50; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:6px;">RECORDED</div>
+          <div style="font-size:10px; line-height:1.6;">• Last check updates on the rule row<br>• an event per notification (when enabled) lands on the Events ledger<br>• the notification links the alert it fired for — alert → run → event → artifact</div>
+        </div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3261e; background:#fbe9e7; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#b3261e; line-height:1.5;"><b>Gate:</b> a rule not executed within its grace window — 2 h on the cycle, 2× its own interval, 26 h for a digest — shows <b>⚠ check overdue</b> on its row (unless disabled). A rule idle past 5 hours scans only the most recent log on its next run — archived logs are skipped to keep the catch-up cheap.</div>
+    </div>
+  </div>
+
+  <!-- ===== branch: schedule & recurrence ===== -->
+  <div style="margin-top:30px; margin-left:259px;">
+    <div style="border:1.5px dashed #b3541e; border-radius:12px; padding:16px 18px; background:#fdfbf8; width:1150px;">
+      <div style="font-size:12px; font-weight:700; color:#8a5a2a; margin-bottom:12px;">BRANCH · schedule &amp; recurrence — three ways a rule runs</div>
+      <div style="display:flex; align-items:flex-start; gap:14px; margin-bottom:12px;">
+        <div style="width:340px; flex:none; background:#fff; border:1.5px solid #1a6e50; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:6px;">◉ EVERY MANAGER CYCLE · default</div>
+          <div style="font-size:10px; line-height:1.6; margin-bottom:6px;">Rides the shared wake-up — no config of its own. The cycle itself is set inline in the rules header:</div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 8px; font-size:9.5px; color:#6d7278;">the alert manager scans hub logs <b style="color:#1a6e50;">every 10 minutes ▾</b> — 5 / 10 / 15 / 30 / 60 min; persisted, DEFINITION CHANGE on the ledger</div>
+        </div>
+        <div style="width:340px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">○ ON ITS OWN INTERVAL</div>
+          <div style="font-size:10px; line-height:1.6; margin-bottom:6px;">A separate scheduler task — every <b>30 min / 1 h / 6 h / 12 h</b>, independent of the manager cycle. Matches found between runs wait for the next run.</div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 8px; font-size:9.5px; color:#6d7278;">Row reads <span style="font-family:'IBM Plex Mono',monospace;">every 6 hours</span> under Last check; the manager log notes “N rules run on their own schedule”.</div>
+        </div>
+        <div style="width:340px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">○ DAILY DIGEST</div>
+          <div style="font-size:10px; line-height:1.6; margin-bottom:6px;">One bundled notification at a set time — <span style="font-family:'IBM Plex Mono',monospace;">07:00</span> — on chosen days: <b>Mo Tu We Th Fr</b> <span style="color:#6d7278;">Sa Su</span>. Nothing sends in between; repeat interval doesn't apply.</div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 8px; font-size:9.5px; color:#6d7278;">Default rule <span style="font-family:'IBM Plex Mono',monospace;">nightly_digest</span> ships this way — weekday mornings, whole fleet.</div>
+        </div>
+      </div>
+      <div style="background:#16181b; border-radius:8px; padding:10px 14px; margin-bottom:10px; width:680px; box-sizing:border-box;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:7px;">
+          <span style="font-size:10.5px; font-weight:700; color:#e8e6e1;">Log</span>
+          <span style="background:#22252a; border:1px solid #2f3237; border-radius:5px; padding:2px 9px; font-family:'IBM Plex Mono',monospace; font-size:9px; color:#e8e6e1;">◎ nightly_digest.out</span>
+          <span style="font-size:9px; color:#8a8f98;">daily digest 07:00 · whole virtual fleet</span>
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:9px; line-height:1.8;">
+          <div><span style="color:#6d7278;">07:00:00</span>&nbsp;&nbsp;<span style="color:#c9c6bf;">alert(nightly_digest): digest window closed — scanning hub logs since the previous digest — whole virtual fleet.</span></div>
+          <div><span style="color:#6d7278;">07:00:01</span>&nbsp;&nbsp;<span style="color:#f0b95a;">bundled 3 issues: mssql-hr capture stopped · db2-mfg latency 96s · DDL pending on ERP.AP_INVOICES</span></div>
+          <div><span style="color:#6d7278;">07:00:02</span>&nbsp;&nbsp;<span style="color:#81c995; font-weight:600;">digest sent via EMAIL to dataops@corp.example (6 lines quoted).</span></div>
+          <div><span style="color:#6d7278;">07:00:02</span>&nbsp;&nbsp;<span style="color:#8a8f98;">event recorded on the Events ledger.</span></div>
+        </div>
+      </div>
+      <div style="border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5; width:680px; box-sizing:border-box;"><b>Branch:</b> changing the manager cycle never touches own-interval or digest rules — they are their own tasks. “Perform alert check now” works on any schedule and resets Last check. A digest with no digest days can't be saved.</div>
+    </div>
+  </div>
+
+  <!-- ===== branch: silence & snooze ===== -->
+  <div style="margin-top:30px; margin-left:259px;">
+    <div style="border:1.5px dashed #b3541e; border-radius:12px; padding:16px 18px; background:#fdfbf8; width:1150px;">
+      <div style="font-size:12px; font-weight:700; color:#8a5a2a; margin-bottom:12px;">BRANCH · silence &amp; snooze — suppress the send, never the scan</div>
+      <div style="display:flex; align-items:flex-start; gap:14px; margin-bottom:12px;">
+        <div style="width:520px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">PER-RULE SNOOZE · ⋮ menu</div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 8px; font-size:9.5px; margin-bottom:6px;">Snooze <span style="border:1px solid #d8d5cf; border-radius:99px; padding:1px 7px; font-weight:600;">30m</span> <span style="border:1px solid #d8d5cf; border-radius:99px; padding:1px 7px; font-weight:600;">1h</span> <span style="border:1px solid #d8d5cf; border-radius:99px; padding:1px 7px; font-weight:600;">4h</span> <span style="border:1px solid #d8d5cf; border-radius:99px; padding:1px 7px; font-weight:600;">24h</span> <span style="border:1px solid #d8d5cf; border-radius:99px; padding:1px 7px; font-weight:600;">∞</span> · custom <span style="font-family:'IBM Plex Mono',monospace;">[hours]</span> <span style="color:#6d7278;">— snoozed rules swap to a single <b>Resume notifications</b> item</span></div>
+          <div style="font-size:10px; line-height:1.6;">The row shows <b style="color:#b3541e;">snoozed · 42m</b> under Last check. The rule keeps executing on its schedule and keeps logging; only the send is held. Auto-resumes when the timer expires; persisted with the rule.</div>
+        </div>
+        <div style="width:560px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">FLEET-WIDE SILENCE · rules header</div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 8px; font-size:9.5px; margin-bottom:6px;"><b>Silence fleet ▾</b> — 30 minutes / 1 hour / 4 hours / until tomorrow 07:00 / <b>mute until turned back on</b> / custom <span style="font-family:'IBM Plex Mono',monospace;">[hours]</span> · while active the button reads <b style="color:#b3541e;">Silenced · 42m</b> (or <b style="color:#b3541e;">Silenced · ∞</b>)</div>
+          <div style="border:1.5px solid #b3541e; background:#fbf3ec; border-radius:6px; padding:5px 8px; font-size:9.5px; color:#8a5a2a; margin-bottom:6px;">🔸 Banner above the rules table: <b>Fleet-wide silence</b> until 14:32 · 42m left — every rule keeps scanning and logging; nothing notifies. <b>[Resume notifications]</b></div>
+          <div style="font-size:10px; line-height:1.6;">Covers every rule regardless of schedule. Persisted — a reload doesn't un-silence; an infinite mute holds until resumed manually. Ledger records set and lift as DEFINITION CHANGE.</div>
+        </div>
+      </div>
+      <div style="background:#16181b; border-radius:8px; padding:10px 14px; margin-bottom:10px; width:680px; box-sizing:border-box;">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:9px; line-height:1.8;">
+          <div><span style="color:#6d7278;">13:40:12</span>&nbsp;&nbsp;<span style="color:#c9c6bf;">alert(fleet_errors): scanning hub logs — whole virtual fleet.</span></div>
+          <div><span style="color:#6d7278;">13:40:13</span>&nbsp;&nbsp;<span style="color:#f0b95a;">matched 1 issue: mssql-hr capture stopped</span></div>
+          <div><span style="color:#6d7278;">13:40:13</span>&nbsp;&nbsp;<span style="color:#f0b95a;">notifications suppressed — rule snoozed until 14:32; scans and logging continue.</span></div>
+        </div>
+      </div>
+      <div style="border:1.5px dashed #b3261e; background:#fbe9e7; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#b3261e; line-height:1.5; width:680px; box-sizing:border-box;"><b>Gate:</b> snooze ≠ disable — a disabled rule stops executing; a snoozed one only stops sending. Send test notification still works while snoozed (an explicit test is never held). Alerts themselves stay on the page — silence mutes streams, not the console.</div>
+
+  <!-- ===== branch: hub health thresholds ===== -->
+  <div style="margin-top:30px; margin-left:259px;">
+    <div style="border:1.5px dashed #b3541e; border-radius:12px; padding:16px 18px; background:#fdfbf8; width:1150px;">
+      <div style="font-size:12px; font-weight:700; color:#8a5a2a; margin-bottom:12px;">BRANCH · hub health × alert thresholds — rules watch the hub, not just the streams</div>
+      <div style="display:flex; align-items:flex-start; gap:14px; margin-bottom:12px;">
+        <div style="width:360px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">CONDITIONS · in the rule dialog</div>
+          <div style="font-size:10px; line-height:1.7;"><b>Relay backlog over N MB</b> — relay files piling faster than apply drains · <b>Agents connected below N</b> — lost hub connections · <b>Frozen-hub watch</b> — repository and GC paused. Effective thresholds are the tightest across enabled rules; each remembers which rule set it.</div>
+        </div>
+        <div style="width:360px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">CARDS · hub health, threshold-aware</div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:6px 8px; font-size:9.5px; line-height:1.7; margin-bottom:6px;">● stream-east · Relay backlog <b style="color:#b3541e;">352 MB</b> · Agents 6 · repo ok<br><span style="color:#b3541e; font-weight:600;">⚠ backlog over 256 MB (fleet_errors)</span></div>
+          <div style="font-size:10px; line-height:1.6;">Breached metrics color and name their watcher; the card dot escalates (amber / red). Unwatched fleets read <i>“no alert thresholds set”</i> — the gap is visible, not silent.</div>
+        </div>
+        <div style="width:370px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">ALERTS · same list as stream alerts</div>
+          <div style="font-size:10px; line-height:1.7;">A breach is a live alert row on Fleet Alerts — <span style="background:#fdf3e3; border:1px solid #f0b95a; border-radius:99px; padding:0 6px; font-size:8.5px; font-weight:700; color:#8a5a2a;">WARNING</span> backlog/frozen, <span style="background:#fbe9e7; border:1px solid #b3261e; border-radius:99px; padding:0 6px; font-size:8.5px; font-weight:700; color:#b3261e;">CRITICAL</span> agents under minimum. Acknowledgeable like any alert; counted in badges; matched by unscoped rules — so digests, previews and rule logs carry hub health too.</div>
+        </div>
+      </div>
+      <div style="border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5; width:740px; box-sizing:border-box;"><b>Branch:</b> hub alerts carry no run — thresholds are evaluated against live hub status each cycle; the rule log states each check: <span style="font-family:'IBM Plex Mono',monospace; font-size:9.5px;">hub health: relay backlog 352 MB vs 256 MB threshold — OVER.</span> Stream-scoped rules never match hub alerts — hub health is fleet-level by definition.</div>
+    </div>
+  </div>
+
+  <!-- ===== branch: escalation tiers ===== -->
+  <div style="margin-top:30px; margin-left:259px;">
+    <div style="border:1.5px dashed #b3541e; border-radius:12px; padding:16px 18px; background:#fdfbf8; width:1150px;">
+      <div style="font-size:12px; font-weight:700; color:#8a5a2a; margin-bottom:12px;">BRANCH · escalation tiers — unacknowledged alerts climb the ladder</div>
+      <div style="display:flex; align-items:flex-start; gap:14px; margin-bottom:12px;">
+        <div style="width:540px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">DIALOG · ESCALATION — tier 1 is the notification itself</div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 8px; font-size:9.5px; margin-bottom:4px;"><span style="display:inline-grid; place-items:center; width:14px; height:14px; border-radius:99px; background:#1a6e50; color:#fff; font-weight:700; font-size:8px;">2</span> Team leads · <span style="font-family:'IBM Plex Mono',monospace;">dl-dataops-leads@corp.example</span> · if unacknowledged after <b>30 min</b> <span style="color:#6d7278;">✕</span></div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 8px; font-size:9.5px; margin-bottom:4px;"><span style="display:inline-grid; place-items:center; width:14px; height:14px; border-radius:99px; background:#1a6e50; color:#fff; font-weight:700; font-size:8px;">3</span> Executives · <span style="font-family:'IBM Plex Mono',monospace;">exec-oncall@corp.example</span> · if unacknowledged after <b>60 min</b> <span style="color:#6d7278;">✕</span></div>
+          <div style="border:1px dashed #c9c6bf; border-radius:6px; padding:4px 10px; font-size:9.5px; font-weight:600; color:#1a6e50; display:inline-block; margin-bottom:6px;">+ Add escalation tier</div>
+          <div style="font-size:10px; line-height:1.6;">No tier limit — 3, 4, 5 groups, each with its own group name, destination, and wait. Waits chain: tier 3 fires its wait <i>after</i> tier 2 fired. Every tier needs a destination to save.</div>
+        </div>
+        <div style="width:560px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">RUNTIME · the chain in the rule log</div>
+          <div style="background:#1a1c1e; border-radius:6px; padding:6px 8px; font-family:'IBM Plex Mono',monospace; font-size:8.5px; line-height:1.8; margin-bottom:6px;">
+            <div style="color:#81c995; font-weight:600;">13:20:18 notification sent via EMAIL to dataops@… — tier 1.</div>
+            <div style="color:#f0b95a;">13:50:18 no acknowledgement after 30m — escalated to tier 2 (Team leads) via EMAIL to dl-dataops-leads@….</div>
+            <div style="color:#f0b95a;">14:50:18 no acknowledgement after 60m — escalated to tier 3 (Executives) via EMAIL to exec-oncall@….</div>
+            <div style="color:#8a8f98;">14:54:18 alert acknowledged by rn.reeves — escalation chain stopped.</div>
+          </div>
+          <div style="font-size:10px; line-height:1.6;"><b>Acknowledge is the off switch</b> — acknowledging the alert (or turning the rule off) stops the climb wherever it is. The rules row reads <span style="font-family:'IBM Plex Mono',monospace; font-size:9px;">· 3 tiers</span>; the saved event carries the whole ladder.</div>
+        </div>
+      </div>
+      <div style="border:1.5px dashed #b3261e; background:#fbe9e7; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#b3261e; line-height:1.5; width:740px; box-sizing:border-box;"><b>Gate:</b> a tier without a destination can't be saved. Snooze/silence hold tier-1 sends — and a chain that never started never escalates; blackout defers the send, and the escalation clock starts when tier 1 actually fires.</div>
+    </div>
+  </div>
+
+  <!-- ===== branch: test & preview ===== -->
+  <div style="margin-top:30px; margin-left:259px;">
+    <div style="border:1.5px dashed #b3541e; border-radius:12px; padding:16px 18px; background:#fdfbf8; width:1150px;">
+      <div style="font-size:12px; font-weight:700; color:#8a5a2a; margin-bottom:12px;">BRANCH · test &amp; preview — see the payload, prove the stream</div>
+      <div style="display:flex; align-items:flex-start; gap:14px; margin-bottom:12px;">
+        <div style="width:520px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">ENTRY · two doors, one modal</div>
+          <div style="font-size:10px; line-height:1.6; margin-bottom:6px;"><b>⋮ · Test delivery &amp; preview</b> on a saved rule — or <b>Preview &amp; test</b> in the dialog footer, working on the <i>unsaved</i> form so the config is proven before Create rule is ever clicked.</div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 8px; font-size:9.5px; color:#6d7278;">The preview renders from the rule's current settings against the live alerts it matches — header fields (From/To/Subject, webhook + stream, topic ARN, trap destination) plus the message body, capped by the message limit. Missing required fields show in red.</div>
+        </div>
+        <div style="width:560px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">DELIVERY TEST · simulated trace</div>
+          <div style="background:#1a1c1e; border-radius:6px; padding:6px 8px; font-family:'IBM Plex Mono',monospace; font-size:8.5px; line-height:1.8; margin-bottom:6px;">
+            <div style="color:#c9c6bf;">connecting to smtp.corp.example:587 …</div>
+            <div style="color:#8a8f98;">STARTTLS established — server certificate matches the pinned cert.</div>
+            <div style="color:#8a8f98;">authenticated as svc-replicator.</div>
+            <div style="color:#81c995; font-weight:600;">test message accepted for 1 recipient.</div>
+          </div>
+          <div style="font-size:10px; line-height:1.6;">Steps stream in per stream — SMTP connect/TLS/auth, Slack POST + HTTP 200, SNS publish + message id, SNMP trap (UDP, no ack). Verdict pill: <b style="color:#1a6e50;">TEST DELIVERED</b> or <b style="color:#b3261e;">TEST FAILED</b> — a missing recipient / webhook / ARN fails the way the real stream would.</div>
+        </div>
+      </div>
+      <div style="border:1.5px dashed #b3261e; background:#fbe9e7; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#b3261e; line-height:1.5; width:680px; box-sizing:border-box;"><b>Gate:</b> tests bypass snooze, fleet silence and blackout — an explicit test always sends. The preview never mutates the rule; closing the modal returns to wherever it was opened (dialog stays open behind it).</div>
+    </div>
+  </div>
+
+  <!-- ===== branch: managing rules ===== -->
+  <div style="margin-top:30px; margin-left:259px;">
+    <div style="border:1.5px dashed #b3541e; border-radius:12px; padding:16px 18px; background:#fdfbf8; width:820px;">
+      <div style="font-size:12px; font-weight:700; color:#8a5a2a; margin-bottom:10px;">BRANCH · managing a rule (row actions + ⋮ menu)</div>
+      <div style="display:grid; grid-template-columns:180px 1fr; gap:6px 14px; font-size:11px;">
+        <div style="font-weight:600;">Disable / Enable</div><div>Disabled rules stop executing until re-enabled — the row dims and Last check reads <i>disabled</i>. Test / check / clear are only offered while enabled.</div>
+        <div style="font-weight:600;">Test delivery &amp; preview</div><div>Opens the Test &amp; preview modal — the rendered payload against live alerts, plus a simulated delivery trace with a DELIVERED / FAILED verdict. Also reachable unsaved, from the dialog's <b>Preview &amp; test</b>.</div>
+        <div style="font-weight:600;">Perform alert check now</div><div>Executes the rule immediately, outside the cycle; Last check resets.</div>
+        <div style="font-weight:600;">Clear outstanding errors</div><div>Pending errors are disregarded — only <i>new</i> errors notify on the next run.</div>
+        <div style="font-weight:600;">Duplicate rule</div><div>Opens the dialog prefilled as <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px;">name_copy</span> — rename before saving.</div>
+        <div style="font-weight:600;">View rule log</div><div>Opens <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px;">&lt;name&gt;.out</span> in the Log drawer — see the log box below.</div>
+        <div style="font-weight:600; color:#b3261e;">Delete rule</div><div>Removes the .conf; recorded in the ledger. The alert history it produced stays on Events.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== branch: the logs ===== -->
+  <div style="margin-top:30px; margin-left:259px;">
+    <div style="border:1.5px dashed #b3541e; border-radius:12px; padding:16px 18px; background:#fdfbf8; width:820px;">
+      <div style="font-size:12px; font-weight:700; color:#8a5a2a; margin-bottom:10px;">BRANCH · the alert logs — two files, one viewer</div>
+      <div style="background:#16181b; border-radius:8px; padding:10px 14px; margin-bottom:12px;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:7px;">
+          <span style="font-size:10.5px; font-weight:700; color:#e8e6e1;">Log</span>
+          <span style="background:#22252a; border:1px solid #2f3237; border-radius:5px; padding:2px 9px; font-family:'IBM Plex Mono',monospace; font-size:9px; color:#e8e6e1;">◎ db2_mfg_latency.out</span>
+          <span style="margin-left:auto; display:flex; gap:5px; font-size:9px; color:#c9c6bf;"><span style="border:1px solid #2f3237; border-radius:4px; padding:1px 7px;">⏸ Pause</span><span style="border:1px solid #2f3237; border-radius:4px; padding:1px 7px;">Download</span><span style="border:1px solid #2f3237; border-radius:4px; padding:1px 7px;">Copy log path</span><span style="color:#8a8f98;">✕</span></span>
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:9px; line-height:1.8;">
+          <div><span style="color:#6d7278;">13:20:16</span>&nbsp;&nbsp;<span style="color:#c9c6bf;">alert(db2_mfg_latency): scanning hub logs — streams db2-mfg.</span></div>
+          <div><span style="color:#6d7278;">13:20:17</span>&nbsp;&nbsp;<span style="color:#f0b95a;">matched 1 issue: db2-mfg latency 96s</span></div>
+          <div><span style="color:#6d7278;">13:20:18</span>&nbsp;&nbsp;<span style="color:#81c995; font-weight:600;">notification sent via SLACK to #data-ops (2 lines quoted).</span></div>
+          <div><span style="color:#6d7278;">13:30:26</span>&nbsp;&nbsp;<span style="color:#8a8f98;">same 1 issue outstanding — silenced by repeat interval (&gt;15 min).</span></div>
+          <div><span style="color:#6d7278;">13:30:27</span>&nbsp;&nbsp;<span style="color:#8a8f98;">▎ following — the next manager cycle appends here</span></div>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:180px 1fr; gap:6px 14px; font-size:11px;">
+        <div style="font-weight:600;">alert-manager.out</div><div>The scheduler job's own log — one Checking / Checked pair per cycle (configurable, default 10 min) across every enabled cycle-scheduled rule. Opened from the <b>Alert manager log</b> button on Fleet Alerts.</div>
+        <div style="font-weight:600;">&lt;rule&gt;.out</div><div>One rule's execution history: each cycle logs the scoped scan, then <span style="color:#f0b95a;">matched issues</span> → <span style="color:#1a6e50;">notification sent</span> (destination + quoted-line count) → event recorded — or “0 errors, 0 warnings matched”, or “silenced by repeat interval”. Opened from ⋮ · View rule log.</div>
+        <div style="font-weight:600;">The viewer</div><div><b>Docked in the page by default</b> — a panel right under the rules table, part of the Fleet Alerts layout. <b>⇱ Overlay</b> floats it over any screen; <b>⇲ Dock in page</b> puts it back. The choice persists. One log at a time — opening another replaces the tab.</div>
+        <div style="font-weight:600;">Follow / Pause</div><div>Follow tails the file live; Pause freezes the lines on screen while the file keeps growing — resume to catch up.</div>
+        <div style="font-weight:600;">Download · Copy path</div><div>Download grabs the whole file, not just the visible tail. Copy path yields <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px;">$HUB_CONFIG/hubs/&lt;vf&gt;/alerts/&lt;file&gt;</span> for CLI work.</div>
+        <div style="font-weight:600; color:#6b4fa1;">What the log proves</div><div>Every notification names its trigger — alert → run → event → artifact — so “did it fire, and why not” is answered by the file, not by memory. Disabled rules log their suspension; overdue rules log the archived-log skip.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== branch: notification type matrix ===== -->
+  <div style="margin-top:30px; margin-left:259px;">
+    <div style="border:1.5px dashed #b3541e; border-radius:12px; padding:16px 18px; background:#fdfbf8; width:820px;">
+      <div style="font-size:12px; font-weight:700; color:#8a5a2a; margin-bottom:10px;">BRANCH · what each notification type needs</div>
+      <div style="display:grid; grid-template-columns:110px 1fr; gap:6px 14px; font-size:11px;">
+        <div style="font-weight:600;">Email</div><div>Recipients (comma-separated) + SMTP server · optional auth (user/password), STARTTLS (pinned cert), from address, port — 587 with TLS, else 25.</div>
+        <div style="font-weight:600;">Slack</div><div>Incoming webhook URL · optional explicit #channel or @user override. Message limit capped at 40.</div>
+        <div style="font-weight:600;">SNS</div><div>Topic ARN + IAM access key ID / secret access key.</div>
+        <div style="font-weight:600;">SNMP</div><div>Hostname (default localhost) · trap port (162) · community · version V1/V2C · heartbeats — a summary trap even when there is nothing to report.</div>
+        <div style="font-weight:600; color:#6b4fa1;">All types</div><div>Message limit · repeat interval · split events · event-per-notification. Secrets are stored on the hub, never echoed back into the dialog.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

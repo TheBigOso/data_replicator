@@ -10,19 +10,19 @@
 
 A **job** is a process that performs one task: capturing changes, integrating changes, refreshing data, comparing data, applying an activation plan, or producing a sync report. Jobs are the unit the scheduler manages (scheduler spec owns *when* jobs run — cron, calendars, overlap, retry curves; this document owns *what a job is* — its states, its event model, its logs, and its settings). Every job's output lands in a retrievable run log, and failed jobs retry automatically under the scheduler's policy.
 
-Two shapes, kept from HVR because they carve reality correctly: **cyclic** jobs rerun repeatedly — capture and integrate cycle for the life of a channel, a scheduled refresh or compare cycles per its cadence — returning to PENDING after each run to await their next trigger. **Acyclic** jobs run once and finish — an ad-hoc refresh, a one-time compare, an activation. The state machine below serves both; acyclic jobs simply end in a terminal state instead of returning to PENDING.
+Two shapes, kept from HVR because they carve reality correctly: **cyclic** jobs rerun repeatedly — capture and integrate cycle for the life of a stream, a scheduled refresh or compare cycles per its cadence — returning to PENDING after each run to await their next trigger. **Acyclic** jobs run once and finish — an ad-hoc refresh, a one-time compare, an activation. The state machine below serves both; acyclic jobs simply end in a terminal state instead of returning to PENDING.
 
 ## 2. Job States — the machine, rationalized
 
 HVR's state list is proven at its core and muddled at its edges: DONE, READY, ERROR, and FAILED overlap enough that "what state is my job in and what does it mean" is a genuine support-ticket category. We keep the core and rationalize the terminals. Every state is visible in the UI and API; every transition is recorded as an event with its cause.
 
-**Scheduling states.** `PENDING` — waiting for its trigger (a cyclic job's resting state). `WAITING` — trigger known and in the future (the next-fire time is shown, per the scheduler's next-run preview). `SUSPENDED` — paused by an operator; resumable, returning to PENDING or RUNNING. Suspension is **graceful by default** — the job completes its current cycle before pausing, with drain progress visible; a **force** option stops immediately and remains checkpoint-safe by construction, costing at most redone work on resume, never correctness (channel spec, section 7.3). `DISABLED` — administratively locked; **not** resumable by an ordinary resume, requiring explicit re-enable (the suspend/disable distinction is kept from HVR exactly because operators need a lock that survives well-meaning colleagues).
+**Scheduling states.** `PENDING` — waiting for its trigger (a cyclic job's resting state). `WAITING` — trigger known and in the future (the next-fire time is shown, per the scheduler's next-run preview). `SUSPENDED` — paused by an operator; resumable, returning to PENDING or RUNNING. Suspension is **graceful by default** — the job completes its current cycle before pausing, with drain progress visible; a **force** option stops immediately and remains checkpoint-safe by construction, costing at most redone work on resume, never correctness (stream spec, section 7.3). `DISABLED` — administratively locked; **not** resumable by an ordinary resume, requiring explicit re-enable (the suspend/disable distinction is kept from HVR exactly because operators need a lock that survives well-meaning colleagues).
 
 **Execution states.** `RUNNING` — in progress, with structured progress where the task supports it (percent, current table/slice, positions). `HANGING` — still RUNNING past its expected envelope (envelope per job type, benchmark-derived — see scheduler open questions); a HANGING job that finishes normally transitions out cleanly, because HANGING is a flag on RUNNING, not a verdict.
 
 **Failure-handling states.** `ALERTING` — the run failed; the alert has fired. `RETRY` — rerunning under the backoff curve. The ALERTING → RETRY → RUNNING loop continues until success or the retry threshold trips (scheduler SCH-05).
 
-**Terminal states — the rationalization.** Exactly two: `SUCCEEDED` and `FAILED`. A FAILED job carries a **cause**: `error` (execution errors exhausted retries), `canceled` (an operator stopped it), or `abandoned` (threshold policy gave up). HVR's DONE / READY / ERROR / FAILED quartet maps onto these two states plus the cause field and the event log — one place to look, no folklore about which terminal means what. Cyclic jobs never reach a terminal state except at channel retirement; acyclic jobs always do.
+**Terminal states — the rationalization.** Exactly two: `SUCCEEDED` and `FAILED`. A FAILED job carries a **cause**: `error` (execution errors exhausted retries), `canceled` (an operator stopped it), or `abandoned` (threshold policy gave up). HVR's DONE / READY / ERROR / FAILED quartet maps onto these two states plus the cause field and the event log — one place to look, no folklore about which terminal means what. Cyclic jobs never reach a terminal state except at stream retirement; acyclic jobs always do.
 
 The full transition diagram is published in the documentation, and JOB-01 tests every edge of it — a transition not in the diagram is a bug by definition.
 
@@ -30,7 +30,7 @@ The full transition diagram is published in the documentation, and JOB-01 tests 
 
 Activate, refresh, compare, and report generation can run for hours; holding an HTTP request open for hours is not an API, it's a timeout. HVR's event pattern is the right answer and is kept whole:
 
-1. The client (UI, CLI, or REST — all the same API) **creates an event**: `POST /channels/{ch}/compare` returns immediately with an **event ID**.
+1. The client (UI, CLI, or REST — all the same API) **creates an event**: `POST /streams/{ch}/compare` returns immediately with an **event ID**.
 2. The event is recorded in the repository with state ACTIVE and an associated job (created under the scheduler at event creation if it doesn't exist).
 3. The job starts, queries for its ACTIVE events, and executes what it finds.
 4. The client follows along by polling or streaming the event: **structured progress** (state, percent, current table and slice, positions, ETA from the slice map where applicable), not just "still running."
@@ -40,11 +40,11 @@ Our additions to HVR's pattern: **cancellation** is first-class (`DELETE` or can
 
 ### 3.1 Worked example — the life of a compare event
 
-`POST /hubs/prod/channels/orders/compare` returns `{event_id: 8812, state: ACTIVE, job: orders-cmp}` in milliseconds. The `orders-cmp` job appears PENDING, then RUNNING. `GET /events/8812` at any point returns state, percent, the table currently comparing, and slices completed. Twenty minutes later the event reads `state: FINISHED, result: SUCCEEDED`, with the difference report attached as its artifact — the same report the sync-report pipeline archives. Had an operator sent the cancel call at minute ten, the job would have checkpointed at the current slice boundary and the event would read `FAILED, cause: canceled`, resumable per the compare spec's checkpoint rules. Nothing here is UI magic: the UI's Jobs page is doing exactly these calls.
+`POST /hubs/prod/streams/orders/compare` returns `{event_id: 8812, state: ACTIVE, job: orders-cmp}` in milliseconds. The `orders-cmp` job appears PENDING, then RUNNING. `GET /events/8812` at any point returns state, percent, the table currently comparing, and slices completed. Twenty minutes later the event reads `state: FINISHED, result: SUCCEEDED`, with the difference report attached as its artifact — the same report the sync-report stream archives. Had an operator sent the cancel call at minute ten, the job would have checkpointed at the current slice boundary and the event would read `FAILED, cause: canceled`, resumable per the compare spec's checkpoint rules. Nothing here is UI magic: the UI's Jobs page is doing exactly these calls.
 
 ## 4. Triggers — what makes a job run
 
-A PENDING job runs when triggered: by the **scheduler** (cron firing, per the scheduler spec's calendars and overlap policies); by **data dependency** (an integrate job is triggered by new files arriving for its channel — the normal CDC heartbeat); by **event creation** (section 3); or **manually** — run-now from the UI, CLI, or API (HVR's hvrstart equivalent), which is a trigger like any other and subject to the same overlap policy, so a run-now against an already-running cyclic job behaves per the channel's configured policy rather than surprising anyone.
+A PENDING job runs when triggered: by the **scheduler** (cron firing, per the scheduler spec's calendars and overlap policies); by **data dependency** (an integrate job is triggered by new files arriving for its stream — the normal CDC heartbeat); by **event creation** (section 3); or **manually** — run-now from the UI, CLI, or API (HVR's hvrstart equivalent), which is a trigger like any other and subject to the same overlap policy, so a run-now against an already-running cyclic job behaves per the stream's configured policy rather than surprising anyone.
 
 ## 5. Run Logs
 
@@ -52,7 +52,7 @@ Every run of every job produces a **structured run log** under a run ID: timesta
 
 ## 6. Job Settings
 
-HVR controls job behavior through **job attributes** configured via a dedicated command — functional, and exactly the scattered-knobs pattern this platform replaces everywhere else. Job behavior here is **structured settings** on the channel and job: schedule and calendars, overlap policy, retry curve and threshold (all owned by the scheduler spec), plus job-level operational settings — priority class (which jobs yield when an agent is saturated), resource caps (max parallel slices, max concurrent jobs per agent), and the HANGING envelope override. Same schema-validated, provenance-displayed, Git-diffable treatment as every other setting in the product; no attribute archaeology.
+HVR controls job behavior through **job attributes** configured via a dedicated command — functional, and exactly the scattered-knobs pattern this platform replaces everywhere else. Job behavior here is **structured settings** on the stream and job: schedule and calendars, overlap policy, retry curve and threshold (all owned by the scheduler spec), plus job-level operational settings — priority class (which jobs yield when an agent is saturated), resource caps (max parallel slices, max concurrent jobs per agent), and the HANGING envelope override. Same schema-validated, provenance-displayed, Git-diffable treatment as every other setting in the product; no attribute archaeology.
 
 ## 7. HVR Parity Matrix
 

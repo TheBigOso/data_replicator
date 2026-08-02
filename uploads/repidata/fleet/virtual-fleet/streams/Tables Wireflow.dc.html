@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#f4f3ef; font-family:'IBM Plex Sans',sans-serif; color:#1a1c1e; }
+    a { color:#1a6e50; } a:hover { color:#14523c; }
+  </style>
+</helmet>
+<div data-screen-label="Tables and registration wireflow" style="padding:36px 40px; min-width:2080px;">
+  <div style="font-size:22px; font-weight:700;">Tables &amp; registration — wireflow</div>
+  <div style="display:flex; align-items:flex-start; gap:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:8px; padding:9px 13px; margin:10px 0 4px; max-width:1180px;">
+    <span style="flex:none; font-size:9.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; border:1px solid #1a6e50; border-radius:4px; padding:2px 7px; background:#fff;">CANONICAL</span>
+    <span style="font-size:11px; color:#6d7278; line-height:1.55;">Canonical for the <b>Tables screens</b> — list, table detail, column editor, DDL panes, stop-then-remove. Summarised in the Tables section of the <b>Stream Wireflow</b>. Spec: <b>tables-ui.md</b>, <b>tables.md</b>.</span>
+  </div>
+  <div style="font-size:13px; color:#6d7278; margin:6px 0 14px;">Replicator console · how tables come online: pick from the source catalogue → confirm the explicit go-online list → registered as a plan · plus the tables surface, per-table column plan, and removal</div>
+  <div style="display:flex; gap:10px; align-items:stretch; margin-bottom:14px;">
+    <div style="border:1.5px solid #1a6e50; background:#e8f2ed; border-radius:9px; padding:8px 12px; font-size:11px; line-height:1.5; width:250px; box-sizing:border-box;"><b style="color:#1a6e50;">Registration is a plan</b><br>Add tables registers only — capture starts at the next checkpoint; rows reach the target with the first refresh, never before</div>
+    <div style="border:1.5px solid #1a6e50; background:#e8f2ed; border-radius:9px; padding:8px 12px; font-size:11px; line-height:1.5; width:250px; box-sizing:border-box;"><b style="color:#1a6e50;">Two-step confirm</b><br>Checkboxes pick from the catalogue; a review step confirms the explicit list of what goes online — not whatever the boxes held</div>
+    <div style="border:1.5px solid #1a6e50; background:#e8f2ed; border-radius:9px; padding:8px 12px; font-size:11px; line-height:1.5; width:250px; box-sizing:border-box;"><b style="color:#1a6e50;">Catalogue-scoped</b><br>Read live from the source database; tables already registered in this stream are never listed — duplicates impossible by construction</div>
+    <div style="border:1.5px solid #1a6e50; background:#e8f2ed; border-radius:9px; padding:8px 12px; font-size:11px; line-height:1.5; width:250px; box-sizing:border-box;"><b style="color:#1a6e50;">Warnings travel</b><br>No-primary-key and logging flags show at pick <i>and</i> review, and land on the ledger event as the flagged list</div>
+    <div style="border:1.5px solid #1a6e50; background:#e8f2ed; border-radius:9px; padding:8px 12px; font-size:11px; line-height:1.5; width:250px; box-sizing:border-box;"><b style="color:#1a6e50;">Column plan per table</b><br>Renames, target-only columns, type overrides and keys are staged as plans — applied to the target on the next activation</div>
+  </div>
+  <div style="display:flex; gap:16px; align-items:center; font-size:11.5px; color:#6d7278; margin-bottom:26px;">
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1px solid #c9c6bf; border-radius:3px;"></span>screen / dialog step</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1.5px dashed #b3541e; border-radius:3px;"></span>branch / sub-flow</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px; height:10px; background:#fbe9e7; border:1px solid #b3261e; border-radius:99px;"></span>validation gate</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:3px;"></span>outcome</span>
+  </div>
+
+  <!-- ===== row 1 · add tables flow ===== -->
+  <div style="font-size:12px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:10px;">ROW 1 · ADD TABLES — FROM CATALOGUE TO ONLINE</div>
+  <div style="display:flex; align-items:flex-start; gap:0; margin-bottom:34px;">
+
+    <div style="width:225px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:8px;">ENTRY POINTS</div>
+        <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; margin-bottom:6px; text-align:center;">Tables screen · + Add tables</div>
+        <div style="background:#fff; border:1px solid #1a6e50; color:#1a6e50; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Stream detail · Tables tab</div>
+        <div style="font-size:10.5px; color:#6d7278; margin-top:8px; line-height:1.5;">Always scoped to <b>one stream</b> — its source system and target are pinned at the top of the modal so it's unambiguous where the tables come from and where the rows go.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Branch:</b> the new-stream wizard registers tables another way — <b>Copy an existing stream</b> carries the whole registration + column plan over.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:300px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">STEP 1 · SOURCE CATALOGUE</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Pick what to bring online</div>
+        <div style="display:flex; gap:4px; margin-bottom:6px;">
+          <span style="flex:1; border:1px solid #e3e1dc; border-radius:5px; padding:3px 7px; font-size:9.5px; background:#faf9f7;"><b>Source system</b> · <span style="font-family:'IBM Plex Mono',monospace;">DB2-MFG</span> · DB2 LUW 11.5 · database MFGDB</span>
+          <span style="flex:1; border:1px solid #e3e1dc; border-radius:5px; padding:3px 7px; font-size:9.5px; background:#faf9f7;"><b>Target</b> · <span style="font-family:'IBM Plex Mono',monospace;">DATABRICKS-LH</span> · Databricks Delta</span>
+        </div>
+        <div style="display:flex; gap:4px; margin-bottom:4px;">
+          <span style="flex:1; border:1px solid #e3e1dc; border-radius:5px; padding:3px 7px; font-size:9.5px; color:#6d7278; font-family:'IBM Plex Mono',monospace;">Search the source catalogue…</span>
+          <span style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 7px; font-size:9.5px;">Select all</span>
+          <span style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 7px; font-size:9.5px;">Clear</span>
+        </div>
+        <div style="font-size:9px; font-weight:700; letter-spacing:.06em; color:#6d7278; margin-bottom:3px; display:flex; justify-content:space-between;"><span>SOURCE CATALOGUE</span><span style="font-weight:400;">12 tables · 3 selected</span></div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; font-size:9.5px; font-family:'IBM Plex Mono',monospace;">
+          <div style="padding:3px 8px; border-bottom:1px solid #f0efeb;">☑ WORK_ORDERS <span style="color:#8a8f98;">· MFGDB.MFG · 1.2M rows · 34 cols</span></div>
+          <div style="padding:3px 8px; border-bottom:1px solid #f0efeb;">☑ SHIFT_LOG <span style="color:#8a8f98;">· 480k rows · 12 cols</span></div>
+          <div style="padding:3px 8px; border-bottom:1px solid #f0efeb;">☑ TOOL_CALIB <span style="color:#b3541e;">· ⚠ no primary key — row-wise compare degraded</span></div>
+          <div style="padding:3px 8px; color:#8a8f98;">☐ scrolls — search-filtered, alphabetical</div>
+        </div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Branch:</b> tables already registered in this stream are <b>not listed</b> — the catalogue only offers what isn't online, so re-adding is structurally impossible.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:300px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">STEP 2 · CONFIRM WHAT GOES ONLINE</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Explicit review list</div>
+        <div style="font-size:10px; margin-bottom:4px;"><b>3 tables will be registered in db2-mfg</b> — 1 needs attention before it replicates cleanly.</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; font-size:9.5px; margin-bottom:6px;">
+          <div style="padding:4px 8px; border-bottom:1px solid #f0efeb;"><b>WORK_ORDERS</b> <span style="float:right; color:#b3261e; border:1px solid #e3e1dc; border-radius:4px; padding:0 5px; font-size:8.5px;">Drop</span><br><span style="font-family:'IBM Plex Mono',monospace; color:#6d7278;">MFGDB.MFG.WORK_ORDERS → lakehouse_prd.db2_mfg.work_orders</span><br><span style="color:#8a8f98;">1.2M rows · 34 columns</span></div>
+          <div style="padding:4px 8px; border-bottom:1px solid #f0efeb;"><b>SHIFT_LOG</b><br><span style="font-family:'IBM Plex Mono',monospace; color:#6d7278;">MFGDB.MFG.SHIFT_LOG → …db2_mfg.shift_log</span></div>
+          <div style="padding:4px 8px;"><b>TOOL_CALIB</b> <span style="color:#b3541e;">⚠ no primary key</span><br><span style="color:#8a8f98;">warning repeats here — dropping it returns the row to the catalogue</span></div>
+        </div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5;">Target names follow the <b>target dialect's convention</b>, namespaced by the stream — two streams sharing a target never write the same objects.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Branch:</b> dropping every row sends the modal back to <b>step 1</b> — a review of nothing can't be confirmed.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:250px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3261e; margin-bottom:8px;">GATES ON REGISTER</div>
+        <div style="border:1px solid #b3261e; background:#fbe9e7; border-radius:6px; padding:4px 8px; font-size:10px; margin-bottom:3px;">≥ 1 table picked from the catalogue</div>
+        <div style="border:1px solid #b3261e; background:#fbe9e7; border-radius:6px; padding:4px 8px; font-size:10px; margin-bottom:3px;">review list non-empty at confirm</div>
+        <div style="border:1px solid #b3261e; background:#fbe9e7; border-radius:6px; padding:4px 8px; font-size:10px;">Cancel / ✕ discards — nothing registered, nothing captured</div>
+        <div style="font-size:10px; color:#6d7278; margin-top:6px; line-height:1.5;">Warnings never block — a keyless table may still register; the flag follows it onto the ledger and the tables grid.</div>
+      </div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:290px; flex:none;">
+      <div style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">OUTCOME · REGISTERED, THEN LOADED</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Three-beat lifecycle</div>
+        <div style="font-size:10px; border:1px solid #cfe0d6; background:#fff; border-radius:6px; padding:4px 8px; margin-bottom:3px;"><b>1 · Registered</b> — rows land in the grid as <span style="font-family:'IBM Plex Mono',monospace;">Queued · refresh PENDING</span>; a violet <b>DEFINITION CHANGE</b> hits the ledger: added list, source schema, flagged list</div>
+        <div style="font-size:10px; border:1px solid #cfe0d6; background:#fff; border-radius:6px; padding:4px 8px; margin-bottom:3px;"><b>2 · Capturing</b> — capture starts at the next checkpoint; changes buffer in the file log, nothing applies yet</div>
+        <div style="font-size:10px; border:1px solid #cfe0d6; background:#fff; border-radius:6px; padding:4px 8px; margin-bottom:6px;"><b>3 · Loaded</b> — the first refresh (chained off <b>Activate replication</b>) reads the snapshot; integrate skips captured changes ≤ snapshot — no gap, no double-apply</div>
+        <div style="font-size:10px; color:#41695a; line-height:1.5;">Toast repeats the contract: “capture starts at the next checkpoint; run a refresh to load the initial data.” See the <b>Activation wireflow</b> for the load itself.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== row 2 · tables surface + column plan ===== -->
+  <div style="font-size:12px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:10px;">ROW 2 · THE TABLES SURFACE — GRID, COLUMN PLAN, REMOVAL</div>
+  <div style="display:flex; align-items:flex-start; gap:0;">
+
+    <div style="width:300px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">TABLES GRID</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Every registered table, one row</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; font-size:8.5px; font-family:'IBM Plex Mono',monospace; margin-bottom:6px;">
+          <div style="padding:3px 8px; border-bottom:1px solid #f0efeb; color:#6d7278; font-family:'IBM Plex Sans',sans-serif; font-size:8.5px;">Table · Stream · Name in source · Group · Recent refresh · Recent compare · Avg changes · Volume/day</div>
+          <div style="padding:3px 8px; border-bottom:1px solid #f0efeb;">BOM_COMPONENTS <span style="color:#8a8f98;">db2-mfg · MFGDB.MFG.BOM_COMPONENTS · core</span> <span style="border:1px solid #e3e1dc; border-radius:99px; padding:0 5px; font-size:8px;">DONE 19h</span> ▁▃▂▅▃▂</div>
+          <div style="padding:3px 8px;">WORK_ORDERS <span style="color:#8a8f98;">db2-mfg · … · </span><span style="border:1px solid #e3e1dc; border-radius:99px; padding:0 5px; font-size:8px; color:#6d7278;">PENDING</span> <span style="color:#8a8f98;">— just registered</span></div>
+        </div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5;">Filterable per stream or fleet-wide; refresh / compare cells deep-link to their runs. Row click opens the <b>table detail</b>.</div>
+      </div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:310px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">TABLE DETAIL · COLUMN PLAN</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Source ↔ target, column by column</div>
+        <div style="font-size:9.5px; font-family:'IBM Plex Mono',monospace; color:#6d7278; margin-bottom:5px;">MFGDB.MFG.WORK_ORDERS → lakehouse_prd.db2_mfg.work_orders</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; font-size:8.5px; font-family:'IBM Plex Mono',monospace; margin-bottom:6px;">
+          <div style="padding:3px 8px; border-bottom:1px solid #f0efeb; color:#6d7278; font-family:'IBM Plex Sans',sans-serif;"># · Column · Target column · Source type · Nullable · Key · Target type · Notes</div>
+          <div style="padding:3px 8px; border-bottom:1px solid #f0efeb;">1 WO_ID → wo_id · INTEGER · NOT NULL · PK · BIGINT</div>
+          <div style="padding:3px 8px; border-bottom:1px solid #f0efeb;">2 STATUS → status_code · CHAR(2) · <span style="color:#b3541e;">renamed</span></div>
+          <div style="padding:3px 8px;">+ loaded_at <span style="color:#8a8f98;">· target-only · audit timestamp</span></div>
+        </div>
+        <div style="display:flex; gap:4px; margin-bottom:6px;">
+          <span style="border:1px solid #1a6e50; color:#1a6e50; border-radius:5px; padding:2px 8px; font-size:9.5px; font-weight:600;">DDL · Source</span>
+          <span style="border:1px solid #e3e1dc; color:#6d7278; border-radius:5px; padding:2px 8px; font-size:9.5px;">DDL · Target</span>
+        </div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5;">Every edit here — rename, retype, drop, restore — stages a <b>plan</b>; the target changes on the next activation, never mid-flight.</div>
+      </div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:300px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">DIALOG · ADD / EDIT TARGET COLUMN</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">What the column is, then its shape</div>
+        <div style="border:1.5px solid #1a6e50; background:#f2f7f4; border-radius:6px; padding:4px 8px; font-size:10px; margin-bottom:3px;">◉ <b>Captured from the source</b> — has a source name + type</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; font-size:10px; color:#6d7278; margin-bottom:3px;">○ <b>Target-only · constant</b> — fixed value on every row</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; font-size:10px; color:#6d7278; margin-bottom:3px;">○ <b>Target-only · expression</b> — computed at apply time</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; font-size:10px; color:#6d7278; margin-bottom:6px;">○ <b>Target-only · audit</b> — apply timestamp / origin markers</div>
+        <div style="font-size:9.5px; font-family:'IBM Plex Mono',monospace; color:#6d7278; border:1px solid #e3e1dc; border-radius:5px; padding:3px 7px; margin-bottom:6px;">source name · type ⇄ target name · type · NULL / NOT NULL · key — target-only rows read “— none at source”</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5;">Types validated against the <b>capability matrix</b> per dialect pair; saved as a violet DEFINITION CHANGE with the applies-on-activation note.</div>
+      </div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:280px; flex:none;">
+      <div style="border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#8a5a2a; margin-bottom:2px;">SUB-FLOW · REMOVE A TABLE</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Stop replication &amp; remove</div>
+        <div style="font-size:10px; border:1px solid #e9d9c6; background:#fff; border-radius:6px; padding:4px 8px; margin-bottom:3px;">Confirm shows the full identity: stream · source object · target object · rows/day</div>
+        <div style="font-size:10px; border:1px solid #e9d9c6; background:#fff; border-radius:6px; padding:4px 8px; margin-bottom:3px;">Capture stops for the table; jobs drain at their checkpoints</div>
+        <div style="font-size:10px; border:1px solid #e9d9c6; background:#fff; border-radius:6px; padding:4px 8px; margin-bottom:6px;"><b>Target data stays</b> — exactly as last applied; nothing is dropped on the target</div>
+        <div style="font-size:10px; color:#8a5a2a; line-height:1.5;">Logged as a red <b>STOP</b> event with a run-log artifact. Re-adding later = normal Add tables — it reappears in the catalogue.</div>
+      </div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:270px; flex:none;">
+      <div style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:8px;">INVARIANTS</div>
+        <div style="font-size:10px; border:1px solid #cfe0d6; background:#fff; border-radius:6px; padding:4px 8px; margin-bottom:3px;">Every table change is a <b>ledger event</b> — add, column edit, remove; the history outlives the table</div>
+        <div style="font-size:10px; border:1px solid #cfe0d6; background:#fff; border-radius:6px; padding:4px 8px; margin-bottom:3px;">Definition changes apply as <b>plans on activation</b> — the running stream is never mutated mid-flight</div>
+        <div style="font-size:10px; border:1px solid #cfe0d6; background:#fff; border-radius:6px; padding:4px 8px;">Registration ≠ data — rows only move on refresh, so an operator always knows <i>when</i> the target changed</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

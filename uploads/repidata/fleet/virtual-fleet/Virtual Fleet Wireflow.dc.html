@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#f4f3ef; font-family:'IBM Plex Sans',sans-serif; color:#1a1c1e; }
+    a { color:#1a6e50; } a:hover { color:#14523c; }
+  </style>
+</helmet>
+<div data-screen-label="Virtual fleet wireflow" style="padding:36px 40px; min-width:2040px;">
+  <div style="font-size:22px; font-weight:700;">Virtual Fleet console — wireflow</div>
+  <div style="display:flex; align-items:flex-start; gap:10px; background:#fbf3ec; border:1.5px dashed #b3541e; border-radius:8px; padding:9px 13px; margin:10px 0 4px; max-width:1180px;">
+    <span style="flex:none; font-size:9.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; border:1px solid #b3541e; border-radius:4px; padding:2px 7px; background:#fff;">MAP</span>
+    <span style="font-size:11px; color:#6d7278; line-height:1.55;">This is the <b>level map</b> for the VF page — how the six header actions hang together. Each is specified in full elsewhere: <b>New Stream Wireflow</b> (branch A) · <b>Activation Wireflow</b> (branch B) · <b>Compare Data Wireflow</b> (branch D) · <b>VF Timeline Wireflow</b> (branch E) · <b>Users Permissions Wireflow</b> (branch F). Where they differ, the deep-dive file wins.</span>
+  </div>
+  <div style="font-size:13px; color:#6d7278; margin:6px 0 14px;">Replicator console · the working context: gate → header + KPIs → stream table → VF log → history panels → VF timeline, plus the six header actions (New stream · Activate replication · VF log · Compare · VF timeline · VF Admin) · docs: fleet-ui.md, fleet-hierarchy.md, activation-ui.md, compare-ui.md, run-history.md, timeline.md</div>
+  <div style="display:flex; gap:16px; align-items:center; font-size:11.5px; color:#6d7278; margin-bottom:26px; flex-wrap:wrap;">
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1px solid #c9c6bf; border-radius:3px;"></span>screen / section</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1.5px dashed #b3541e; border-radius:3px;"></span>branch / sub-flow</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px; height:10px; background:#fbe9e7; border:1px solid #b3261e; border-radius:99px;"></span>access gate</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:3px;"></span>outcome / drill-down</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#f2effb; border:1px solid #7c6ce0; border-radius:3px;"></span>modal / wizard</span>
+  </div>
+
+  <!-- ===== row 1 ===== -->
+  <div style="display:flex; align-items:flex-start; gap:0;">
+
+    <div style="width:214px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:8px;">ENTRY POINTS</div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Fleet page → Switch</div>
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Tree · Virtual Fleet · rk-prod</div>
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Header VF selector</div>
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Triage / timeline deep-link</div>
+        </div>
+        <div style="font-size:10.5px; color:#6d7278; margin-top:8px; line-height:1.5;">A <b>Virtual Fleet</b> is a logical hub inside one fleet: its own repository namespace, streams, connections, jobs, users, and log. <b>This is the working context</b> — the level everything downstream inherits.</div>
+      </div>
+    </div>
+    <div style="width:34px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:228px; flex:none;">
+      <div style="background:#fbe9e7; border:1px solid #b3261e; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3261e; margin-bottom:2px;">GATE · VF SCOPE</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">Four grant tiers, four surfaces</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.6;">
+          <div><b>HubOwner</b> — everything, incl. ⚙ VF Admin</div>
+          <div><b>ReadExec</b> — run compares, start/stop jobs; no create/delete</div>
+          <div><b>ReadOnly</b> — read every panel; no action buttons</div>
+          <div><b>Fleet/SysAdmin</b> — inherited HubOwner</div>
+        </div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Header actions render per tier</b> — a ReadOnly user sees VF log, Compare history, and VF timeline; the four mutating buttons are absent, not disabled.</div>
+    </div>
+    <div style="width:34px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:364px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">LAYER 1 · HEADER + OVERVIEW</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Identity, six actions, four KPIs</div>
+        <div style="border:1px solid #e3e1dc; border-radius:7px; padding:8px 10px; margin-bottom:8px;">
+          <div style="font-size:12.5px; font-weight:700; margin-bottom:5px;">Virtual fleet · rk-prod <span style="font-size:9px; font-weight:400; color:#6d7278;">2 streams · last refresh 6s ago</span></div>
+          <div style="display:flex; gap:4px; flex-wrap:wrap; font-size:9px; font-weight:600;">
+            <span style="background:#1a6e50; color:#fff; border-radius:5px; padding:4px 7px;">New stream</span>
+            <span style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 7px;">Activate replication…</span>
+            <span style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 7px;">▤ VF log</span>
+            <span style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 7px;">Compare ▾</span>
+            <span style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 7px;">VF timeline</span>
+            <span style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 7px;">⚙ VF Admin</span>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:5px;">
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 7px; font-size:9px;"><span style="color:#6d7278;">Streams</span><br><b style="font-size:13px;">2</b></div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 7px; font-size:9px;"><span style="color:#6d7278;">P95 latency</span><br><b style="font-size:13px;">2.1s</b></div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 7px; font-size:9px;"><span style="color:#6d7278;">Rows/min</span><br><b style="font-size:13px;">521k</b></div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 7px; font-size:9px;"><span style="color:#6d7278;">Attention</span><br><b style="font-size:13px;">0</b></div>
+        </div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5; margin-top:8px;">Four tiles, not six — a VF has no fleet-count or org-wide roll-up to report. Attention and P95 &gt; 60s go danger-red and mirror what the fleet timeline shows one level up.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Six branches ↓</b> — <b>A</b> New stream · <b>B</b> Activate replication · <b>C</b> VF log · <b>D</b> Compare · <b>E</b> VF timeline · <b>F</b> VF Admin.</div>
+    </div>
+    <div style="width:34px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:372px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">LAYER 2 · THE INVENTORY</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Stream table</div>
+        <div style="display:grid; grid-template-columns:1.7fr .8fr .8fr .7fr .7fr; gap:5px; font-size:8px; color:#6d7278; border-bottom:1px solid #e3e1dc; padding-bottom:4px; margin-bottom:4px;">
+          <span>Stream</span><span>Hub</span><span>Status</span><span>Latency</span><span>Rows/min</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1.7fr .8fr .8fr .7fr .7fr; gap:5px; font-size:8.5px; align-items:center; padding:4px 0;">
+          <b>flight-telemetry → snowflake</b><span style="font-family:'IBM Plex Mono',monospace; color:#6d7278;">rk-prod</span><span style="background:#e8f2ed; color:#1a6e50; border-radius:99px; padding:1px 6px; font-size:8px; justify-self:start;">Healthy</span><span>2.1s</span><span>374k</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1.7fr .8fr .8fr .7fr .7fr; gap:5px; font-size:8.5px; align-items:center; padding:4px 0; border-top:1px solid #f2f1ee;">
+          <b>flight-plans → databricks</b><span style="font-family:'IBM Plex Mono',monospace; color:#6d7278;">rk-prod</span><span style="background:#e8f2ed; color:#1a6e50; border-radius:99px; padding:1px 6px; font-size:8px; justify-self:start;">Healthy</span><span>1.7s</span><span>147k</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1.7fr .8fr .8fr .7fr .7fr; gap:5px; font-size:8.5px; align-items:center; padding:4px 0; border-top:1px solid #f2f1ee; background:#fdf7f6;">
+          <b>sensor-ingest → s3-telem</b><span style="font-family:'IBM Plex Mono',monospace; color:#6d7278;">rk-prod</span><span style="background:#fbe9e7; color:#b3261e; border-radius:99px; padding:1px 6px; font-size:8px; justify-self:start;">Error</span><span>—</span><span>0</span>
+        </div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5; margin-top:8px;">Every row opens the <b>stream dashboard</b> (tables tree, Capture / Integrate / Compare / Refresh tabs, stream log). Status is derived from the capture and apply jobs, not asserted — a stopped capture shows Error even while apply is idle-healthy.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Suspended ≠ error.</b> A paused stream reports Suspended (grey), zero rows, and no latency — it is a deliberate state, never sorted into triage.</div>
+    </div>
+    <div style="width:34px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:392px; flex:none;">
+      <div style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">LAYER 3 · WHAT ALREADY RAN</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Compare + Refresh history, side by side</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <div>
+            <div style="font-size:9px; font-weight:700; color:#6d7278; margin-bottom:4px;">COMPARE HISTORY</div>
+            <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:5px 7px; font-size:8px; margin-bottom:4px;"><span style="background:#e7effb; color:#2a5cab; border-radius:4px; padding:0 4px; font-weight:700;">CURRENT</span> <span style="font-family:'IBM Plex Mono',monospace;">flight-telemetry</span><br><span style="color:#6d7278;">running now · scheduler</span></div>
+            <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:5px 7px; font-size:8px; margin-bottom:4px;"><span style="background:#e8f2ed; color:#1a6e50; border-radius:4px; padding:0 4px; font-weight:700;">DONE/IDENTICAL</span><br><span style="color:#6d7278;">all rows match · 5m 10s · Mei Tanaka</span></div>
+            <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:5px 7px; font-size:8px;"><span style="background:#fbf3ec; color:#b3541e; border-radius:4px; padding:0 4px; font-weight:700;">DONE/INCONCLUSIVE</span><br><span style="color:#6d7278;">191 rows in motion unresolved</span></div>
+          </div>
+          <div>
+            <div style="font-size:9px; font-weight:700; color:#6d7278; margin-bottom:4px;">REFRESH HISTORY</div>
+            <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:5px 7px; font-size:8px; margin-bottom:4px;"><span style="background:#e8f2ed; color:#1a6e50; border-radius:4px; padding:0 4px; font-weight:700;">DONE</span> <span style="font-family:'IBM Plex Mono',monospace;">flight-plans</span><br><span style="color:#6d7278;">3.5M rows loaded · 15m · scheduler</span></div>
+            <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:5px 7px; font-size:8px; margin-bottom:4px;"><span style="background:#e8f2ed; color:#1a6e50; border-radius:4px; padding:0 4px; font-weight:700;">DONE</span><br><span style="color:#6d7278;">9.5M rows loaded · 25m · Ryan Reeves</span></div>
+            <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:5px 7px; font-size:8px;"><span style="background:#f2f1ee; color:#6d7278; border-radius:4px; padding:0 4px; font-weight:700;">CANCELED</span><br><span style="color:#6d7278;">canceled — resumable · 8m</span></div>
+          </div>
+        </div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5; margin-top:8px;">Every stream in the VF, newest first. One row builder serves both panels and the per-stream tabs — same states, same attribution (<b>who or scheduler</b>), same durations. Each row opens its full record in Events.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== row 2: branches A B C ===== -->
+  <div style="display:flex; align-items:flex-start; gap:18px; margin-top:34px;">
+
+    <div style="width:470px; flex:none;">
+      <div style="background:#f2effb; border:1px solid #7c6ce0; border-radius:10px; padding:14px 16px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6a3fb5; margin-bottom:2px;">BRANCH A · WIZARD · NEW STREAM</div>
+        <div style="font-size:14px; font-weight:600; margin-bottom:3px;">Define a replication unit — it starts inert</div>
+        <div style="font-size:11px; color:#6d7278; margin-bottom:10px;">Four steps, each validated as typed. The wizard <b>creates a definition, not a running stream</b>; nothing moves until Activate replication is applied.</div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:7px; padding:7px 10px; font-size:9.5px;"><b>1 · Identity</b> <span style="color:#6d7278;">— name (identity rules, unique in the VF), description, environment accent.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:7px; padding:7px 10px; font-size:9.5px;"><b>2 · Source &amp; target</b> <span style="color:#6d7278;">— pick from this VF's connections; the picker excludes classes the capability matrix says cannot serve that role. <b>Create a connection inline</b> without leaving the wizard.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:7px; padding:7px 10px; font-size:9.5px;"><b>3 · Tables</b> <span style="color:#6d7278;">— browse or pattern-match the source catalog; per-table overrides deferred to the Tables page.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:7px; padding:7px 10px; font-size:9.5px;"><b>4 · Mode</b> <span style="color:#6d7278;">— continuous CDC · scheduled refresh · CDC + scheduled compare; apply style (replica / soft delete / history) and cadence.</span></div>
+        </div>
+        <div style="margin-top:9px; background:#fff; border:1px solid #e3e1dc; border-radius:7px; padding:8px 10px; font-size:10px; color:#6d7278; line-height:1.55;"><b style="color:#1a1c1e;">Exit:</b> the stream lands in the table as <b>Suspended · not activated</b>, the tree gains a node, and the console offers <b>Activate replication →</b> as the obvious next step. The equivalent CLI is shown and exportable.</div>
+      </div>
+    </div>
+
+    <div style="width:520px; flex:none;">
+      <div style="background:#fff; border:1.5px dashed #b3541e; border-radius:10px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; margin-bottom:2px;">BRANCH B · ACTIVATE REPLICATION</div>
+        <div style="font-size:14px; font-weight:600; margin-bottom:3px;">Plan → review → apply, Terraform-style</div>
+        <div style="font-size:11px; color:#6d7278; margin-bottom:10px;">The hub diffs the definition against the real state of every connection and shows exactly what it will create. <b>Nothing is applied until you approve the plan.</b> Re-activation is idempotent — unchanged components verify fast and report "no change".</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:9px;">
+          <div style="border:1px solid #e3e1dc; border-radius:7px; padding:8px 10px;">
+            <div style="font-size:10px; font-weight:700; margin-bottom:4px;">Components (checklist)</div>
+            <div style="font-size:9px; color:#6d7278; line-height:1.6;">Jobs · table registration (replace or add) · supplemental logging · state tables · capture position</div>
+          </div>
+          <div style="border:1px solid #e3e1dc; border-radius:7px; padding:8px 10px;">
+            <div style="font-size:10px; font-weight:700; margin-bottom:4px;">Capture start</div>
+            <div style="font-size:9px; color:#6d7278; line-height:1.6;">now · oldest open txn · rewind N minutes · <b>recovery — target integrate sequence</b> · custom position</div>
+          </div>
+        </div>
+        <div style="background:#fbe9e7; border:1px solid #f3d1cf; border-radius:7px; padding:7px 10px; font-size:9.5px; color:#b3261e; line-height:1.5; margin-bottom:9px;"><b>Guard rails:</b> recreating state tables drops recovery positions and is called out in red · recovery rewind is blocked until the integrate sequence is fetched · a partial table selection must select at least one table.</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:10px; color:#6d7278; line-height:1.55;">
+          <div><b style="color:#1a1c1e;">Chained refresh.</b> Activation optionally runs the initial load as-of the recorded capture position, so CDC and the bulk load meet exactly with no gap and no duplicates.</div>
+          <div><b style="color:#1a1c1e;">Every apply is a record.</b> Steps, timings, and warnings land in the VF log and the event ledger; the plan is archived as a versioned, attributed artifact.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="width:470px; flex:none;">
+      <div style="background:#fff; border:1.5px dashed #b3541e; border-radius:10px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; margin-bottom:2px;">BRANCH C · ▤ VF LOG</div>
+        <div style="font-size:14px; font-weight:600; margin-bottom:3px;">Every stream in this virtual fleet, merged by time</div>
+        <div style="font-size:11px; color:#6d7278; margin-bottom:10px;">Level two of the four-level hierarchy: <span style="font-family:'IBM Plex Mono',monospace;">&lt;stream&gt;.out</span> → <b><span style="font-family:'IBM Plex Mono',monospace;">&lt;vf&gt;.vf.out</span></b> → <span style="font-family:'IBM Plex Mono',monospace;">&lt;fleet&gt;.fleet.out</span> → <span style="font-family:'IBM Plex Mono',monospace;">global.out</span>.</div>
+        <div style="background:#1a1c1e; border-radius:8px; padding:9px 11px; margin-bottom:10px;">
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px; flex-wrap:wrap;">
+            <span style="color:#fff; font-size:10px; font-weight:600;">Virtual fleet log</span>
+            <span style="color:#8a8f98; font-size:9px; font-family:'IBM Plex Mono',monospace;">rk-prod.vf.out</span>
+            <span style="color:#cfcfcf; font-size:8.5px; border:1px solid #444; border-radius:4px; padding:1px 5px;">⇱ Overlay</span>
+          </div>
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; line-height:1.7; color:#9fd8b8;">
+            <div>14:49:00 <span style="color:#cfcfcf;">flight-telemetry-cap-ora-telem:</span> Routed 2,933 bytes (compression=80.5%)</div>
+            <div>14:49:00 <span style="color:#cfcfcf;">flight-plans-cap-pg-flight:</span> Captured 140 rows from 2 seconds ago…</div>
+            <div>14:49:02 <span style="color:#cfcfcf;">flight-telemetry-integ-snowflake-rkt:</span> Integrate cycle 481…</div>
+            <div style="color:#8a8f98;">▪ following — capture cycles and fleet events append here</div>
+          </div>
+        </div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.55;"><b style="color:#1a1c1e;">Line prefix is the job</b> (<span style="font-family:'IBM Plex Mono',monospace;">&lt;stream&gt;-cap-&lt;conn&gt;</span> / <span style="font-family:'IBM Plex Mono',monospace;">-integ-</span>), so a merged tail stays greppable. Same five filters (Capture · Integrate · Latency · Errors · Events), per-tab state, Follow/Pause, and Copy/Download of the <b>filtered</b> view. Activation and compare milestones interleave as Events lines — one timeline, not two.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== row 3: branches D E F ===== -->
+  <div style="display:flex; align-items:flex-start; gap:18px; margin-top:22px;">
+
+    <div style="width:470px; flex:none;">
+      <div style="background:#f2effb; border:1px solid #7c6ce0; border-radius:10px; padding:14px 16px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6a3fb5; margin-bottom:2px;">BRANCH D · COMPARE ▾</div>
+        <div style="font-size:14px; font-weight:600; margin-bottom:3px;">Prove the target matches the source</div>
+        <div style="font-size:11px; color:#6d7278; margin-bottom:10px;">A split button: <b>Compare history</b> reads, <b>New compare</b> writes. The window is a setup → running → results flow that survives being closed — a running compare keeps going in the background with a notice chip and a Jobs entry.</div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:7px; padding:7px 10px; font-size:9.5px;"><b>Scope</b> <span style="color:#6d7278;">— which stream, which tables (all by default), optional row restriction.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:7px; padding:7px 10px; font-size:9.5px;"><b>Method</b> <span style="color:#6d7278;">— tiered: row count → checksum → composed → row-by-row. Cheapest method that can answer the question runs first.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:7px; padding:7px 10px; font-size:9.5px;"><b>Online truth</b> <span style="color:#6d7278;">— compare a live pair without stopping it; in-flight rows are held and re-checked rather than reported as differences.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:7px; padding:7px 10px; font-size:9.5px;"><b>Report → repair</b> <span style="color:#6d7278;">— per-table missing/extra/updated counts, then an optional directed repair (insert / delete / update, source→target or reverse).</span></div>
+        </div>
+        <div style="margin-top:9px; font-size:10px; color:#6d7278; line-height:1.55;"><b style="color:#1a1c1e;">Three honest outcomes:</b> IDENTICAL · DIFFERENT (with counts) · <b>INCONCLUSIVE</b> when rows were in motion — never a false green.</div>
+      </div>
+    </div>
+
+    <div style="width:470px; flex:none;">
+      <div style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:10px; padding:14px 16px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">BRANCH E · VF TIMELINE</div>
+        <div style="font-size:14px; font-weight:600; margin-bottom:3px;">What is running right now, and what checked out</div>
+        <div style="font-size:11px; color:#6d7278; margin-bottom:10px;">The operational view the fleet timeline links into. Three bands, one per class of thing happening inside the VF.</div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="background:#fff; border:1px solid #e3e1dc; border-left:3px solid #b3261e; border-radius:7px; padding:7px 10px; font-size:9.5px;"><b>CONCERNS</b> <span style="color:#6d7278;">— open conditions: stream errors, latency over SLA, agent CPU/memory/IO above threshold. Each chip deep-links to the offending object.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-left:3px solid #2a5cab; border-radius:7px; padding:7px 10px; font-size:9.5px;"><b>JOBS</b> <span style="color:#6d7278;">— capture, apply, refresh, and compare jobs with live state (RUNNING / WAITING / RETRY / DONE / FAILED) and suspend/resume where granted.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-left:3px solid #1a6e50; border-radius:7px; padding:7px 10px; font-size:9.5px;"><b>CHECKS</b> <span style="color:#6d7278;">— system cards for the hub, repo database, and every source/target agent: health, CPU, memory, IO, version.</span></div>
+        </div>
+        <div style="margin-top:9px; font-size:10px; color:#6d7278; line-height:1.55;">Ordering is deterministic and thresholds are evaluated against <b>wobble-free values</b>, so nothing reshuffles or flickers on a live tick. Counts here are exactly the counts the fleet timeline shows for this VF one level up.</div>
+      </div>
+    </div>
+
+    <div style="width:520px; flex:none;">
+      <div style="background:#fff; border:1.5px dashed #b3541e; border-radius:10px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; margin-bottom:2px;">BRANCH F · ⚙ VF ADMIN</div>
+        <div style="font-size:14px; font-weight:600; margin-bottom:3px;">The bottom tier of the three-level admin model</div>
+        <div style="font-size:11px; color:#6d7278; margin-bottom:10px;">Same admin screen as Global and Fleet admin, scoped to one VF: <i>"VF Admins can edit this virtual fleet's admins, manage/update this virtual fleet, and edit any connection, table, alert, job, and event — within it."</i></div>
+        <div style="display:flex; gap:4px; margin-bottom:9px; font-size:10px; border-bottom:1px solid #e3e1dc;">
+          <span style="border-bottom:2px solid #1a6e50; font-weight:600; padding:3px 8px;">Virtual fleet</span>
+          <span style="color:#6d7278; padding:3px 8px;">Users</span>
+          <span style="color:#6d7278; padding:3px 8px;">Permissions</span>
+          <span style="color:#6d7278; padding:3px 8px;">Alert rules</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:9px;">
+          <div style="border:1px solid #e3e1dc; border-radius:7px; padding:8px 10px;">
+            <div style="font-size:10.5px; font-weight:700; margin-bottom:4px;">Virtual fleet</div>
+            <div style="font-size:9.5px; color:#6d7278; line-height:1.55;">Description, scheduler cycle, freeze / unfreeze, snapshot, export definition, delete (typed confirmation), stats retention. Freeze suspends the scheduler and <b>holds capture positions</b> — it never drops state.</div>
+          </div>
+          <div style="border:1px solid #e3e1dc; border-radius:7px; padding:8px 10px;">
+            <div style="font-size:10.5px; font-weight:700; margin-bottom:4px;">Users</div>
+            <div style="font-size:9.5px; color:#6d7278; line-height:1.55;">Accounts whose grants land in this VF, with service accounts flagged. Creating an account is Fleet or Global Admin's job — here you attach existing ones.</div>
+          </div>
+          <div style="border:1px solid #e3e1dc; border-radius:7px; padding:8px 10px;">
+            <div style="font-size:10.5px; font-weight:700; margin-bottom:4px;">Permissions</div>
+            <div style="font-size:9.5px; color:#6d7278; line-height:1.55;">Grants scoped to this VF only: HubOwner / ReadExec / ReadOnly. <b>Cannot grant fleet or repository scope</b> — a VF admin can never widen their own reach.</div>
+          </div>
+          <div style="border:1px solid #e3e1dc; border-radius:7px; padding:8px 10px;">
+            <div style="font-size:10.5px; font-weight:700; margin-bottom:4px;">Alert rules</div>
+            <div style="font-size:9.5px; color:#6d7278; line-height:1.55;">Rules watching this VF's logs, one notification channel each, with the retry/backoff curve and delivery-failure history.</div>
+          </div>
+        </div>
+        <div style="margin-top:9px; background:#fbe9e7; border:1px solid #f3d1cf; border-radius:7px; padding:7px 10px; font-size:10px; color:#b3261e; line-height:1.5;"><b>Gate:</b> ⚙ renders for HubOwner on this VF, or anyone with an inherited fleet/repository grant. Deleting the VF is the only action that also requires the fleet-level role.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== row 4 ===== -->
+  <div style="display:flex; align-items:stretch; gap:18px; margin-top:34px;">
+    <div style="flex:1; background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:8px;">THE LIFECYCLE THIS PAGE OWNS</div>
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:10px;">
+        <span style="background:#f2effb; border:1px solid #7c6ce0; border-radius:6px; padding:5px 9px; font-weight:600;">New stream</span>
+        <span style="color:#8a8f98;">→</span>
+        <span style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 9px; color:#6d7278;">Suspended · not activated</span>
+        <span style="color:#8a8f98;">→</span>
+        <span style="background:#fbf3ec; border:1px solid #b3541e; border-radius:6px; padding:5px 9px; font-weight:600; color:#8a5a2a;">Activate — plan</span>
+        <span style="color:#8a8f98;">→</span>
+        <span style="background:#fbf3ec; border:1px solid #b3541e; border-radius:6px; padding:5px 9px; font-weight:600; color:#8a5a2a;">Apply + chained refresh</span>
+        <span style="color:#8a8f98;">→</span>
+        <span style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:6px; padding:5px 9px; font-weight:600; color:#1a6e50;">Healthy · capturing</span>
+        <span style="color:#8a8f98;">→</span>
+        <span style="background:#f2effb; border:1px solid #7c6ce0; border-radius:6px; padding:5px 9px; font-weight:600;">Compare — prove it</span>
+        <span style="color:#8a8f98;">→</span>
+        <span style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 9px; color:#6d7278;">Deactivate / retire</span>
+      </div>
+      <div style="font-size:10px; color:#6d7278; line-height:1.55; margin-top:9px;">Each transition writes to the VF log and the event ledger with an attributed, versioned artifact. Re-activation after a definition change re-enters at <b>plan</b>, never at create — the console has no second path that skips the diff.</div>
+    </div>
+    <div style="width:440px; flex:none; background:#fbf3ec; border:1.5px dashed #b3541e; border-radius:10px; padding:14px 16px;">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; margin-bottom:8px;">RULES THIS PAGE HOLDS TO</div>
+      <div style="font-size:10.5px; color:#8a5a2a; line-height:1.6;">
+        <div>· Nothing replicates until a plan is applied — creation is always inert.</div>
+        <div>· A compare never reports a false green; in-motion rows are INCONCLUSIVE.</div>
+        <div>· Freeze holds positions; only an explicit teardown drops state.</div>
+        <div>· A VF admin cannot widen their own scope.</div>
+        <div>· Suspended is a deliberate state and never enters triage.</div>
+        <div>· Every action shows its equivalent CLI and is exportable.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

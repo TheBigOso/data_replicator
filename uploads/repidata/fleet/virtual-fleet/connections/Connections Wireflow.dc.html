@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#f4f3ef; font-family:'IBM Plex Sans',sans-serif; color:#1a1c1e; }
+    a { color:#1a6e50; } a:hover { color:#14523c; }
+  </style>
+</helmet>
+<div data-screen-label="Connections wireflow" style="padding:36px 40px; min-width:2060px;">
+  <div style="font-size:22px; font-weight:700;">Connections — wireflow</div>
+  <div style="display:flex; align-items:flex-start; gap:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:8px; padding:9px 13px; margin:10px 0 4px; max-width:1180px;">
+    <span style="flex:none; font-size:9.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; border:1px solid #1a6e50; border-radius:4px; padding:2px 7px; background:#fff;">CANONICAL</span>
+    <span style="font-size:11px; color:#6d7278; line-height:1.55;">Canonical for <b>Connections</b> — list and filters, the five detail cards, the creation wizard, and the edit dialogs. Spec: <b>connection.md</b>.</span>
+  </div>
+  <div style="font-size:13px; color:#6d7278; margin:6px 0 14px;">Replicator console · the endpoints a virtual fleet replicates between: list + filters → connection detail (agent · database · source/target properties · server health · stream membership) → the five-step New connection wizard and the three edit dialogs · docs: connection.md, connection.md, agent.md, virtual-fleet-ui.md</div>
+  <div style="display:flex; gap:16px; align-items:center; font-size:11.5px; color:#6d7278; margin-bottom:26px; flex-wrap:wrap;">
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1px solid #c9c6bf; border-radius:3px;"></span>screen / section</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1.5px dashed #b3541e; border-radius:3px;"></span>branch / sub-flow</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px; height:10px; background:#fbe9e7; border:1px solid #b3261e; border-radius:99px;"></span>rule / guard</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:3px;"></span>outcome / drill-down</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#f2effb; border:1px solid #7c6ce0; border-radius:3px;"></span>modal / wizard</span>
+  </div>
+
+  <!-- ===== row 1: scope → list → filters → detail ===== -->
+  <div style="display:flex; align-items:flex-start; gap:0;">
+
+    <div style="width:230px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:8px;">SCOPE + ENTRY</div>
+        <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:8px;">
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Tree · VF → Connections</div>
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Stream page → source / target</div>
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Triage · agent unreachable</div>
+        </div>
+        <div style="background:#fbe9e7; border:1px solid #f3d1cf; border-radius:7px; padding:8px 10px; font-size:10px; color:#b3261e; line-height:1.55;"><b>One scope rule.</b> Connections belong to the <b>virtual fleet</b>, not to a stream — they sit beside Jobs and Events. Opened at VF level: every connection its streams use, <i>plus</i> unattached ones. Opened from a stream: just that stream's source and target.</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5; margin-top:8px;">So a count in the Global Fleet console always matches what the screen it opens contains.</div>
+      </div>
+    </div>
+    <div style="width:34px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:470px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">LAYER 1 · THE LIST</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:3px;">A table, not a card grid</div>
+        <div style="font-size:10px; color:#6d7278; margin-bottom:8px;">Operators compare connections against each other — which agent version, which is stale, which has no streams — and comparison demands aligned columns.</div>
+        <div style="display:grid; grid-template-columns:1.5fr 1.4fr .95fr .75fr .7fr .5fr; gap:4px; font-size:8px; color:#6d7278; border-bottom:1px solid #e3e1dc; padding-bottom:3px;">
+          <span>Connection ▼</span><span>Platform</span><span>Agent</span><span>Heartbeat</span><span>Status</span><span>Test</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1.5fr 1.4fr .95fr .75fr .7fr .5fr; gap:4px; padding:3px 0; border-bottom:1px solid #f2f1ee;">
+          <span style="border:1px solid #e3e1dc; border-radius:4px; font-size:7.5px; color:#8a8f98; padding:1px 4px;">filter…</span>
+          <span style="border:1px solid #e3e1dc; border-radius:4px; font-size:7.5px; color:#8a8f98; padding:1px 4px;">filter…</span>
+          <span style="border:1px solid #e3e1dc; border-radius:4px; font-size:7.5px; color:#8a8f98; padding:1px 4px;">filter…</span>
+          <span style="border:1px solid #e3e1dc; border-radius:4px; font-size:7.5px; color:#8a8f98; padding:1px 4px;">filter…</span>
+          <span style="border:1px solid #e3e1dc; border-radius:4px; font-size:7.5px; color:#8a8f98; padding:1px 4px;">filter…</span><span></span>
+        </div>
+        <div style="display:grid; grid-template-columns:1.5fr 1.4fr .95fr .75fr .7fr .5fr; gap:4px; font-size:8.5px; align-items:center; padding:4px 0;">
+          <span><span style="font-family:'IBM Plex Mono',monospace;">ORA-TELEM</span> <span style="background:#e7effb; color:#2a5cab; border-radius:99px; padding:0 4px; font-size:7px; font-weight:700;">source</span></span>
+          <span style="color:#6d7278;">Oracle 19c · direct redo</span><span style="color:#6d7278;">1.4.2 · linux</span><span>3s</span>
+          <span style="background:#e8f2ed; color:#1a6e50; border-radius:99px; padding:1px 5px; font-size:7.5px; justify-self:start;">Healthy</span>
+          <span style="border:1px solid #e3e1dc; border-radius:4px; font-size:7.5px; padding:1px 4px; text-align:center;">Test</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1.5fr 1.4fr .95fr .75fr .7fr .5fr; gap:4px; font-size:8.5px; align-items:center; padding:4px 0; background:#fdf7f6; border-top:1px solid #f2f1ee;">
+          <span><span style="font-family:'IBM Plex Mono',monospace;">ORA-SENSORS</span> <span style="background:#e7effb; color:#2a5cab; border-radius:99px; padding:0 4px; font-size:7px; font-weight:700;">source</span></span>
+          <span style="color:#6d7278;">Oracle 19c · direct redo</span><span style="color:#6d7278;">1.3.9 · linux</span><span style="color:#b3261e;">14m</span>
+          <span style="background:#fbe9e7; color:#b3261e; border-radius:99px; padding:1px 5px; font-size:7.5px; justify-self:start;">Unreachable</span>
+          <span style="border:1px solid #e3e1dc; border-radius:4px; font-size:7.5px; padding:1px 4px; text-align:center;">Test</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1.5fr 1.4fr .95fr .75fr .7fr .5fr; gap:4px; font-size:8.5px; align-items:center; padding:4px 0; border-top:1px solid #f2f1ee;">
+          <span><span style="font-family:'IBM Plex Mono',monospace;">SNOWFLAKE-RKT</span> <span style="background:#f2effb; color:#6a3fb5; border-radius:99px; padding:0 4px; font-size:7px; font-weight:700;">target</span></span>
+          <span style="color:#6d7278;">Snowflake · batched apply</span><span style="color:#8a8f98;">agentless</span><span>8s</span>
+          <span style="background:#e8f2ed; color:#1a6e50; border-radius:99px; padding:1px 5px; font-size:7.5px; justify-self:start;">Healthy</span>
+          <span style="border:1px solid #e3e1dc; border-radius:4px; font-size:7.5px; padding:1px 4px; text-align:center;">Test</span>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.5; margin-top:8px;"><b style="color:#1a1c1e;">Hidden by default</b> (column chooser): Host / endpoint · Created · Created by · Streams · Last test. <b style="color:#1a1c1e;">Connection is locked on</b> — hiding the identifier is never useful. Test is itself hideable.</div>
+      </div>
+    </div>
+    <div style="width:34px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:300px; flex:none;">
+      <div style="background:#fff; border:1.5px dashed #b3541e; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; margin-bottom:2px;">SORT · FILTER · PERSIST</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:8px;">How operators find one row</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.6;">
+          <div style="margin-bottom:6px;"><b style="color:#1a1c1e;">Every header sorts.</b> Click to sort, click to reverse, ▲/▼ on the active column. Default is <b>Connection descending</b>, indicator visible on load — the sort state is never implicit.</div>
+          <div style="margin-bottom:6px;"><b style="color:#1a1c1e;">Numeric columns sort numerically.</b> Heartbeat and Streams — a 14-minute-stale agent must not sort between 1s and 2s because "1" precedes "2".</div>
+          <div style="margin-bottom:6px;"><b style="color:#1a1c1e;">Per-column filter boxes.</b> Substring, AND across columns, applied immediately. The Connection filter also matches the role, so typing <span style="font-family:'IBM Plex Mono',monospace;">target</span> narrows to targets without a separate control.</div>
+          <div style="margin-bottom:6px;"><b style="color:#1a1c1e;">No match = explicit empty state</b>, never an ambiguous blank area.</div>
+          <div><b style="color:#1a1c1e;">Persistence split.</b> Column visibility and sort are <b>per user</b>, restored at sign-in. Filters are <b>session-only</b> — a transient act of looking, not a preference.</div>
+        </div>
+      </div>
+    </div>
+    <div style="width:34px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:300px; flex:none;">
+      <div style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">LAYER 2 · DETAIL</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:3px;">Three questions, one screen</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.55; margin-bottom:9px;">Connection problems are the most common cause of a stalled stream, so the console answers all three without navigation: <b>is it reachable · what is it · what breaks if it is down.</b></div>
+        <div style="display:flex; flex-direction:column; gap:5px;">
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px; font-size:9.5px;"><b>Header</b> <span style="color:#6d7278;">— name · role pill · status pill · platform · description · <b>Test connection</b></span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px; font-size:9.5px;"><b>① Agent card</b></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px; font-size:9.5px;"><b>② Database connection card</b></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px; font-size:9.5px;"><b>③ Source / target properties card</b></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px; font-size:9.5px;"><b>④ Server health panel</b></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px; font-size:9.5px;"><b>⑤ Stream membership</b> <span style="color:#6d7278;">— the blast radius</span></div>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.5; margin-top:8px;">Cards, not a form — the whole connection reads without scrolling through inputs. Each card has an <b>Edit</b> action opening its dialog.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== row 2: the five detail cards ===== -->
+  <div style="display:flex; align-items:flex-start; gap:16px; margin-top:34px;">
+
+    <div style="width:390px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:13px 15px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:3px;">① AGENT CARD</div>
+        <div style="font-size:12.5px; font-weight:600; margin-bottom:7px;">How the hub reaches the endpoint</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-bottom:8px;">
+          <div style="border:1px solid #1a6e50; background:#e8f2ed; border-radius:6px; padding:7px 9px; font-size:9px;"><b>Connect via agent</b><br><span style="color:#6d7278;">Enrolled binary near the DB, over mTLS. Less network cost, distributed CPU, and capture directly from the logging system.</span></div>
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:7px 9px; font-size:9px;"><b>Agentless</b><br><span style="color:#6d7278;">Hub connects directly. Zero footprint — all capture load and network cost land on the hub.</span></div>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.6;">
+          <div><b style="color:#1a1c1e;">Agent mode fields:</b> mode · binary version · enrollment method · agent host · agent port · heartbeat age · regular vs RAC-cluster.</div>
+          <div style="margin-top:5px;"><b style="color:#1a1c1e;">Test agent connection</b> checks reachability, latency, mTLS handshake, certificate verification, and hub/agent version match.</div>
+          <div style="margin-top:5px;"><b style="color:#1a1c1e;">Configure agent service:</b> service account · spool directory · log level · upgrade ring.</div>
+          <div style="margin-top:5px;"><b style="color:#1a1c1e;">Certificate panel:</b> pinned fingerprint · <b>rotate certificate</b> (picked up on next heartbeat, old one honored for a grace period) · <b>re-issue enrollment token</b> (single-use, short-lived, ledgered).</div>
+          <div style="margin-top:5px;"><b style="color:#1a1c1e;">Agentless mode</b> states plainly that the hub connects directly, with the reachability-probe age instead of a heartbeat.</div>
+        </div>
+        <div style="margin-top:8px; background:#fbf3ec; border:1px solid #f0dcc8; border-radius:6px; padding:6px 9px; font-size:9.5px; color:#8a5a2a; line-height:1.5;">Switching to agentless is a <b>visible</b> change: the Agent column and the card both re-render to <span style="font-family:'IBM Plex Mono',monospace;">agentless · hub-direct</span>.</div>
+      </div>
+    </div>
+
+    <div style="width:360px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:13px 15px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:3px;">② DATABASE CONNECTION CARD</div>
+        <div style="font-size:12.5px; font-weight:600; margin-bottom:7px;">Where it connects, as whom</div>
+        <div style="border:1px solid #e3e1dc; border-radius:7px; padding:8px 10px; font-size:9px; margin-bottom:8px;">
+          <div style="display:grid; grid-template-columns:auto 1fr; gap:3px 10px; color:#6d7278;">
+            <span>Host</span><b style="color:#1a1c1e; font-family:'IBM Plex Mono',monospace;">ora-prod-01.corp.example</b>
+            <span>Port</span><b style="color:#1a1c1e; font-family:'IBM Plex Mono',monospace;">1521</b>
+            <span>Database</span><b style="color:#1a1c1e; font-family:'IBM Plex Mono',monospace;">TELEMPRD</b>
+            <span>User</span><b style="color:#1a1c1e; font-family:'IBM Plex Mono',monospace;">repl_capture</b>
+            <span>ORACLE_HOME</span><b style="color:#1a1c1e; font-family:'IBM Plex Mono',monospace;">/u01/app/oracle/…</b>
+            <span>Connect path</span><b style="color:#1a1c1e; font-family:'IBM Plex Mono',monospace;">TNS · TELEMPRD</b>
+          </div>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.6;"><b style="color:#1a1c1e;">Platform-shaped.</b> Oracle adds ORACLE_HOME and the connect path (<span style="font-family:'IBM Plex Mono',monospace;">Local · SID x</span> or <span style="font-family:'IBM Plex Mono',monospace;">TNS · x</span>); other classes show host / port / database only.</div>
+        <div style="margin-top:8px; background:#fbe9e7; border:1px solid #f3d1cf; border-radius:6px; padding:6px 9px; font-size:9.5px; color:#b3261e; line-height:1.5;"><b>Standing note:</b> credentials are vaulted on the hub and <b>never</b> written to agent disk or logs — the credential promise from connection.md, restated where the operator can act on it.</div>
+      </div>
+    </div>
+
+    <div style="width:360px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:13px 15px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:3px;">③ SOURCE / TARGET PROPERTIES</div>
+        <div style="font-size:12.5px; font-weight:600; margin-bottom:7px;">The effective configuration, without opening the editor</div>
+        <div style="border:1px solid #e3e1dc; border-radius:7px; padding:8px 10px; font-size:9px; margin-bottom:8px;">
+          <div style="font-weight:700; margin-bottom:3px;">Role · source</div>
+          <div style="color:#6d7278; margin-bottom:6px;">Capture method — <b style="color:#1a1c1e;">direct redo</b> (no LogMiner)</div>
+          <div style="display:flex; gap:4px; flex-wrap:wrap;">
+            <span style="background:#e8f2ed; color:#1a6e50; border-radius:99px; padding:1px 6px; font-size:8px;">✓ supplemental logging</span>
+            <span style="background:#e8f2ed; color:#1a6e50; border-radius:99px; padding:1px 6px; font-size:8px;">✓ zstd compression</span>
+            <span style="background:#e8f2ed; color:#1a6e50; border-radius:99px; padding:1px 6px; font-size:8px;">✓ log-layer filter</span>
+            <span style="background:#f2f1ee; color:#6d7278; border-radius:99px; padding:1px 6px; font-size:8px;">RAC · off</span>
+          </div>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.6;">
+          <div><b style="color:#1a1c1e;">Role is constrained by the capability matrix</b>, not asserted by the user — a target-only class never offers "source".</div>
+          <div style="margin-top:5px;"><b style="color:#1a1c1e;">Target side</b> shows the integrate method (continuous vs batched apply / stage-and-merge) and its options: staging path, merge cadence, error-table behavior.</div>
+          <div style="margin-top:5px;"><b style="color:#1a1c1e;">Blank reads as blank.</b> No screen substitutes a derived default for a field the operator left empty, and editing a blank field starts empty — never pre-filled with a display placeholder.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="width:400px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:13px 15px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:3px;">④ SERVER HEALTH PANEL</div>
+        <div style="font-size:12.5px; font-weight:600; margin-bottom:7px;">Is the host itself the problem?</div>
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:5px; margin-bottom:8px;">
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 6px; font-size:8.5px;"><span style="color:#6d7278;">CPU</span><br><b style="font-size:12px;">28%</b></div>
+          <div style="border:1px solid #f3d1cf; background:#fdf7f6; border-radius:6px; padding:5px 6px; font-size:8.5px;"><span style="color:#6d7278;">Memory</span><br><b style="font-size:12px; color:#b3261e;">94%</b></div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 6px; font-size:8.5px;"><span style="color:#6d7278;">IO write</span><br><b style="font-size:12px;">90 MB/s</b></div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 6px; font-size:8.5px;"><span style="color:#6d7278;">Disk</span><br><b style="font-size:12px;">61%</b></div>
+        </div>
+        <div style="background:#fbf3ec; border:1px solid #f0dcc8; border-radius:6px; padding:6px 9px; font-size:9px; color:#8a5a2a; line-height:1.5; margin-bottom:8px;">⚠ <b>Advisory</b> — memory 94% is above the 80% concern threshold. This is the row that appears in the VF timeline and in global triage; clicking it there lands <i>here</i>.</div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.6;">
+          <div><b style="color:#1a1c1e;">Live metrics, wobble-free thresholds.</b> The displayed number ticks; the threshold is evaluated against a stable value, so an advisory never flickers in and out.</div>
+          <div style="margin-top:5px;"><b style="color:#1a1c1e;">Thresholds:</b> CPU / memory &gt; 80%, IO write &gt; 320 MB/s. Unreachable is its own state, not a metric.</div>
+          <div style="margin-top:5px;"><b style="color:#1a1c1e;">Also carried:</b> agent binary version and platform, uptime, spool directory usage, and the last heartbeat timestamp.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="width:400px; flex:none;">
+      <div style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:10px; padding:13px 15px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:3px;">⑤ STREAM MEMBERSHIP — THE BLAST RADIUS</div>
+        <div style="font-size:12.5px; font-weight:600; margin-bottom:7px;">What breaks if this is down</div>
+        <div style="display:grid; grid-template-columns:1.5fr .85fr .6fr .55fr .7fr; gap:4px; font-size:8px; color:#6d7278; border-bottom:1px solid #cfe0d7; padding-bottom:3px; margin-bottom:3px;">
+          <span>Stream</span><span>Status</span><span>Role here</span><span>Tables</span><span>Avg/day</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1.5fr .85fr .6fr .55fr .7fr; gap:4px; font-size:8.5px; align-items:center; padding:3px 0;">
+          <b style="color:#1a6e50;">flight-telemetry → snowflake</b><span style="color:#1a6e50;">Healthy</span><span>source</span><span>74</span><span>12.4M</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1.5fr .85fr .6fr .55fr .7fr; gap:4px; font-size:8.5px; align-items:center; padding:3px 0; border-top:1px solid #dfeae4;">
+          <b style="color:#1a6e50;">sensor-ingest → s3-telem</b><span style="color:#b3261e;">Error</span><span>source</span><span>52</span><span>8.1M</span>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.6; margin-top:8px;">
+          <div>One row per stream using this connection, with <b>the role it plays in that stream</b> — a connection can be a source in one and a target in another.</div>
+          <div style="margin-top:5px;">An operator looking at an unreachable connection sees immediately which streams are affected. Each row links to the stream.</div>
+          <div style="margin-top:5px;"><b style="color:#1a1c1e;">Add to an existing stream</b> starts the membership change. A connection with <b>no</b> streams shows an explicit empty state with that action — not an empty table.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== row 3: wizard + dialogs ===== -->
+  <div style="display:flex; align-items:flex-start; gap:18px; margin-top:34px;">
+
+    <div style="width:620px; flex:none;">
+      <div style="background:#f2effb; border:1px solid #7c6ce0; border-radius:10px; padding:14px 16px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6a3fb5; margin-bottom:2px;">BRANCH A · WIZARD · NEW CONNECTION</div>
+        <div style="font-size:14px; font-weight:600; margin-bottom:3px;">Five steps, not one dense form</div>
+        <div style="font-size:11px; color:#6d7278; margin-bottom:10px;">Each step confirms before the next opens; completed steps collapse to a one-line summary with an Edit action. A persistent rail carries the name, description, and progress — the operator always knows what they have committed to and what remains.</div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:7px; padding:7px 10px; font-size:9.5px;"><b>1 · Select location type</b> <span style="color:#6d7278;">— every supported platform, filterable <b>All / Sources / Targets</b>, each stating the roles it can take. The choice seeds the default port and constrains every later step.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:7px; padding:7px 10px; font-size:9.5px;"><b>2 · Select agent connection</b> <span style="color:#6d7278;">— agent vs hub-direct with each mode's cost stated · host and port · regular vs RAC cluster · test agent connection · configure agent service · certificate state · authentication method.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:7px; padding:7px 10px; font-size:9.5px;"><b>3 · Configure location connection</b> <span style="color:#6d7278;">— platform-shaped: Oracle asks ORACLE_HOME and local-SID or TNS; others ask host, port, database. User and password with the vaulting statement.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:7px; padding:7px 10px; font-size:9.5px;"><b>4 · Configure capture / integrate</b> <span style="color:#6d7278;">— role (only what the class supports) and method, with the class's options and the same configuration-time cross-validation as the edit dialog.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:7px; padding:7px 10px; font-size:9.5px;"><b>5 · Stream membership</b> <span style="background:#f2f1ee; color:#6d7278; border-radius:99px; padding:0 5px; font-size:8px;">OPTIONAL</span> <span style="color:#6d7278;">— save unattached (the default) or attach to streams in the current VF now.</span></div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px;">
+          <div style="background:#fbe9e7; border:1px solid #f3d1cf; border-radius:7px; padding:7px 9px; font-size:9px; color:#b3261e; line-height:1.5;"><b>A connection exists on its own.</b> Membership is a separate, optional act — defining a database before any stream needs it must not force you to invent one.</div>
+          <div style="background:#fbe9e7; border:1px solid #f3d1cf; border-radius:7px; padding:7px 9px; font-size:9px; color:#b3261e; line-height:1.5;"><b>A name is required and unique.</b> It is how every stream, job, and event refers to the connection. A duplicate is refused at creation, not after.</div>
+          <div style="background:#fbe9e7; border:1px solid #f3d1cf; border-radius:7px; padding:7px 9px; font-size:9px; color:#b3261e; line-height:1.5;"><b>What you entered is what shows.</b> Every collected value is stored and rendered. No derived defaults stand in for blanks.</div>
+        </div>
+        <div style="margin-top:9px; font-size:10px; color:#6d7278; line-height:1.55;"><b style="color:#1a1c1e;">Exit:</b> the connection enters as <b>Enrolling</b> with no heartbeat until its first one arrives. The confirmation states whether it was attached to a stream or saved unattached; an unattached connection says so plainly on its detail screen, with an action to attach it later.</div>
+      </div>
+    </div>
+
+    <div style="width:520px; flex:none;">
+      <div style="background:#fff; border:1.5px dashed #b3541e; border-radius:10px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; margin-bottom:2px;">BRANCH B · THE THREE EDIT DIALOGS</div>
+        <div style="font-size:14px; font-weight:600; margin-bottom:3px;">One shared contract</div>
+        <div style="font-size:11px; color:#6d7278; margin-bottom:10px;">Agent · Database connection · Capture/Integrate. Each opens from its card's Edit action, and all three behave identically.</div>
+        <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:9px;">
+          <div style="border:1px solid #e3e1dc; border-radius:7px; padding:7px 10px; font-size:9.5px;"><b>State the trade-off inline.</b> <span style="color:#6d7278;">Choices are cards with consequences written on them, not bare toggles.</span></div>
+          <div style="border:1px solid #e3e1dc; border-radius:7px; padding:7px 10px; font-size:9.5px;"><b>Validate against the capability matrix</b> <span style="color:#6d7278;">at configuration time — rather than accepting anything and failing at job runtime.</span></div>
+          <div style="border:1px solid #e3e1dc; border-radius:7px; padding:7px 10px; font-size:9.5px;"><b>Test connection before saving</b> <span style="color:#6d7278;">— a checkbox, checked by default, that can be unchecked.</span></div>
+          <div style="border:1px solid #e3e1dc; border-radius:7px; padding:7px 10px; font-size:9.5px;"><b>Every save is ledgered.</b> <span style="color:#6d7278;">Who, when, what changed — in the event ledger and the VF log.</span></div>
+        </div>
+        <div style="background:#fbf3ec; border:1px solid #f0dcc8; border-radius:7px; padding:8px 10px; font-size:10px; color:#8a5a2a; line-height:1.55;"><b>Saving untested is legitimate.</b> An operator configuring a database that is down for maintenance must be able to record the configuration. The product allows it, <b>says so in the confirmation</b>, and defers validation to the next heartbeat or capability check.</div>
+      </div>
+    </div>
+
+    <div style="width:400px; flex:none;">
+      <div style="background:#fff; border:1.5px dashed #b3541e; border-radius:10px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; margin-bottom:2px;">BRANCH C · TEST CONNECTION</div>
+        <div style="font-size:14px; font-weight:600; margin-bottom:3px;">One action, staged results</div>
+        <div style="font-size:11px; color:#6d7278; margin-bottom:10px;">Available from the list row, the detail header, and inside every dialog. It reports per stage, so a failure names the layer that failed rather than "could not connect".</div>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <div style="display:flex; gap:6px; align-items:center; font-size:9.5px;"><span style="color:#1a6e50;">✓</span><span>Network reachability + latency</span></div>
+          <div style="display:flex; gap:6px; align-items:center; font-size:9.5px;"><span style="color:#1a6e50;">✓</span><span>mTLS handshake + certificate verification</span></div>
+          <div style="display:flex; gap:6px; align-items:center; font-size:9.5px;"><span style="color:#1a6e50;">✓</span><span>Hub / agent version match</span></div>
+          <div style="display:flex; gap:6px; align-items:center; font-size:9.5px;"><span style="color:#1a6e50;">✓</span><span>Database authentication</span></div>
+          <div style="display:flex; gap:6px; align-items:center; font-size:9.5px;"><span style="color:#b3261e;">✕</span><span style="color:#b3261e;">Capture privilege check — <b>missing SELECT on V$LOG</b></span></div>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.55; margin-top:9px;">The outcome and its age populate the <b>Last test</b> column and the status pill, and the run is written to the event ledger like any other action.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== row 4 ===== -->
+  <div style="display:flex; align-items:stretch; gap:18px; margin-top:34px;">
+    <div style="flex:1; background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:8px;">WHERE A CONNECTION SHOWS UP ELSEWHERE</div>
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; font-size:10px; color:#6d7278; line-height:1.55;">
+        <div><b style="color:#1a1c1e;">Stream page</b><br>As the source and target endpoints on the Capture and Integrate tabs — the name links back here.</div>
+        <div><b style="color:#1a1c1e;">VF timeline · CHECKS</b><br>One system card per agent, with the same health figures as the Server health panel.</div>
+        <div><b style="color:#1a1c1e;">Global triage</b><br>CPU / memory / IO advisories and Unreachable rows deep-link straight to this connection's health panel.</div>
+        <div><b style="color:#1a1c1e;">New stream wizard</b><br>Step 2 picks from this VF's connections, and can create one inline without leaving the wizard.</div>
+      </div>
+    </div>
+    <div style="width:440px; flex:none; background:#fbf3ec; border:1.5px dashed #b3541e; border-radius:10px; padding:14px 16px;">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; margin-bottom:8px;">RULES THIS SCREEN HOLDS TO</div>
+      <div style="font-size:10.5px; color:#8a5a2a; line-height:1.6;">
+        <div>· Connections belong to the VF, never to a stream.</div>
+        <div>· Credentials are vaulted on the hub — never on agent disk or in logs.</div>
+        <div>· Roles are constrained by the capability matrix, not asserted.</div>
+        <div>· Blank reads as blank; no derived defaults stand in for empty fields.</div>
+        <div>· Saving untested is allowed, stated, and deferred — never silently "OK".</div>
+        <div>· Column setup persists per user; filters are session-only.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

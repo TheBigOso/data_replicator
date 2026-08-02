@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#f4f3ef; font-family:'IBM Plex Sans',sans-serif; color:#1a1c1e; }
+    a { color:#1a6e50; } a:hover { color:#14523c; }
+  </style>
+</helmet>
+<div data-screen-label="Stream wireflow" style="padding:36px 40px; min-width:2100px;">
+  <div style="font-size:22px; font-weight:700;">Stream — wireflow</div>
+  <div style="display:flex; align-items:flex-start; gap:10px; background:#fbf3ec; border:1.5px dashed #b3541e; border-radius:8px; padding:9px 13px; margin:10px 0 4px; max-width:1180px;">
+    <span style="flex:none; font-size:9.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; border:1px solid #b3541e; border-radius:4px; padding:2px 7px; background:#fff;">MAP</span>
+    <span style="font-size:11px; color:#6d7278; line-height:1.55;">This is the <b>level map</b> for the Stream page — the three-stage strip, latency panel, tables, and the lifecycle spine. Sub-flows drawn in summary here are specified in full elsewhere: <b>New Stream Wireflow</b> (①) · <b>Activation Wireflow</b> (② and the stream log) · <b>Compare Data Wireflow</b> (④a) · <b>Add Table Wireflow</b> (⑤) · <b>Tables Wireflow</b> (the Tables section). Where they differ, the deep-dive file wins.</span>
+  </div>
+  <div style="font-size:13px; color:#6d7278; margin:6px 0 14px;">Replicator console · the leaf: one replication unit end to end — capture → file log → apply. Header actions → the stream strip → latency panel → events → tables → stream log, plus New stream, Activate replication, Compare, Refresh, Duplicate, Add tables, Stream timeline · docs: virtual-fleet-ui.md, activation-ui.md, compare-ui.md, tables-ui.md, stream-ui.md, run-history.md</div>
+  <div style="display:flex; gap:16px; align-items:center; font-size:11.5px; color:#6d7278; margin-bottom:26px; flex-wrap:wrap;">
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1px solid #c9c6bf; border-radius:3px;"></span>screen / section</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1.5px dashed #b3541e; border-radius:3px;"></span>branch / sub-flow</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px; height:10px; background:#fbe9e7; border:1px solid #b3261e; border-radius:99px;"></span>rule / guard</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:3px;"></span>outcome / drill-down</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#f2effb; border:1px solid #7c6ce0; border-radius:3px;"></span>modal / wizard</span>
+  </div>
+
+  <!-- ===== row 0: lifecycle spine ===== -->
+  <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:14px 16px; margin-bottom:30px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+    <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:9px;">THE SPINE — A STREAM'S WHOLE LIFE</div>
+    <div style="display:flex; align-items:center; gap:7px; flex-wrap:wrap; font-size:10px;">
+      <span style="background:#f2effb; border:1px solid #7c6ce0; border-radius:6px; padding:5px 9px; font-weight:600;">① New stream</span>
+      <span style="color:#8a8f98;">→</span>
+      <span style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 9px; color:#6d7278;">Suspended · not activated</span>
+      <span style="color:#8a8f98;">→</span>
+      <span style="background:#fbf3ec; border:1px solid #b3541e; border-radius:6px; padding:5px 9px; font-weight:600; color:#8a5a2a;">② Activate — plan</span>
+      <span style="color:#8a8f98;">→</span>
+      <span style="background:#fbf3ec; border:1px solid #b3541e; border-radius:6px; padding:5px 9px; font-weight:600; color:#8a5a2a;">apply + chained refresh</span>
+      <span style="color:#8a8f98;">→</span>
+      <span style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:6px; padding:5px 9px; font-weight:600; color:#1a6e50;">③ Healthy · capturing</span>
+      <span style="color:#8a8f98;">⇄</span>
+      <span style="background:#f2effb; border:1px solid #7c6ce0; border-radius:6px; padding:5px 9px; font-weight:600;">④ Compare / Refresh</span>
+      <span style="color:#8a8f98;">⇄</span>
+      <span style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 9px; color:#6d7278;">⑤ Add / remove tables</span>
+      <span style="color:#8a8f98;">→</span>
+      <span style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 9px; color:#6d7278;">Suspend</span>
+      <span style="color:#8a8f98;">→</span>
+      <span style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 9px; color:#6d7278;">⑥ Deactivate / retire</span>
+    </div>
+    <div style="font-size:10px; color:#6d7278; margin-top:9px; line-height:1.55;">Any change to the definition — tables added, method changed, connection swapped — re-enters at <b>plan</b>. There is no path in the console that mutates a running stream without a diff first.</div>
+  </div>
+
+  <!-- ===== row 1: the page ===== -->
+  <div style="display:flex; align-items:flex-start; gap:0;">
+
+    <div style="width:226px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:8px;">ENTRY POINTS</div>
+        <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:8px;">
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">VF page → stream row</div>
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Tree · VF → Streams → id</div>
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Global triage · stream error</div>
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Connection → membership row</div>
+        </div>
+        <div style="font-size:10.5px; color:#6d7278; line-height:1.5;">A <b>Stream</b> is one replication unit: a source, a target, a table set, and a mode. It is the smallest thing that can be activated, compared, refreshed, paused, or retired.</div>
+        <div style="margin-top:8px; background:#fbe9e7; border:1px solid #f3d1cf; border-radius:7px; padding:7px 9px; font-size:9.5px; color:#b3261e; line-height:1.5;">Opening a stream <b>opens its log tab</b> automatically and makes it active — the tab persists after you navigate away.</div>
+      </div>
+    </div>
+    <div style="width:32px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:430px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">LAYER 1 · HEADER + THE STRIP</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:7px;">Identity, then the three stages</div>
+        <div style="border:1px solid #e3e1dc; border-radius:7px; padding:8px 10px; margin-bottom:8px;">
+          <div style="font-size:9px; color:#6d7278; margin-bottom:3px;">← Virtual fleet rk-prod</div>
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+            <span style="font-size:12.5px; font-weight:700;">flight-telemetry → snowflake</span>
+            <span style="background:#e8f2ed; color:#1a6e50; border-radius:99px; padding:1px 7px; font-size:8px; font-weight:700;">Healthy</span>
+            <span style="margin-left:auto; display:flex; gap:4px; font-size:8.5px; font-weight:600;">
+              <span style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 6px;">Stream Timeline</span>
+              <span style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 6px;">Duplicate</span>
+              <span style="border:1px solid #e3e1dc; border-radius:5px; padding:3px 6px;">Pause</span>
+            </span>
+          </div>
+          <div style="font-size:8.5px; color:#6d7278; margin-top:4px;">rk-prod · Oracle 19c direct redo capture · Snowflake apply · 74 tables</div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 16px 1fr 16px 1fr; align-items:center; gap:0; margin-bottom:8px;">
+          <div style="border:1px dashed #c9c6bf; border-radius:7px; padding:7px 8px; font-size:8.5px;"><span style="color:#6d7278;">Capture</span><br><b style="font-size:10px;">ORA-TELEM</b><br><span style="color:#6d7278;">redo pos 2.1s behind</span></div>
+          <div style="text-align:center; color:#8a8f98;">→</div>
+          <div style="border:1px dashed #c9c6bf; border-radius:7px; padding:7px 8px; font-size:8.5px;"><span style="color:#6d7278;">File log</span><br><b style="font-size:10px;">rk-prod file log</b><br><span style="color:#6d7278;">61 MB buffered</span></div>
+          <div style="text-align:center; color:#8a8f98;">→</div>
+          <div style="border:1px dashed #c9c6bf; border-radius:7px; padding:7px 8px; font-size:8.5px;"><span style="color:#6d7278;">Apply</span><br><b style="font-size:10px;">SNOWFLAKE-RKT</b><br><span style="color:#6d7278;">batched · 30s cadence</span></div>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.55;"><b style="color:#1a1c1e;">The strip is the mental model.</b> Three stages, always in this order, each naming its connection and its current position. When a stream breaks, the stage that broke is the one showing the error text — an operator reads the failure point before reading any log.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Pause is honest.</b> A paused stream reports Suspended, zero rows, no latency, and its capture position is <b>held</b> — resuming picks up exactly where it stopped, no refresh required.</div>
+    </div>
+    <div style="width:32px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:352px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">LAYER 2 · IS IT KEEPING UP?</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:7px;">Latency panel + recent events</div>
+        <div style="border:1px solid #e3e1dc; border-radius:7px; padding:8px 10px; margin-bottom:8px;">
+          <div style="display:flex; align-items:flex-end; gap:10px;">
+            <div><div style="font-size:8px; color:#6d7278;">Latency · last 30 min</div><b style="font-size:14px;">2.1s</b></div>
+            <svg width="150" height="30" viewBox="0 0 150 30" style="flex:none;"><path d="M0,20 L18,17 L36,22 L54,14 L72,18 L90,11 L108,16 L126,9 L150,13" fill="none" stroke="#1a6e50" stroke-width="1.5"></path></svg>
+            <div style="margin-left:auto; text-align:right;"><div style="font-size:8px; color:#6d7278;">Rows/min</div><b style="font-size:14px;">374k</b></div>
+          </div>
+          <div style="font-size:8.5px; color:#1a6e50; font-weight:600; margin-top:5px;">why? → stream timeline</div>
+        </div>
+        <div style="font-size:10px; font-weight:600; margin-bottom:4px;">Recent events</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 8px; font-size:8.5px; margin-bottom:4px; display:flex; gap:6px; align-items:center;"><span style="font-family:'IBM Plex Mono',monospace; color:#6d7278;">E-4812</span><span style="background:#e8f2ed; color:#1a6e50; border-radius:99px; padding:0 5px; font-size:7.5px; font-weight:700;">COMPARE</span><span>DONE/IDENTICAL · 74 tables</span><span style="margin-left:auto; color:#8a8f98;">31m</span></div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 8px; font-size:8.5px; display:flex; gap:6px; align-items:center;"><span style="font-family:'IBM Plex Mono',monospace; color:#6d7278;">E-4780</span><span style="background:#e7effb; color:#2a5cab; border-radius:99px; padding:0 5px; font-size:7.5px; font-weight:700;">ACTIVATE</span><span>Plan applied · 5 components</span><span style="margin-left:auto; color:#8a8f98;">2d</span></div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.55; margin-top:8px;">The event strip is a <b>preview of the ledger</b>, not a second source — every row opens its full record in Events, with the same id, attribution, and artifact.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>"why?"</b> is a real link, not decoration — latency without a cause is a number, so the panel always offers the timeline that explains it.</div>
+    </div>
+    <div style="width:32px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:470px; flex:none;">
+      <div style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">LAYER 3 · WHAT IS ACTUALLY REPLICATING</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:7px;">Tables</div>
+        <div style="display:flex; align-items:center; gap:6px; font-size:8.5px; color:#6d7278; margin-bottom:6px;">
+          <span>Volume in <b style="color:#1a1c1e;">rows ▾</b></span>
+          <span style="margin-left:auto;">74 registered · <b style="color:#1a6e50;">view all in Tables</b></span>
+        </div>
+        <div style="display:grid; grid-template-columns:1.1fr 1.5fr .7fr .95fr 1.15fr .75fr; gap:4px; font-size:7.5px; color:#6d7278; border-bottom:1px solid #cfe0d7; padding-bottom:3px; margin-bottom:3px;">
+          <span>Table</span><span>Name in source</span><span>Group</span><span>Recent refresh</span><span>Recent compare</span><span>Vol/day</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1.1fr 1.5fr .7fr .95fr 1.15fr .75fr; gap:4px; font-size:8px; align-items:center; padding:3px 0;">
+          <b style="font-family:'IBM Plex Mono',monospace;">ALERT_THRESHOLDS</b><span style="color:#6d7278; font-family:'IBM Plex Mono',monospace;">TELEM.ALERT_THRESH</span><span>OPS</span><span style="color:#6d7278;">DONE · 6d</span><span style="color:#1a6e50;">DONE/IDENTICAL</span><span>1.2M</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1.1fr 1.5fr .7fr .95fr 1.15fr .75fr; gap:4px; font-size:8px; align-items:center; padding:3px 0; border-top:1px solid #dfeae4;">
+          <b style="font-family:'IBM Plex Mono',monospace;">DEVICE_TELEMETRY</b><span style="color:#6d7278; font-family:'IBM Plex Mono',monospace;">TELEM.DEV_TELEM</span><span>OPS</span><span style="color:#6d7278;">DONE · 2d</span><span style="color:#b3541e;">DONE/INCONCLUSIVE</span><span>8.4M</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1.1fr 1.5fr .7fr .95fr 1.15fr .75fr; gap:4px; font-size:8px; align-items:center; padding:3px 0; border-top:1px solid #dfeae4;">
+          <b style="font-family:'IBM Plex Mono',monospace;">FIRMWARE_EVENTS</b><span style="color:#6d7278; font-family:'IBM Plex Mono',monospace;">TELEM.FW_EVENTS</span><span>OPS</span><span style="color:#8a8f98;">—</span><span style="color:#1a6e50;">DONE/IDENTICAL</span><span>0.4M</span>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.55; margin-top:8px;">Per-table state, not a name list: the last refresh and the last compare <b>per table</b>, so "the stream is healthy" can be checked row by row. Row actions: compare this table · refresh this table · remove from stream. <b>Volume unit is a per-user preference</b> (rows / MB / GB) shared with the Tables page.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Removing a table stops replication for it at the next checkpoint</b> and asks whether in-flight changes drain through apply or are discarded. Other tables keep running — a table is not a stream.</div>
+    </div>
+  </div>
+
+  <!-- ===== row 2: branches ===== -->
+  <div style="display:flex; align-items:flex-start; gap:16px; margin-top:34px;">
+
+    <div style="width:400px; flex:none;">
+      <div style="background:#f2effb; border:1px solid #7c6ce0; border-radius:10px; padding:13px 15px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6a3fb5; margin-bottom:2px;">① NEW STREAM</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">Four steps, then inert</div>
+        <div style="display:flex; flex-direction:column; gap:5px;">
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px; font-size:9px;"><b>1 · Identity</b> <span style="color:#6d7278;">— name (identity rules, unique in the VF), description, accent.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px; font-size:9px;"><b>2 · Source &amp; target</b> <span style="color:#6d7278;">— from this VF's connections; the picker excludes classes the capability matrix says cannot take that role. Create one inline.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px; font-size:9px;"><b>3 · Tables</b> <span style="color:#6d7278;">— browse or pattern-match the source catalog.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px; font-size:9px;"><b>4 · Mode</b> <span style="color:#6d7278;">— continuous CDC · scheduled refresh · CDC + scheduled compare; apply style (replica / soft delete / history) and cadence.</span></div>
+        </div>
+        <div style="margin-top:8px; font-size:9.5px; color:#6d7278; line-height:1.55;"><b style="color:#1a1c1e;">Exit:</b> the stream lands as <b>Suspended · not activated</b> and the console offers <b>Activate replication →</b>. The equivalent CLI is shown and exportable.</div>
+      </div>
+    </div>
+
+    <div style="width:470px; flex:none;">
+      <div style="background:#fff; border:1.5px dashed #b3541e; border-radius:10px; padding:13px 15px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; margin-bottom:2px;">② ACTIVATE REPLICATION</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">Plan → review → apply</div>
+        <div style="font-size:10px; color:#6d7278; margin-bottom:8px; line-height:1.55;">The hub diffs the definition against the real state of both connections and shows exactly what it will create. <b>Nothing applies until approved.</b> Re-activation is idempotent — unchanged components verify fast and report "no change".</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-bottom:8px;">
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:7px 9px; font-size:8.5px;"><b>Components</b><br><span style="color:#6d7278;">jobs · table registration · supplemental logging · state tables · capture position</span></div>
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:7px 9px; font-size:8.5px;"><b>Capture start</b><br><span style="color:#6d7278;">now · oldest open txn · rewind N min · <b>recovery — target integrate seq</b> · custom</span></div>
+        </div>
+        <div style="background:#fbe9e7; border:1px solid #f3d1cf; border-radius:6px; padding:7px 9px; font-size:9px; color:#b3261e; line-height:1.5;"><b>Guard rails:</b> recreating state tables drops recovery positions (flagged red) · recovery rewind blocked until the integrate sequence is fetched · partial table selection needs ≥1 table · rewind interval must be positive.</div>
+        <div style="margin-top:8px; font-size:9.5px; color:#6d7278; line-height:1.55;"><b style="color:#1a1c1e;">Emit time is independent</b> of capture start — capture early to catch open transactions while emitting only what committed from a chosen moment. <b style="color:#1a1c1e;">Chained refresh</b> loads as-of the recorded position so the bulk load and CDC meet with no gap and no duplicates.</div>
+      </div>
+    </div>
+
+    <div style="width:420px; flex:none;">
+      <div style="background:#f2effb; border:1px solid #7c6ce0; border-radius:10px; padding:13px 15px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6a3fb5; margin-bottom:2px;">④a COMPARE — PROVE IT</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">Setup → running → report → repair</div>
+        <div style="display:flex; flex-direction:column; gap:5px;">
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px; font-size:9px;"><b>Scope</b> <span style="color:#6d7278;">— which tables (all by default), optional row restriction.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px; font-size:9px;"><b>Method</b> <span style="color:#6d7278;">— tiered: row count → checksum → composed → row-by-row. Cheapest that can answer runs first.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px; font-size:9px;"><b>Online truth</b> <span style="color:#6d7278;">— compare a live pair without stopping it; in-flight rows are held and re-checked, not reported as differences.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px; font-size:9px;"><b>Repair</b> <span style="color:#6d7278;">— directed insert / delete / update, source→target or reverse, with a WHERE restriction.</span></div>
+        </div>
+        <div style="margin-top:8px; background:#fbe9e7; border:1px solid #f3d1cf; border-radius:6px; padding:7px 9px; font-size:9px; color:#b3261e; line-height:1.5;"><b>Three honest outcomes:</b> IDENTICAL · DIFFERENT (with counts) · <b>INCONCLUSIVE</b> when rows were in motion. Never a false green.</div>
+        <div style="margin-top:8px; font-size:9.5px; color:#6d7278; line-height:1.5;">Closing the window does not stop the run — it continues in the background with a notice chip and a Jobs entry, and reopening restores it.</div>
+      </div>
+    </div>
+
+    <div style="width:400px; flex:none;">
+      <div style="background:#f2effb; border:1px solid #7c6ce0; border-radius:10px; padding:13px 15px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6a3fb5; margin-bottom:2px;">④b REFRESH — RELOAD IT</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">Bulk or row-wise, sliced when large</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.6;">
+          <div><b style="color:#1a1c1e;">Method.</b> Bulk (staged load, fastest) or row-wise (repair-style, restartable). Chosen per run, not fixed on the stream.</div>
+          <div style="margin-top:5px;"><b style="color:#1a1c1e;">Target policy.</b> Create missing · alter/recreate · keep structure · keep old rows · truncate and load — each stated in plain words before it runs.</div>
+          <div style="margin-top:5px;"><b style="color:#1a1c1e;">Segmented load.</b> Large tables split into segments loaded in parallel, with a segment map and per-segment progress; a failed segment retries alone.</div>
+          <div style="margin-top:5px;"><b style="color:#1a1c1e;">As-of consistency.</b> A refresh chained to activation reads at exactly the recorded capture position; a standalone refresh records its own.</div>
+          <div style="margin-top:5px;"><b style="color:#1a1c1e;">Cancel is resumable</b> — the run reports CANCELED with the segments already loaded retained.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== row 3 ===== -->
+  <div style="display:flex; align-items:flex-start; gap:16px; margin-top:22px;">
+
+    <div style="width:460px; flex:none;">
+      <div style="background:#fff; border:1.5px dashed #b3541e; border-radius:10px; padding:13px 15px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; margin-bottom:2px;">③ STREAM LOG</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">Level one — the leaf of the log hierarchy</div>
+        <div style="font-size:10px; color:#6d7278; margin-bottom:8px;"><b style="color:#1a1c1e; font-family:'IBM Plex Mono',monospace;">&lt;stream&gt;.out</b> → <span style="font-family:'IBM Plex Mono',monospace;">&lt;vf&gt;.vf.out</span> → <span style="font-family:'IBM Plex Mono',monospace;">&lt;fleet&gt;.fleet.out</span> → <span style="font-family:'IBM Plex Mono',monospace;">global.out</span>. Each level is a strict superset of the one below.</div>
+        <div style="background:#1a1c1e; border-radius:8px; padding:9px 11px; margin-bottom:8px;">
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:5px; flex-wrap:wrap;">
+            <span style="color:#fff; font-size:9.5px; font-weight:600;">Stream log</span>
+            <span style="color:#8a8f98; font-size:8.5px; font-family:'IBM Plex Mono',monospace;">flight-telemetry.out</span>
+            <span style="color:#cfcfcf; font-size:8px; border:1px solid #444; border-radius:4px; padding:1px 5px;">⇱ Overlay</span>
+            <span style="color:#cfcfcf; font-size:8px; border:1px solid #444; border-radius:4px; padding:1px 5px;">⏸ Pause</span>
+          </div>
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:8px; line-height:1.7; color:#9fd8b8;">
+            <div>14:49:00 <span style="color:#cfcfcf;">cap-ora-telem:</span> Captured 140 rows from 2 seconds ago…</div>
+            <div>14:49:00 <span style="color:#cfcfcf;">cap-ora-telem:</span> Routed 2,933 bytes (compression=80.5%)</div>
+            <div>14:49:02 <span style="color:#cfcfcf;">integ-snowflake-rkt:</span> Integrated 202 changes — latency 1.7s</div>
+          </div>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.55;"><b style="color:#1a1c1e;">Tabs, not windows.</b> Opening a stream adds its tab; tabs persist across navigation and survive reload. Multiple streams sit side by side in one surface, dockable in the page or floating. Same five filters (Capture · Integrate · Latency · Errors · Events) with per-tab state, and Copy / Download of the <b>filtered</b> view.</div>
+      </div>
+    </div>
+
+    <div style="width:400px; flex:none;">
+      <div style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:10px; padding:13px 15px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">STREAM TIMELINE</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">The answer to "why?"</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.6;">
+          <div>One track per stage — <b style="color:#1a1c1e;">capture · file log · apply</b> — over a shared time axis, so a latency spike can be attributed to the stage that caused it.</div>
+          <div style="margin-top:5px;">Overlaid markers: activations, refreshes, compares, suspensions, agent restarts, and threshold breaches.</div>
+          <div style="margin-top:5px;">Hovering a marker shows its event record; clicking opens it in Events.</div>
+          <div style="margin-top:5px;"><b style="color:#1a1c1e;">Sibling timelines</b> exist at VF, fleet, and global level. Same component, wider scope — this one is scoped to a single stream.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="width:400px; flex:none;">
+      <div style="background:#f2effb; border:1px solid #7c6ce0; border-radius:10px; padding:13px 15px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6a3fb5; margin-bottom:2px;">⑤ ADD TABLES · DUPLICATE</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">Two modal sub-flows</div>
+        <div style="border:1px solid #e3e1dc; background:#fff; border-radius:6px; padding:7px 9px; font-size:9px; margin-bottom:6px; line-height:1.55;"><b>Add tables</b> — browse or pattern-match the source catalog, showing what is already registered so nothing is added twice. Newly added tables land <b>unregistered</b> and the stream is flagged as needing re-activation; the plan then covers registration, supplemental logging, and their initial load.</div>
+        <div style="border:1px solid #e3e1dc; background:#fff; border-radius:6px; padding:7px 9px; font-size:9px; line-height:1.55;"><b>Duplicate</b> — copies the definition only. The duplicate carries <b>zero jobs, state, or history</b>, shares the connection but keeps its <b>own capture position and file log</b>, and reports nothing moving until it is activated. The duplicate event names its source.</div>
+      </div>
+    </div>
+
+    <div style="width:400px; flex:none;">
+      <div style="background:#fff; border:1.5px dashed #b3541e; border-radius:10px; padding:13px 15px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; margin-bottom:2px;">⑥ SUSPEND · DEACTIVATE · RETIRE</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">Three different amounts of undo</div>
+        <div style="display:flex; flex-direction:column; gap:5px; font-size:9px; line-height:1.55;">
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>Suspend</b> <span style="color:#6d7278;">— jobs stop, <b>positions held</b>. Resume continues exactly where it stopped. No refresh needed.</span></div>
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>Deactivate</b> <span style="color:#6d7278;">— removes runtime components. <b>Retention-first defaults:</b> state tables and registration are kept unless explicitly dropped; supplemental logging is never dropped automatically.</span></div>
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>Retire</b> <span style="color:#6d7278;">— after the GC interval, zero files remain on the hub file store; the definition survives read-only with its full version history.</span></div>
+        </div>
+        <div style="margin-top:8px; background:#fbe9e7; border:1px solid #f3d1cf; border-radius:6px; padding:7px 9px; font-size:9px; color:#b3261e; line-height:1.5;">Destructive teardown is <b>opt-in and confirmed by typing the stream name</b> — never a default, never a single click.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== row 4 ===== -->
+  <div style="display:flex; align-items:stretch; gap:18px; margin-top:34px;">
+    <div style="flex:1; background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:8px;">WHERE THIS STREAM APPEARS ELSEWHERE</div>
+      <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:10px; font-size:10px; color:#6d7278; line-height:1.55;">
+        <div><b style="color:#1a1c1e;">VF page</b><br>A row in the stream table with derived status, latency, and rows/min.</div>
+        <div><b style="color:#1a1c1e;">VF / fleet / global logs</b><br>Its lines, job-prefixed, merged into every level above.</div>
+        <div><b style="color:#1a1c1e;">Global triage</b><br>Stream errors and latency breaches surface as rows that deep-link back here.</div>
+        <div><b style="color:#1a1c1e;">Connection detail</b><br>A membership row on both its source and its target, with the role it plays.</div>
+        <div><b style="color:#1a1c1e;">Compare / Refresh history</b><br>Every run, at VF level and per-table, from one shared row builder.</div>
+      </div>
+    </div>
+    <div style="width:440px; flex:none; background:#fbf3ec; border:1.5px dashed #b3541e; border-radius:10px; padding:14px 16px;">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; margin-bottom:8px;">RULES THIS SCREEN HOLDS TO</div>
+      <div style="font-size:10.5px; color:#8a5a2a; line-height:1.6;">
+        <div>· Every definition change re-enters at plan — no silent mutation.</div>
+        <div>· Status is derived from job state, never asserted.</div>
+        <div>· Suspend holds positions; only teardown drops state.</div>
+        <div>· A table is not a stream — removing one leaves the rest running.</div>
+        <div>· A compare never reports a false green.</div>
+        <div>· A duplicate shares connections but never state or history.</div>
+        <div>· Every action shows its equivalent CLI and is ledgered.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

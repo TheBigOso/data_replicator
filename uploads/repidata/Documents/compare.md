@@ -8,7 +8,7 @@
 
 ## 1. Purpose and Positioning
 
-Compare answers the only question that ultimately matters: **is the target equal to the source?** Everything else the platform does is machinery; compare is proof. It is also load-bearing twice over: customers use it for audit and drift detection (Mode 3 pipelines alert on divergence nightly), and *we* use it — every CI run in every test plan in this document set ends with a compare gating the merge. The product proves itself with the same instrument it sells, which is the strongest statement of confidence a replication vendor can make, and the reason this specification tolerates zero ambiguity.
+Compare answers the only question that ultimately matters: **is the target equal to the source?** Everything else the platform does is machinery; compare is proof. It is also load-bearing twice over: customers use it for audit and drift detection (Mode 3 streams alert on divergence nightly), and *we* use it — every CI run in every test plan in this document set ends with a compare gating the merge. The product proves itself with the same instrument it sells, which is the strongest statement of confidence a replication vendor can make, and the reason this specification tolerates zero ambiguity.
 
 A compare that lies is worse than no compare at all. Both failure directions are specified against: **false negatives** (differences missed — the audit criteria) and **false positives** (differences invented — the canonicalization and online criteria), because a compare that cries wolf under normal replication latency trains operators to ignore it.
 
@@ -24,7 +24,7 @@ Row-wise compare walks both sides key-ordered and produces the precise differenc
 
 ### 2.3 Structure before data — do we have all the columns?
 
-Compare verifies **structure first, data second**, per table: the table exists on both sides; the column set matches the channel's identity mapping (every expected column present, no unexplained extras unless the keep-existing-structure policy declared them); types are compatible per the published type-mapping table; and key/uniqueness expectations hold. A structural mismatch **short-circuits the data compare for that table** with a distinct verdict — comparing rows across mismatched columns produces garbage diffs, and the report should say "column TIER missing on target" rather than flagging ten million rows as different. Structure results are a first-class section of every report.
+Compare verifies **structure first, data second**, per table: the table exists on both sides; the column set matches the stream's identity mapping (every expected column present, no unexplained extras unless the keep-existing-structure policy declared them); types are compatible per the published type-mapping table; and key/uniqueness expectations hold. A structural mismatch **short-circuits the data compare for that table** with a distinct verdict — comparing rows across mismatched columns produces garbage diffs, and the report should say "column TIER missing on target" rather than flagging ten million rows as different. Structure results are a first-class section of every report.
 
 ### 2.4 One source, many targets
 
@@ -44,15 +44,15 @@ Comparing while replication runs is the normal case, and naive comparison lies: 
 
 1. Compare both sides; collect candidate differences.
 2. For each candidate, check the in-flight window: the region between the source position when the compare read the source and the target's applied position (from the state table — the platform knows exactly what the target has seen).
-3. Candidates attributable to in-flight changes are **re-checked after the pipeline's applied position passes the compare's source position**; only differences that persist are reported.
+3. Candidates attributable to in-flight changes are **re-checked after the stream's applied position passes the compare's source position**; only differences that persist are reported.
 
-The report separates **confirmed differences** from **transient candidates resolved during the run** (count shown — a healthy busy system resolves many), so the operator sees both the verdict and the evidence that the verdict accounted for motion. A compare on a paused or quiet channel skips the machinery and says so.
+The report separates **confirmed differences** from **transient candidates resolved during the run** (count shown — a healthy busy system resolves many), so the operator sees both the verdict and the evidence that the verdict accounted for motion. A compare on a paused or quiet stream skips the machinery and says so.
 
 One operational note where HVR documents a hazard: HVR's equivalent mode accumulates transaction files for as long as an online compare job sits suspended — unbounded disk growth with no ceiling but the volume. Here the in-flight window rides the ordinary file-log acknowledgment and GC discipline under the file-store quota machinery (ARC-13): a suspended compare is a visible capacity line-item with an alert, never a silent disk filler.
 
 ### 4.1 Online without capture — the double compare
 
-Mode 2 pipelines have no capture running, and the in-flight algorithm needs one — so HVR's alternative is kept, because it is the right answer: **compare twice and report only the differences that occur both times.** Two variants: a fixed **delay** between passes, or — where a pipeline exists — a **cycle flush**, waiting for a complete capture-and-integrate cycle between passes so in-flight changes have landed. The honesty requirement is stated with the mode: the intersection is a *persistent-difference filter, not a proof* — a row changing between passes can evade detection or appear once — and the report labels double-compare verdicts as such, with both pass timestamps. Where the source supports consistent reads, a pass can additionally pin its source read **as-of a position** (now, a timestamp, a transaction sequence, or an SCN — the refresh snapshot machinery reused), with the as-of recorded in the report, because "identical as of *when*?" is the auditor's question.
+Mode 2 streams have no capture running, and the in-flight algorithm needs one — so HVR's alternative is kept, because it is the right answer: **compare twice and report only the differences that occur both times.** Two variants: a fixed **delay** between passes, or — where a stream exists — a **cycle flush**, waiting for a complete capture-and-integrate cycle between passes so in-flight changes have landed. The honesty requirement is stated with the mode: the intersection is a *persistent-difference filter, not a proof* — a row changing between passes can evade detection or appear once — and the report labels double-compare verdicts as such, with both pass timestamps. Where the source supports consistent reads, a pass can additionally pin its source read **as-of a position** (now, a timestamp, a transaction sequence, or an SCN — the refresh snapshot machinery reused), with the as-of recorded in the report, because "identical as of *when*?" is the auditor's question.
 
 ## 5. The Difference Report and Repair
 
@@ -60,7 +60,7 @@ The report is a first-class, archivable artifact: per table — row counts both 
 
 ## 6. The Sync Report — daily proof of health
 
-The gap in every replication product, HVR included: all the verification machinery exists, but nobody closes the loop into something a data owner actually reads. The **sync report** is that closure — one artifact per channel answering the three questions that matter:
+The gap in every replication product, HVR included: all the verification machinery exists, but nobody closes the loop into something a data owner actually reads. The **sync report** is that closure — one artifact per stream answering the three questions that matter:
 
 **Do we have all the rows?** Row counts per table, source and target, with missing/extra counts from compare.
 **Do we have all the columns?** The structure verification of 2.3, per table: columns present, types compatible, keys intact.
@@ -68,23 +68,23 @@ The gap in every replication product, HVR included: all the verification machine
 
 ### 6.1 When it's produced
 
-Two triggers, one format: **on schedule** — daily by default per channel (any cadence the scheduler supports; rides Mode 3's scheduled compare), and **on demand** — every manually invoked compare emits the same report. One format everywhere means the 2 AM ad-hoc compare and the boardroom daily are the same document, and trends line up across both.
+Two triggers, one format: **on schedule** — daily by default per stream (any cadence the scheduler supports; rides Mode 3's scheduled compare), and **on demand** — every manually invoked compare emits the same report. One format everywhere means the 2 AM ad-hoc compare and the boardroom daily are the same document, and trends line up across both.
 
 ### 6.2 What's in it
 
-Header: channel, period covered, source and target positions as-of the run (the auditor's "as of when?"). Structure section per table (2.3 results). Data section per table: source rows, target rows, matched, missing, extra, different, match rate, transient-resolved count. Replication activity for the period: changes captured and applied, refresh runs completed, latency percentiles. A one-line **verdict** per channel — IN SYNC, DRIFT DETECTED (with the affected tables), or STRUCTURE MISMATCH — and a trend strip against the last N reports so a slow degradation is visible before it's an incident. The daily run uses the cheapest sufficient method by default (bulk checksums plus counts); on any block difference it escalates to row-wise on the affected blocks automatically (configurable), so the daily answer is exact, not just "something differs."
+Header: stream, period covered, source and target positions as-of the run (the auditor's "as of when?"). Structure section per table (2.3 results). Data section per table: source rows, target rows, matched, missing, extra, different, match rate, transient-resolved count. Replication activity for the period: changes captured and applied, refresh runs completed, latency percentiles. A one-line **verdict** per stream — IN SYNC, DRIFT DETECTED (with the affected tables), or STRUCTURE MISMATCH — and a trend strip against the last N reports so a slow degradation is visible before it's an incident. The daily run uses the cheapest sufficient method by default (bulk checksums plus counts); on any block difference it escalates to row-wise on the affected blocks automatically (configurable), so the daily answer is exact, not just "something differs."
 
 ### 6.3 Delivery and retention
 
-Delivery is per channel, multi-sink: the Reports tab in the UI, email, webhook, and **file drop to a directory** — the air-gap answer, where a mail relay may not exist but a watched folder always does. All sinks receive the same content (rendered per medium); every report is archived under the retention policy; drift verdicts raise the standard drift alert (SCH-09) linking the exact report. The report is also available via REST like everything else, so a customer's own portal can embed it.
+Delivery is per stream, multi-sink: the Reports tab in the UI, email, webhook, and **file drop to a directory** — the air-gap answer, where a mail relay may not exist but a watched folder always does. All sinks receive the same content (rendered per medium); every report is archived under the retention policy; drift verdicts raise the standard drift alert (SCH-09) linking the exact report. The report is also available via REST like everything else, so a customer's own portal can embed it.
 
 ## 7. Direct File Compare
 
-Comparing a file target (S3, ADLS, local directories) has a classic failure mode: routing the comparison through an external-table layer (Hive and kin) lets the deserializer coerce types, and the compare inherits the coercion's lies. **Direct file compare** reads and parses the files itself: the files of each table are sliced and distributed to **prereader subtasks** (count configurable per table), each of which reads, sorts, and parses its files into compressed, encrypted intermediate files (the intermediate directory is a per-location setting); the intermediates are then compared against the database side through the normal engine — canonicalization, difference classification, and reporting all identical. HVR parity on the mechanics, with its stated gaps as our roadmap: HVR's direct file compare excludes Avro, Parquet, and JSON; native columnar parsing (Arrow-based) for Parquet first is planned as a v1.x differentiator, since Parquet *is* the lake format. Structural limits are honest and documented: blob-style file channels (no table structure — files as byte sequences) cannot be compared this way, and XML requires one table per file.
+Comparing a file target (S3, ADLS, local directories) has a classic failure mode: routing the comparison through an external-table layer (Hive and kin) lets the deserializer coerce types, and the compare inherits the coercion's lies. **Direct file compare** reads and parses the files itself: the files of each table are sliced and distributed to **prereader subtasks** (count configurable per table), each of which reads, sorts, and parses its files into compressed, encrypted intermediate files (the intermediate directory is a per-location setting); the intermediates are then compared against the database side through the normal engine — canonicalization, difference classification, and reporting all identical. HVR parity on the mechanics, with its stated gaps as our roadmap: HVR's direct file compare excludes Avro, Parquet, and JSON; native columnar parsing (Arrow-based) for Parquet first is planned as a v1.x differentiator, since Parquet *is* the lake format. Structural limits are honest and documented: blob-style file streams (no table structure — files as byte sequences) cannot be compared this way, and XML requires one table per file.
 
 ## 8. Scope, Slicing, Scheduling
 
-Compare scope mirrors refresh scope: channel, table subset, per-table predicates (compare only March; compare only rows touched by the incident). Large tables slice for compare exactly as for refresh — same strategies, same checkpoint-resume, same map (the union invariant means a sliced compare's verdict equals an unsliced one's, and SLC procedures already prove union correctness). Scheduling: ad-hoc, or recurring as Mode 3's scheduled compare with drift alerting — all under the scheduler's calendars and policies.
+Compare scope mirrors refresh scope: stream, table subset, per-table predicates (compare only March; compare only rows touched by the incident). Large tables slice for compare exactly as for refresh — same strategies, same checkpoint-resume, same map (the union invariant means a sliced compare's verdict equals an unsliced one's, and SLC procedures already prove union correctness). Scheduling: ad-hoc, or recurring as Mode 3's scheduled compare with drift alerting — all under the scheduler's calendars and policies.
 
 ## 9. HVR Parity Matrix
 
@@ -111,7 +111,7 @@ Compare scope mirrors refresh scope: channel, table subset, per-table predicates
 | Flashback select-moment for compare (Now / time / tx_seq / SCN) | As-of-position source pinning via the refresh snapshot machinery, recorded in the report | Kept; "as of when?" always answered |
 | Keep Difference Files (binary diff + viewer) | First-class archivable difference report with RBAC'd inspection | Kept, upgraded |
 | Parallel sessions; prereaders per table | Table parallelism and prereaders per the slicing and direct-file-compare designs | Kept |
-| Scheduling incl. delay-suspended; entry points; Repeat Compare from event | Scheduler-native; scoped-surface pre-fill and idempotent repeat (channel 6.7) | Same pattern everywhere |
+| Scheduling incl. delay-suspended; entry points; Repeat Compare from event | Scheduler-native; scoped-surface pre-fill and idempotent repeat (stream 6.7) | Same pattern everywhere |
 
 ## 10. Test Plan
 
@@ -132,7 +132,7 @@ Ground truth is the discipline: every seeded-difference corpus is independently 
 ## 11. Test Procedures
 
 ### CMP-01 — Zero false positives on identical data
-**Steps:** (1) Refresh a 20-table channel to a verified-identical state (external differ confirms). (2) Run bulk, row-wise, and composed compares. (3) Any reported difference is a failure — investigate, don't rationalize.
+**Steps:** (1) Refresh a 20-table stream to a verified-identical state (external differ confirms). (2) Run bulk, row-wise, and composed compares. (3) Any reported difference is a failure — investigate, don't rationalize.
 **Expected:** Zero differences from all three methods; reports show active rules.
 **Evidence:** Three reports, external differ confirmation.
 
@@ -142,7 +142,7 @@ Ground truth is the discipline: every seeded-difference corpus is independently 
 **Evidence:** Inventory-vs-oracle diff (empty), corpus manifest.
 
 ### CMP-03 — Online compare under full load
-**Steps:** (1) TPC-C at full rate through a healthy channel. (2) Run online compares continuously for one hour. (3) Assert zero confirmed differences; record transient-resolved counts. (4) Inject one real difference (manual target mutation) mid-run; assert it is confirmed, not dissolved as transient.
+**Steps:** (1) TPC-C at full rate through a healthy stream. (2) Run online compares continuously for one hour. (3) Assert zero confirmed differences; record transient-resolved counts. (4) Inject one real difference (manual target mutation) mid-run; assert it is confirmed, not dissolved as transient.
 **Expected:** Zero false positives across the hour; the injected real difference is caught and confirmed; transient accounting present in every report.
 **Evidence:** Hourly report set, injection case report.
 
@@ -168,23 +168,23 @@ Ground truth is the discipline: every seeded-difference corpus is independently 
 **Evidence:** Paired reports.
 
 ### CMP-08 — Scheduled compare, drift alert, report retention
-**Steps:** (1) Mode 3 channel, nightly compare on the virtual clock. (2) Seed drift; advance to the next cycle. (3) Follow the drift alert to its linked report; verify the report archive across simulated weeks against the retention policy. (4) Kill a compare job mid-run (chaos variant); resume; verify the final report equals an uninterrupted run's.
+**Steps:** (1) Mode 3 stream, nightly compare on the virtual clock. (2) Seed drift; advance to the next cycle. (3) Follow the drift alert to its linked report; verify the report archive across simulated weeks against the retention policy. (4) Kill a compare job mid-run (chaos variant); resume; verify the final report equals an uninterrupted run's.
 **Expected:** Alert within one cycle linking the exact report (SCH-09 alignment); retention policy enforced; checkpoint-resumed report identical to uninterrupted.
 **Evidence:** Alert-report linkage, archive audit, resumed-vs-uninterrupted report diff (empty).
 
 ### CMP-09 — Sync report content accuracy
-**Preconditions:** Three lab channels engineered to three states: fully in sync; seeded data drift (known counts per class); seeded structure mismatch (one column dropped on one target table).
+**Preconditions:** Three lab streams engineered to three states: fully in sync; seeded data drift (known counts per class); seeded structure mismatch (one column dropped on one target table).
 **Steps:** (1) Run the scheduled daily report (virtual clock) across all three. (2) Audit every number in each report against externally computed ground truth: row counts, missing/extra/different counts, match rates, activity stats, and the verdict line. (3) Verify the drift report escalated to row-wise on exactly the differing blocks.
 **Expected:** Every figure matches ground truth; verdicts are IN SYNC / DRIFT DETECTED / STRUCTURE MISMATCH respectively; the structure-mismatch table's data compare short-circuited with the column named.
 **Evidence:** Three reports vs oracle computations, escalation log.
 
 ### CMP-10 — Delivery sinks, including air-gap
-**Steps:** (1) Configure one channel's report to all four sinks: UI, email (lab SMTP), webhook (capture endpoint), file drop. (2) Trigger the daily run. (3) Verify all four deliveries carry identical content; for the file-drop path, run with hub egress blocked (namespace) and verify delivery still succeeds with zero external connection attempts. (4) Verify archive and retention behavior over simulated weeks.
+**Steps:** (1) Configure one stream's report to all four sinks: UI, email (lab SMTP), webhook (capture endpoint), file drop. (2) Trigger the daily run. (3) Verify all four deliveries carry identical content; for the file-drop path, run with hub egress blocked (namespace) and verify delivery still succeeds with zero external connection attempts. (4) Verify archive and retention behavior over simulated weeks.
 **Expected:** Four identical deliveries; file drop fully functional air-gapped; archive obeys retention.
 **Evidence:** Delivery captures, egress capture (empty), archive audit.
 
 ### CMP-11 — On-demand report parity
-**Steps:** (1) Run a manual compare via UI and via CLI on the drifted channel. (2) Diff both outputs against the scheduled report format and against each other. (3) Verify both appear in the report archive alongside scheduled ones.
+**Steps:** (1) Run a manual compare via UI and via CLI on the drifted stream. (2) Diff both outputs against the scheduled report format and against each other. (3) Verify both appear in the report archive alongside scheduled ones.
 **Expected:** One format everywhere; manual reports archived identically; UI and CLI outputs equivalent (parity rule).
 **Evidence:** Format diffs (empty), archive listing.
 
@@ -195,20 +195,20 @@ Ground truth is the discipline: every seeded-difference corpus is independently 
 **Evidence:** Four report structure sections.
 
 ### CMP-13 — Direct file compare
-**Preconditions:** File-location fixture (CSV on lab object store) populated by a TimeKey channel; seeded differences on the database side.
-**Steps:** (1) Run direct file compare with 4 prereaders per table; verify slicing across prereaders and intermediate files in the configured directory (compressed, encrypted — spot-check unreadability). (2) Verify the difference inventory against the external oracle. (3) Verify intermediates are cleaned per policy post-run. (4) Attempt compare on a blob-style channel; verify the documented refusal.
+**Preconditions:** File-location fixture (CSV on lab object store) populated by a TimeKey stream; seeded differences on the database side.
+**Steps:** (1) Run direct file compare with 4 prereaders per table; verify slicing across prereaders and intermediate files in the configured directory (compressed, encrypted — spot-check unreadability). (2) Verify the difference inventory against the external oracle. (3) Verify intermediates are cleaned per policy post-run. (4) Attempt compare on a blob-style stream; verify the documented refusal.
 **Expected:** Inventory exact; intermediates encrypted and cleaned; prereader distribution observed; blob refusal matches documentation.
 **Evidence:** Oracle diff (empty), directory audits, refusal message.
 
 ### CMP-14 — Multi-target compare
-**Preconditions:** Broadcast channel, one source, two targets; drift seeded on target B only.
+**Preconditions:** Broadcast stream, one source, two targets; drift seeded on target B only.
 **Steps:** (1) Run one compare of source vs both targets. (2) Verify the source was read once (session/scan audit). (3) Inspect per-target sections and verdicts.
 **Expected:** Target A clean, target B's seeded drift exactly reported; single source read; verdicts independent.
 **Evidence:** Scan audit, per-target report sections vs seed list.
 
 ### CMP-15 — Counts-only, class filters, and the double compare
-**Preconditions:** In-sync and drifted lab channels; soft-delete-style fixture; a Mode 2 channel (no capture) with a scripted live-change driver; external oracle scripts.
-**Steps:** (1) Run row-counts-only on both channels; assert counts exact against the oracle and runtime measurably below bulk's. (2) Row-wise compare with the no-deletes class filter on the soft-delete fixture: the filtered class is absent from results and diff output, the report names the active filter, and an unfiltered rerun surfaces it. (3) On the Mode 2 channel under live changes, run the double compare with a fixed delay: assert only twice-occurring differences are reported, the verdict is labeled double-compare with both pass timestamps, and a scripted between-pass mutation appears in neither final result (the documented heuristic limit, observed). (4) On a Mode 1 channel, run the cycle-flush variant and assert the second pass waited for a complete capture-and-integrate cycle. (5) Pin a pass as-of a recorded SCN; assert the as-of in the report and verdict agreement with the oracle evaluated at that position.
+**Preconditions:** In-sync and drifted lab streams; soft-delete-style fixture; a Mode 2 stream (no capture) with a scripted live-change driver; external oracle scripts.
+**Steps:** (1) Run row-counts-only on both streams; assert counts exact against the oracle and runtime measurably below bulk's. (2) Row-wise compare with the no-deletes class filter on the soft-delete fixture: the filtered class is absent from results and diff output, the report names the active filter, and an unfiltered rerun surfaces it. (3) On the Mode 2 stream under live changes, run the double compare with a fixed delay: assert only twice-occurring differences are reported, the verdict is labeled double-compare with both pass timestamps, and a scripted between-pass mutation appears in neither final result (the documented heuristic limit, observed). (4) On a Mode 1 stream, run the cycle-flush variant and assert the second pass waited for a complete capture-and-integrate cycle. (5) Pin a pass as-of a recorded SCN; assert the as-of in the report and verdict agreement with the oracle evaluated at that position.
 **Expected:** Counts tier exact and cheapest; filters honored, named, and reversible; double-compare intersection and labeling per spec including the heuristic's documented blind spot; cycle-flush waits provably; as-of pinning recorded and oracle-consistent.
 **Evidence:** Timed run records, filtered/unfiltered report pair, double-compare reports with timestamps, mutation-case audit, cycle-wait timeline, pinned-pass report vs oracle.
 
@@ -224,14 +224,14 @@ Ground truth is the discipline: every seeded-difference corpus is independently 
 | CMP-06 | The heterogeneous type-gap corpus compares clean per the published canonicalization table, while real mutations in every type family are still caught; verdicts are identical with read and write sides swapped |
 | CMP-07 | Exclusions and tolerances are honored, recorded in the report, and never mask unrelated differences |
 | CMP-08 | Scheduled compares alert on drift within one cycle with linked, retained reports; a killed compare resumes to an identical report |
-| CMP-09 | The daily sync report's every figure (rows, columns, match rate, activity, verdict) matches external ground truth across in-sync, drifted, and structure-mismatch channels |
+| CMP-09 | The daily sync report's every figure (rows, columns, match rate, activity, verdict) matches external ground truth across in-sync, drifted, and structure-mismatch streams |
 | CMP-10 | Reports deliver identically to UI, email, webhook, and file drop; the file-drop path works fully air-gapped with zero egress |
 | CMP-11 | On-demand compares emit the identical report format from UI and CLI and are archived alongside scheduled reports |
 | CMP-12 | Structure mismatches short-circuit data compare with the discrepancy named; declared extras pass, undeclared extras flag |
-| CMP-13 | Direct file compare produces an oracle-exact inventory via sliced prereaders with encrypted, cleaned intermediates; unsupported channel styles are refused as documented |
+| CMP-13 | Direct file compare produces an oracle-exact inventory via sliced prereaders with encrypted, cleaned intermediates; unsupported stream styles are refused as documented |
 | CMP-14 | Multi-target compare reads the source once and delivers independent per-target verdicts |
 | CMP-15 | The counts-only tier is exact and cheapest; class filters are honored, named, and reversible; the double compare reports the two-pass intersection with honest labeling and provable cycle-flush waits; as-of pinning is recorded and oracle-consistent |
 
 ## 13. Open Questions
 
-The re-check window policy for online compare on high-latency pipelines (how long to wait for in-flight resolution before confirming) needs a default and a per-compare override. Whether block checksums should be persisted per table to enable incremental compare (only re-hash blocks whose data changed since the last run — a large-table cost win) is a v1.x design candidate. Report retention defaults for regulated deployments (align with audit-package cycles) need field input. Very large difference sets need a report noise policy (full inventory vs sampled examples with counts) before the daily report ships. The Parquet direct-compare timeline (Arrow reader maturity) needs a v1.x milestone decision. Whether the sync report should support a consolidated all-channels digest (one email per hub per day) is a likely early customer request — design the per-channel format so digestion composes.
+The re-check window policy for online compare on high-latency streams (how long to wait for in-flight resolution before confirming) needs a default and a per-compare override. Whether block checksums should be persisted per table to enable incremental compare (only re-hash blocks whose data changed since the last run — a large-table cost win) is a v1.x design candidate. Report retention defaults for regulated deployments (align with audit-package cycles) need field input. Very large difference sets need a report noise policy (full inventory vs sampled examples with counts) before the daily report ships. The Parquet direct-compare timeline (Arrow reader maturity) needs a v1.x milestone decision. Whether the sync report should support a consolidated all-streams digest (one email per hub per day) is a likely early customer request — design the per-stream format so digestion composes.

@@ -108,7 +108,7 @@ Slicing parallelizes the source side; parallel writers parallelize the target si
 
 ### 9.1 Slice-level checkpoint and resume (v1 — cannot be retrofitted)
 
-Every slice is an independent unit of work with its own durable state. A slice that completes is done forever; a slice that fails is individually retried (with backoff, honoring the pipeline's retry policy) without touching completed slices. A refresh that dies at hour seven costs one slice, not the run. This property shapes the file log layout for refresh data (per-slice file sequences) and therefore must exist from v1 even though the advanced slicing features come later.
+Every slice is an independent unit of work with its own durable state. A slice that completes is done forever; a slice that fails is individually retried (with backoff, honoring the stream's retry policy) without touching completed slices. A refresh that dies at hour seven costs one slice, not the run. This property shapes the file log layout for refresh data (per-slice file sequences) and therefore must exist from v1 even though the advanced slicing features come later.
 
 ### 9.2 Consistency
 
@@ -132,7 +132,7 @@ Every tile is clickable. The drill-in shows the slice's exact range, the literal
 
 The drill-in can display sample rows that actually came across for that slice — first and last rows received plus min/max key values — decoded on demand from the slice's staged change files on the hub or read back from the target staging table. This turns "is this slice pulling what I think it's pulling" from a guess into a glance, and for a failed slice the last-received rows are often the fastest diagnostic clue.
 
-Access control: data preview is a privilege, not a default. The control plane ordinarily never exposes row contents. Preview requires the distinct data-viewer role; every preview action is written to the audit log (user, slice, timestamp); and a per-hub policy switch disables preview entirely for classified or regulated pipelines. The feature exists for the operator debugging at 2 AM without becoming a data-exposure surface a security package cannot approve.
+Access control: data preview is a privilege, not a default. The control plane ordinarily never exposes row contents. Preview requires the distinct data-viewer role; every preview action is written to the audit log (user, slice, timestamp); and a per-hub policy switch disables preview entirely for classified or regulated streams. The feature exists for the operator debugging at 2 AM without becoming a data-exposure surface a security package cannot approve.
 
 ### 10.3 API parity
 

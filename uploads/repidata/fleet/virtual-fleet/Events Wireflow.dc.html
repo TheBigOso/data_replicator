@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#f4f3ef; font-family:'IBM Plex Sans',sans-serif; color:#1a1c1e; }
+    a { color:#1a6e50; } a:hover { color:#14523c; }
+  </style>
+</helmet>
+<div data-screen-label="Events wireflow" style="padding:36px 40px; min-width:2140px;">
+  <div style="font-size:22px; font-weight:700;">Events — wireflow</div>
+  <div style="display:flex; align-items:flex-start; gap:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:8px; padding:9px 13px; margin:10px 0 4px; max-width:1180px;">
+    <span style="flex:none; font-size:9.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; border:1px solid #1a6e50; border-radius:4px; padding:2px 7px; background:#fff;">CANONICAL</span>
+    <span style="font-size:11px; color:#6d7278; line-height:1.55;">Canonical for <b>Events</b> — the audit ledger surface: filters, the expandable record, artifacts, and the planned retention/export/diff upgrades. Spec: <b>events-ui.md</b>, <b>events.md</b>.</span>
+  </div>
+  <div style="font-size:13px; color:#6d7278; margin:6px 0 14px;">Replicator console · the audit ledger and the closed set: six filters → the row → the expanded record → parameters → artifact → View log. Every user action that changes something, with who did it, what it touched, and how it ended · docs: events.md, jobs-ui.md, timeline.md, virtual-fleet-ui.md</div>
+  <div style="display:flex; gap:16px; align-items:center; font-size:11.5px; color:#6d7278; margin-bottom:26px; flex-wrap:wrap;">
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1px solid #c9c6bf; border-radius:3px;"></span>screen / section</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1.5px dashed #b3541e; border-radius:3px;"></span>branch / sub-flow</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px; height:10px; background:#fbe9e7; border:1px solid #b3261e; border-radius:99px;"></span>rule / guard</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:3px;"></span>outcome / drill-down</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#f2effb; border:1px solid #7c6ce0; border-radius:3px;"></span>proposed addition</span>
+  </div>
+
+  <!-- ===== row 0 ===== -->
+  <div style="display:flex; align-items:stretch; gap:18px; margin-bottom:32px;">
+    <div style="flex:1; background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:16px 18px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:4px;">WHAT IS AND IS NOT AN EVENT</div>
+      <div style="font-size:15px; font-weight:600; margin-bottom:9px;">The line that keeps the ledger useful</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:10px;">
+        <div style="border:1.5px solid #1a6e50; background:#e8f2ed; border-radius:8px; padding:10px 12px;">
+          <div style="font-size:10.5px; font-weight:700; color:#1a6e50; margin-bottom:4px;">IS AN EVENT</div>
+          <div style="font-size:10px; color:#6d7278; line-height:1.6;">Every <b>user action that changes something</b> — activate, suspend, disable, compare, refresh, definition change, permission grant, enrollment, export, sign-in. Plus scheduler-initiated work that a user could have initiated.</div>
+        </div>
+        <div style="border:1.5px solid #b3261e; background:#fbe9e7; border-radius:8px; padding:10px 12px;">
+          <div style="font-size:10.5px; font-weight:700; color:#b3261e; margin-bottom:4px;">IS NOT AN EVENT</div>
+          <div style="font-size:10px; color:#6d7278; line-height:1.6;"><b>Read-only activity</b> and <b>automated job cycles</b>. Those live in the job logs. A capture cycling 18,422 times is not 18,422 audit records — it is one running job.</div>
+        </div>
+      </div>
+      <div style="font-size:11px; color:#6d7278; line-height:1.65;">Get this line wrong in either direction and the ledger dies: too permissive and it becomes an unsearchable firehose that no auditor will read; too strict and a change happened that nobody can attribute. The test is <b>"could someone be asked to justify this?"</b><br><br><b style="color:#1a1c1e;">Events is the closed set; Jobs is the open set</b> — the same record in two tenses. A job that finishes does not write an event, it <b>becomes</b> one, keeping its id. That is why an in-flight compare or refresh appears here as <b>CURRENT</b> rather than as a second, separate row.</div>
+    </div>
+    <div style="width:490px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:16px 18px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">THE FIVE FIELDS EVERY EVENT CARRIES</div>
+      <div style="display:flex; flex-direction:column; gap:5px; font-size:10px; line-height:1.5;">
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>Identity</b> <span style="color:#6d7278;">— a sortable, microsecond-precision id that doubles as the timestamp: <span style="font-family:'IBM Plex Mono',monospace;">2026-08-01T23:48:35.709101Z</span></span></div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>Type</b> <span style="color:#6d7278;">— SUSPEND · REFRESH · COMPARE · ACTIVATE · DEFINITION CHANGE · GRANT · ENROLL · EXPORT · SIGNIN · STOP</span></div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>State</b> <span style="color:#6d7278;">— CURRENT (open) · WAITING (scheduled) · DONE · FAILED · CANCELED</span></div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>Scope</b> <span style="color:#6d7278;">— fleet / virtual fleet / stream / connection. Every event is placed somewhere in the hierarchy</span></div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>Attribution</b> <span style="color:#6d7278;">— a named person or <span style="font-family:'IBM Plex Mono',monospace;">scheduler</span>. Never blank, never "system" as a dodge</span></div>
+      </div>
+      <div style="background:#fbf3ec; border:1px solid #f0dcb8; border-radius:7px; padding:8px 10px; font-size:9.5px; color:#8a5a2a; line-height:1.5; margin-top:9px;">Mirrors the industry <span style="font-family:'IBM Plex Mono',monospace;">HVR_EVENT</span> shape so migrating operators recognize it — but the vocabulary, the parameter block, and the artifact link are ours.</div>
+    </div>
+  </div>
+
+  <!-- ===== row 1 ===== -->
+  <div style="display:flex; align-items:flex-start; gap:0;">
+
+    <div style="width:214px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:8px;">SCOPE + ENTRY</div>
+        <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:8px;">
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Tree · VF → Events</div>
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Stream · Recent events row</div>
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Compare / Refresh history row</div>
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Jobs · Open event</div>
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Timeline · marker chip</div>
+        </div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.55;">Same VF scope rule as Jobs and Connections: at VF level, every event in the virtual fleet; opened from a stream, that stream's only. <b>Arriving from a specific record scrolls to it and expands it.</b></div>
+      </div>
+    </div>
+    <div style="width:30px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:560px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">LAYER 1 · NARROWING</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:7px;">Six filters that compose</div>
+        <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px; font-size:9px;">
+          <span style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 9px;">All streams ▾</span>
+          <span style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 9px;">All connections ▾</span>
+          <span style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 9px;">Type: all ▾</span>
+          <span style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 9px;">State: all ▾</span>
+          <span style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 9px;">Started: any time ▾</span>
+          <span style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 9px; flex:1; color:#8a8f98;">Search events…</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; font-size:9px; color:#6d7278; margin-bottom:8px;">
+          <span><b style="color:#1a1c1e;">All 142 matching events</b></span>
+          <span style="margin-left:auto; border:1px solid #e3e1dc; border-radius:5px; padding:3px 9px; font-weight:600;">Columns ▾</span>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.6;">
+          <div><b style="color:#1a1c1e;">All six AND together</b>, and the matching count is always visible — so a narrowed view can never be mistaken for an empty ledger. That distinction is the whole reason the count is a permanent fixture rather than a footer.</div>
+          <div style="margin-top:5px;"><b style="color:#1a1c1e;">Scope filters name real objects</b> (streams, connections in this VF), not free text — a typo cannot silently return nothing.</div>
+          <div style="margin-top:5px;"><b style="color:#1a1c1e;">Event ID is the default sort, descending</b>, with the ▼ indicator visible on load. Because the id <i>is</i> the timestamp, sorting by id and sorting by time are the same operation — there is no way for them to disagree.</div>
+          <div style="margin-top:5px;"><b style="color:#1a1c1e;">Column chooser</b> persists per user; filters are session-only. Looking is transient; setup is a preference.</div>
+        </div>
+      </div>
+    </div>
+    <div style="width:30px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:640px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">LAYER 2 · THE ROW, THEN THE RECORD</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:7px;">Scannable list, expandable evidence</div>
+        <div style="display:grid; grid-template-columns:14px 1.5fr .8fr 1.1fr .6fr 1.3fr .55fr .65fr; gap:4px; font-size:7.5px; color:#6d7278; border-bottom:1px solid #e3e1dc; padding-bottom:3px; margin-bottom:3px;">
+          <span></span><span>Type</span><span>Stream</span><span>Connections</span><span>State</span><span>Event ID ▼</span><span>Created</span><span></span>
+        </div>
+        <div style="display:grid; grid-template-columns:14px 1.5fr .8fr 1.1fr .6fr 1.3fr .55fr .65fr; gap:4px; font-size:8px; align-items:center; padding:4px 0; background:#f7f6f2;">
+          <span style="color:#1a6e50;">▾</span>
+          <span><span style="background:#fbf3ec; color:#b3541e; border-radius:99px; padding:1px 5px; font-size:7px; font-weight:700;">SUSPEND</span><br><span style="color:#6d7278;">Job billing-invoices-refresh is SUSPENDED</span></span>
+          <span style="color:#6d7278;">billing-invoices</span><span style="color:#8a8f98;">—</span>
+          <span style="background:#e7effb; color:#2a5cab; border-radius:99px; padding:1px 5px; font-size:7px; font-weight:700; justify-self:start;">CURRENT</span>
+          <span style="font-family:'IBM Plex Mono',monospace; color:#6d7278; font-size:7px;">2026-08-01T23:48:35.709101Z</span><span style="color:#8a8f98;">18s ago</span>
+          <span style="border:1px solid #e3e1dc; border-radius:4px; padding:1px 5px; font-weight:600; text-align:center;">View log</span>
+        </div>
+        <div style="border:1px solid #e3e1dc; border-radius:7px; padding:9px 11px; margin:5px 0; background:#fdfdfc;">
+          <div style="display:flex; align-items:baseline; gap:8px; margin-bottom:6px;"><b style="font-size:10px;">SUSPEND</b><span style="font-family:'IBM Plex Mono',monospace; font-size:8px; color:#6d7278;">2026-08-01T23:48:35.709101Z</span><span style="margin-left:auto; border:1px solid #e3e1dc; border-radius:4px; padding:1px 6px; font-size:8px; font-weight:600;">View log</span></div>
+          <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:6px; font-size:8px; margin-bottom:8px;">
+            <div><span style="color:#6d7278;">Stream</span><br><b>billing-invoices</b></div>
+            <div><span style="color:#6d7278;">Connections</span><br><b>—</b></div>
+            <div><span style="color:#6d7278;">State</span><br><b>CURRENT</b></div>
+            <div><span style="color:#6d7278;">Job</span><br><b>billing-invoices-refresh</b></div>
+            <div><span style="color:#6d7278;">Started</span><br><b>18s ago</b></div>
+            <div><span style="color:#6d7278;">Retries</span><br><b>1</b></div>
+          </div>
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:7px 9px; background:#fff;">
+            <div style="font-size:7.5px; font-weight:700; letter-spacing:.06em; color:#6d7278; margin-bottom:4px;">PARAMETERS</div>
+            <div style="display:grid; grid-template-columns:auto 1fr; gap:2px 12px; font-size:8px;">
+              <span style="color:#6d7278;">job</span><b>billing-invoices-refresh</b>
+              <span style="color:#6d7278;">job type</span><b>REFRESH</b>
+              <span style="color:#6d7278;">current state</span><b>SUSPENDED</b>
+              <span style="color:#6d7278;">detail</span><b>drained at segment 12/40 · resumable</b>
+              <span style="color:#6d7278;">clears when</span><b>an operator resumes the job</b>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.6;"><b style="color:#1a1c1e;">The parameter block is the point.</b> A one-line summary is a headline; the parameters are what the event actually did, in the platform's own terms. An open (CURRENT) event additionally states <b>"clears when"</b> — so a ledger row is never a dead end that leaves the reader wondering what would close it.</div>
+      </div>
+    </div>
+    <div style="width:30px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:330px; flex:none;">
+      <div style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">LAYER 3 · THE EVIDENCE</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:7px;">Every event points at its artifact</div>
+        <div style="display:flex; flex-direction:column; gap:5px; font-size:9px; line-height:1.5;">
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>ACTIVATE</b> → <span style="color:#6d7278;">the applied plan diff</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>COMPARE</b> → <span style="color:#6d7278;">the compare report, per table</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>REFRESH</b> → <span style="color:#6d7278;">the run log with segment detail</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>DEFINITION CHANGE</b> → <span style="color:#6d7278;">the versioned before/after</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>EXPORT / ENROLL</b> → <span style="color:#6d7278;">the export manifest, the token record</span></div>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.6; margin-top:8px;"><b style="color:#1a1c1e;">View log</b> opens the job log positioned at that event's timestamp — not the top of the file. An audit trail that makes you scroll for the moment is not a trail.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== row 2: the four upgrades ===== -->
+  <div style="display:flex; align-items:flex-start; gap:16px; margin-top:32px;">
+
+    <div style="width:520px; flex:none;">
+      <div style="background:#f2effb; border:1px solid #7c6ce0; border-radius:10px; padding:13px 15px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6a3fb5; margin-bottom:2px;">UPGRADE ① · FILTER BY ARTIFACT</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">Auditors search by artifact, not by time</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.6; margin-bottom:8px;">"Show me every compare report from Q2" is the actual question. Today it can only be reached by combining Type and a date range and hoping. A seventh filter makes it direct.</div>
+        <div style="display:flex; flex-wrap:wrap; gap:4px; font-size:8.5px;">
+          <span style="background:#fff; border:1px solid #e3e1dc; border-radius:99px; padding:2px 8px;">any artifact</span>
+          <span style="background:#fff; border:1px solid #7c6ce0; color:#6a3fb5; border-radius:99px; padding:2px 8px; font-weight:600;">plan diff</span>
+          <span style="background:#fff; border:1px solid #e3e1dc; border-radius:99px; padding:2px 8px;">compare report</span>
+          <span style="background:#fff; border:1px solid #e3e1dc; border-radius:99px; padding:2px 8px;">run log</span>
+          <span style="background:#fff; border:1px solid #e3e1dc; border-radius:99px; padding:2px 8px;">export manifest</span>
+          <span style="background:#fff; border:1px solid #e3e1dc; border-radius:99px; padding:2px 8px;">token record</span>
+          <span style="background:#fff; border:1px solid #e3e1dc; border-radius:99px; padding:2px 8px;">has no artifact</span>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.55; margin-top:8px;"><b style="color:#1a1c1e;">"has no artifact" earns its place too</b> — it is how you find the events that changed something but left no evidence, which is exactly what an audit should surface.</div>
+      </div>
+    </div>
+
+    <div style="width:520px; flex:none;">
+      <div style="background:#f2effb; border:1px solid #7c6ce0; border-radius:10px; padding:13px 15px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6a3fb5; margin-bottom:2px;">UPGRADE ② · RETENTION, STATED</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">A ledger with no retention policy is not an audit ledger</div>
+        <div style="background:#fff; border:1px solid #e3e1dc; border-radius:7px; padding:8px 10px; font-size:9px; line-height:1.6; margin-bottom:8px;">
+          <div style="display:grid; grid-template-columns:auto 1fr; gap:3px 12px;">
+            <span style="color:#6d7278;">retained</span><b>36 months (regulated default)</b>
+            <span style="color:#6d7278;">oldest held</span><b>2024-02-11 · 29 months</b>
+            <span style="color:#6d7278;">at the edge</span><b>archived to the hub file store, not deleted</b>
+            <span style="color:#6d7278;">artifacts</span><b>retained with their event, same window</b>
+            <span style="color:#6d7278;">set by</span><b>Global Admin · applies fleet-wide</b>
+          </div>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.6;">Stated <b>on the screen</b>, not buried in settings — an auditor reading a 14-month-old event needs to know whether the 20-month-old one still exists. And <b>what happens at the edge</b> matters as much as the number: archived and retrievable is a different promise from deleted.</div>
+      </div>
+    </div>
+
+    <div style="width:500px; flex:none;">
+      <div style="background:#f2effb; border:1px solid #7c6ce0; border-radius:10px; padding:13px 15px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6a3fb5; margin-bottom:2px;">UPGRADE ③ · SIGNED EXPORT</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">Verifiable off-platform</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.6; margin-bottom:8px;">An export the auditor can check without trusting the console that produced it. This is a real gap for defense and regulated buyers, and the one place a screenshot is not evidence.</div>
+        <div style="background:#fff; border:1px solid #e3e1dc; border-radius:7px; padding:8px 10px; font-size:9px; line-height:1.6;">
+          <div style="font-weight:700; margin-bottom:4px;">Export events</div>
+          <div style="display:grid; grid-template-columns:auto 1fr; gap:2px 10px;">
+            <span style="color:#6d7278;">range</span><b>the current filter, stated in full</b>
+            <span style="color:#6d7278;">format</span><b>JSONL + a manifest</b>
+            <span style="color:#6d7278;">signature</span><b>detached, over the manifest digest</b>
+            <span style="color:#6d7278;">includes</span><b>artifacts by reference, with digests</b>
+          </div>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.55; margin-top:8px;"><b style="color:#1a1c1e;">The export is itself an event</b> — EXPORT, attributed, with the filter it ran under recorded. Exporting the audit log is an auditable act.</div>
+      </div>
+    </div>
+
+    <div style="width:480px; flex:none;">
+      <div style="background:#f2effb; border:1px solid #7c6ce0; border-radius:10px; padding:13px 15px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6a3fb5; margin-bottom:2px;">UPGRADE ④ · DIFF VIEW</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">Show the change, not a sentence about it</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.6; margin-bottom:8px;">ACTIVATE and DEFINITION CHANGE events summarize: <i>"Column DISCOUNT_PCT dropped from GL_JOURNALS."</i> The reviewer's next question is always <b>what else was in that change</b>.</div>
+        <div style="background:#fff; border:1px solid #e3e1dc; border-radius:7px; padding:8px 10px; font-family:'IBM Plex Mono',monospace; font-size:8px; line-height:1.7;">
+          <div style="color:#6d7278;">tables.GL_JOURNALS</div>
+          <div style="background:#fbe9e7; color:#b3261e;">− column DISCOUNT_PCT NUMBER(5,2)</div>
+          <div style="background:#e8f2ed; color:#1a6e50;">+ apply.style history</div>
+          <div style="color:#6d7278;">  compare.schedule nightly → hourly</div>
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.55; margin-top:8px;">The versioned definition already exists — this only surfaces it. Same diff the activation plan showed before it was applied, so <b>plan and record are the same artifact</b>.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== row 3 ===== -->
+  <div style="display:flex; align-items:stretch; gap:18px; margin-top:32px;">
+    <div style="flex:1; background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:8px;">EVENTS IN THE FOUR-LEVEL HIERARCHY</div>
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; font-size:10px; color:#6d7278; line-height:1.55;">
+        <div><b style="color:#1a1c1e;">Stream</b><br>The "Recent events" strip — a <b>preview of the ledger</b>, not a second source. Same ids, same attribution.</div>
+        <div><b style="color:#1a1c1e;">Virtual fleet (this)</b><br>The full ledger for the VF, with all filters and the expandable record.</div>
+        <div><b style="color:#1a1c1e;">Fleet</b><br>Events appear as <b>markers</b> in the fleet log and as condition chips on VF cards.</div>
+        <div><b style="color:#1a1c1e;">Global</b><br>Only triage-worthy events surface, in the needs-triage strip and its 90-day history.</div>
+      </div>
+      <div style="font-size:10px; color:#6d7278; line-height:1.55; margin-top:9px;"><b style="color:#1a1c1e;">One ledger, four viewports.</b> No level keeps its own copy, so a count at any level is a filtered read of the same records — which is what makes "the number here matches the number there" true by construction rather than by discipline.</div>
+    </div>
+    <div style="width:440px; flex:none; background:#fbf3ec; border:1.5px dashed #b3541e; border-radius:10px; padding:14px 16px;">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; margin-bottom:8px;">RULES THIS SCREEN HOLDS TO</div>
+      <div style="font-size:10.5px; color:#8a5a2a; line-height:1.6;">
+        <div>· Every change is an event; no read or job cycle is.</div>
+        <div>· Attribution is never blank — a person or the scheduler.</div>
+        <div>· Events are immutable; a correction is a new event.</div>
+        <div>· The id is the timestamp, so sort order can never disagree.</div>
+        <div>· The matching count is always visible — filtered ≠ empty.</div>
+        <div>· An open event states what would close it.</div>
+        <div>· View log opens at the event's moment, not the top of the file.</div>
+        <div>· Exporting the ledger is itself a recorded event.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

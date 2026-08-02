@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#f4f3ef; font-family:'IBM Plex Sans',sans-serif; color:#1a1c1e; }
+    a { color:#1a6e50; } a:hover { color:#14523c; }
+  </style>
+</helmet>
+<div data-screen-label="Compare data wireflow" style="padding:36px 40px; min-width:2460px;">
+  <div style="font-size:22px; font-weight:700;">Compare data — wireflow</div>
+  <div style="display:flex; align-items:flex-start; gap:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:8px; padding:9px 13px; margin:10px 0 4px; max-width:1180px;">
+    <span style="flex:none; font-size:9.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; border:1px solid #1a6e50; border-radius:4px; padding:2px 7px; background:#fff;">CANONICAL</span>
+    <span style="font-size:11px; color:#6d7278; line-height:1.55;">Canonical for <b>Compare</b> — scope, tiered method, online truth, report, background lifecycle, and repair. Summarised as branch D of the <b>Virtual Fleet Wireflow</b> and ④a of the <b>Stream Wireflow</b>. Spec: <b>compare-ui.md</b>, <b>compare.md</b>.</span>
+  </div>
+  <div style="font-size:13px; color:#6d7278; margin:6px 0 14px;">Replicator console · scope → method → run → report, with the repair sub-flow and the method/verdict matrix · docs: compare.md, refresh.md</div>
+  <div style="display:flex; gap:16px; align-items:center; font-size:11.5px; color:#6d7278; margin-bottom:26px;">
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1px solid #c9c6bf; border-radius:3px;"></span>screen / dialog step</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1.5px dashed #b3541e; border-radius:3px;"></span>branch / sub-flow</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px; height:10px; background:#fbe9e7; border:1px solid #b3261e; border-radius:99px;"></span>validation gate</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:3px;"></span>outcome</span>
+  </div>
+
+  <!-- ===== main flow ===== -->
+  <div style="display:flex; align-items:flex-start; gap:0;">
+
+    <!-- entry -->
+    <div style="width:210px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:8px;">ENTRY POINTS</div>
+        <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; margin-bottom:6px; text-align:center;">Stream detail · Compare</div>
+        <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; margin-bottom:6px; text-align:center;">Stream admin · Run compare</div>
+        <div style="background:#fff; border:1px solid #1a6e50; color:#1a6e50; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Events · Repeat ↻</div>
+        <div style="font-size:10.5px; color:#6d7278; margin-top:8px; line-height:1.5;">Scoped to one stream — its read and write locations are the compare's locations.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3261e; background:#fbe9e7; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#b3261e; line-height:1.5;"><b>Gate:</b> no tables registered → toast, the dialog never opens. Register tables first.</div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Branch:</b> the stream already has a compare running or a report open → the Compare button reopens that window instead of starting over.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- scope -->
+    <div style="width:280px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">SETUP · SCOPE</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Locations + tables</div>
+        <div style="display:grid; grid-template-columns:1fr 18px 1fr; gap:0; align-items:center; margin-bottom:8px;">
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 7px; font-size:9.5px;"><span style="color:#6d7278;">READ · SOURCE</span><br><span style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:10px;">ORA-ERP01</span></div>
+          <div style="text-align:center; color:#8a8f98; font-size:12px;">≈</div>
+          <div style="border:1px solid #e3e1dc; background:#f7f6f2; border-radius:6px; padding:5px 7px; font-size:9.5px;"><span style="color:#6d7278;">WRITE · TARGET</span><br><span style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:10px;">SNOWFLAKE-PRD</span></div>
+        </div>
+        <div style="border:1px solid #e3e1dc; border-radius:7px; overflow:hidden; margin-bottom:6px;">
+          <div style="display:flex; gap:7px; padding:4px 8px; border-bottom:1px solid #f0eeea; font-size:10px; color:#6d7278;"><span style="color:#1a6e50;">☑</span><span style="flex:1;">8 of 8 selected</span><span>select all</span></div>
+          <div style="display:flex; gap:7px; padding:4px 8px; border-bottom:1px solid #f0eeea; font-size:10px;"><span style="color:#1a6e50;">☑</span><span style="font-family:'IBM Plex Mono',monospace; flex:1;">GL_JOURNALS</span><span style="color:#6d7278;">1.2M</span></div>
+          <div style="display:flex; gap:7px; padding:4px 8px; border-bottom:1px solid #f0eeea; font-size:10px;"><span style="color:#1a6e50;">☑</span><span style="font-family:'IBM Plex Mono',monospace; flex:1;">AP_INVOICES</span><span style="color:#6d7278;">88k</span></div>
+          <div style="display:flex; gap:7px; padding:4px 8px; font-size:10px;"><span style="color:#8a8f98;">☐</span><span style="font-family:'IBM Plex Mono',monospace; flex:1;">PO_LINES</span><span style="color:#6d7278;">310k</span></div>
+        </div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.5;">Both sides canonicalize to the same comparison form — swapping read and write cannot change the verdict.</div>
+      </div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- method -->
+    <div style="width:250px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">SETUP · METHOD</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Three tiers</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 8px; font-size:10.5px; color:#6d7278; margin-bottom:4px;">○ <b style="color:#1a1c1e;">Row counts only</b> — cheapest sanity tier</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 8px; font-size:10.5px; color:#6d7278; margin-bottom:4px;">○ <b style="color:#1a1c1e;">Bulk</b> — block checksums, minimal network</div>
+        <div style="border:1.5px solid #1a6e50; background:#f2f7f4; border-radius:6px; padding:5px 8px; font-size:10.5px;">◉ <b>Composed</b> — bulk finds the smoke, row-wise on the differing blocks finds the fire · default</div>
+        <div style="font-size:10px; color:#6d7278; margin-top:6px; line-height:1.5;">Only composed produces the row inventory — and repair needs the inventory.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Branch:</b> picking counts disables online compare (nothing to re-check).</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- options -->
+    <div style="width:280px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">SETUP · OPTIONS</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Truth under motion</div>
+        <div style="border:1.5px solid #1a6e50; background:#f2f7f4; border-radius:6px; padding:5px 8px; font-size:10.5px; margin-bottom:3px;">☑ <b>Online compare</b></div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; font-size:10px; margin-left:14px; margin-bottom:3px;">◉ In-flight window re-check — only persistent differences report</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:4px 8px; font-size:10px; color:#6d7278; margin-left:14px; margin-bottom:8px;">○ Double compare · wait 5 s — a persistent-difference <i>filter</i>, labeled as such</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:8px; font-size:10px;">
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:4px 7px;">Parallel sessions <b>4</b></div>
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:4px 7px; color:#6d7278;">☐ no-inserts ☐ no-deletes ☐ no-updates</div>
+        </div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 8px; font-size:9.5px; font-family:'IBM Plex Mono',monospace; color:#6d7278; margin-bottom:6px;">Restrict: INVOICE_DATE &gt;= DATE '2026-07-01'</div>
+        <div style="background:#f7f6f2; border:1px solid #eceae5; border-radius:6px; padding:5px 8px; font-size:9px; font-family:'IBM Plex Mono',monospace; color:#6d7278;">repl compare --stream ora-erp --method composed --parallel 4 --online inflight</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3261e; background:#fbe9e7; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#b3261e; line-height:1.5;"><b>Gate:</b> ≥1 table selected. Ignored classes and restrict are always named in the report — a verdict is meaningless without what it ignored.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- running -->
+    <div style="width:270px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">RUNNING</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:6px;">Job <span style="font-family:'IBM Plex Mono',monospace; font-size:12px;">ora-erp-cmp</span></div>
+        <div style="height:6px; background:#eceae5; border-radius:99px; overflow:hidden; margin-bottom:8px;"><div style="height:100%; width:62%; background:#1a6e50;"></div></div>
+        <div style="font-size:10.5px; line-height:1.8;">
+          <span style="color:#1a6e50; font-weight:700;">✓</span> Structure check — columns, types, keys first<br>
+          <span style="color:#1a6e50; font-weight:700;">✓</span> Source scan — checksums at the read side<br>
+          <span style="color:#b3541e; font-weight:700;">●</span> Target scan — same canonical form<br>
+          <span style="color:#8a8f98;">·</span> Row-wise on differing blocks only
+        </div>
+        <div style="border-top:1px solid #f0eeea; margin-top:7px; padding-top:6px; font-size:9.5px; font-family:'IBM Plex Mono',monospace; color:#6d7278;">GL_JOURNALS ▮▮▮▮▮ DONE · AP_INVOICES ▮▮▮░░ BUSY</div>
+        <div style="display:flex; gap:5px; margin-top:8px;">
+          <div style="flex:1; border:1px solid #e3e1dc; border-radius:6px; padding:4px 7px; font-size:9.5px; font-weight:600; text-align:center;">Run in background</div>
+          <div style="flex:1; border:1px solid #f3d1cf; color:#b3261e; border-radius:6px; padding:4px 7px; font-size:9.5px; font-weight:600; text-align:center;">Cancel event</div>
+        </div>
+        <div style="font-size:10px; color:#6d7278; margin-top:6px;">A composed run takes ~3–4 min. RUNNING on Jobs and CURRENT on Events from the moment it starts.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Branch:</b> Cancel event → back to setup, partial scans discarded, nothing reported. Click a table row → deep analysis drill-in.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- deep analysis drill-in -->
+    <div style="width:255px; flex:none;">
+      <div style="background:#fff; border:1.5px dashed #b3541e; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#8a5a2a; margin-bottom:2px;">DRILL-IN · CLICK A TABLE ROW</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Deep analysis</div>
+        <div style="display:flex; justify-content:space-between; font-size:10px; margin-bottom:3px;"><b>Slice 144 of 156</b><span style="color:#6d7278;">143 complete</span></div>
+        <div style="height:5px; background:#eceae5; border-radius:99px; overflow:hidden; margin-bottom:6px;"><div style="height:100%; width:92%; background:#1a6e50;"></div></div>
+        <div style="display:flex; justify-content:space-between; font-size:10px; margin-bottom:3px;"><span style="color:#6d7278;">56% done with slice 145</span><span style="color:#8a8f98;">184k rows/s</span></div>
+        <div style="height:5px; background:#eceae5; border-radius:99px; overflow:hidden; margin-bottom:8px;"><div style="height:100%; width:56%; background:#1a6e50; opacity:.6;"></div></div>
+        <div style="font-size:9.5px; font-family:'IBM Plex Mono',monospace; color:#6d7278; line-height:1.6;">row-wise walk of differing blocks<br>keys 1,440,000 … 1,450,000 · modulo on AP_INVOICE_ID<br>read SCN 8,845,127 · applied through 8,845,093</div>
+        <div style="display:flex; gap:4px; flex-wrap:wrap; margin-top:7px; font-size:9px;">
+          <span style="border:1px solid #e3e1dc; border-radius:5px; padding:2px 6px;">s1 · slice 145 · 56%</span>
+          <span style="border:1px solid #e3e1dc; border-radius:5px; padding:2px 6px;">s2 · slice 146</span>
+          <span style="border:1px solid #e3e1dc; border-radius:5px; padding:2px 6px;">s3 · slice 147</span>
+          <span style="border:1px solid #e3e1dc; border-radius:5px; padding:2px 6px;">s4 · slice 148</span>
+        </div>
+        <div style="font-size:10px; color:#6d7278; margin-top:7px; line-height:1.5;">Per table: slice map, current operation + key range, read/write positions, per-session assignments (slicing-design.md). Close returns to the run view — the job continues either way.</div>
+      </div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- results -->
+    <div style="width:300px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">RESULTS · THE REPORT</div>
+        <div style="display:flex; gap:6px; align-items:center; margin-bottom:8px;">
+          <span style="background:#fbe9e7; color:#b3261e; font-size:10px; font-weight:700; border-radius:99px; padding:2px 9px;">DRIFT DETECTED</span>
+          <span style="font-size:10px; color:#6d7278;">8 tables · 6 identical · 2 different · 41.2M rows · 3m 42s</span>
+        </div>
+        <div style="border:1px solid #e3e1dc; border-radius:7px; overflow:hidden; font-size:9px; font-family:'IBM Plex Mono',monospace;">
+          <div style="display:grid; grid-template-columns:1.4fr 1fr .7fr .7fr .6fr; gap:5px; padding:4px 7px; border-bottom:1px solid #f0eeea; color:#6d7278; font-family:'IBM Plex Sans',sans-serif;">Table · State · Missing · Only tgt · Differ</div>
+          <div style="display:grid; grid-template-columns:1.4fr 1fr .7fr .7fr .6fr; gap:5px; padding:4px 7px; border-bottom:1px solid #f0eeea;"><b>AP_INVOICES</b><span style="color:#b3261e;">DIFFERENT</span><span>132</span><span>9</span><span>57</span></div>
+          <div style="display:grid; grid-template-columns:1.4fr 1fr .7fr .7fr .6fr; gap:5px; padding:4px 7px; border-bottom:1px solid #f0eeea;"><b>GL_JOURNALS</b><span style="color:#1a6e50;">IDENTICAL</span><span>0</span><span>0</span><span>0</span></div>
+          <div style="display:grid; grid-template-columns:1.4fr 1fr .7fr .7fr .6fr; gap:5px; padding:4px 7px;"><b>ASSET_REG…</b><span style="color:#6b4fa1;">STRUCTURE</span><span>—</span><span>—</span><span>—</span></div>
+        </div>
+        <div style="font-size:10px; color:#6d7278; margin-top:6px; line-height:1.5;">Per-table match rate + <span style="color:#1a6e50;">View file</span> diff inspection (RBAC'd). Online runs show transient-resolved counts — motion accounted for, not reported as drift.</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Branch:</b> bulk / counts verdicts name no rows → "Set up composed re-run" pre-selects only the differing tables and loops back to setup.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- outcome -->
+    <div style="width:250px; flex:none;">
+      <div style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:8px;">DONE</div>
+        <div style="font-size:11px; line-height:1.7;">
+          • the job leaves the Jobs list; the event flips CURRENT → DONE on Events (persisted)<br>
+          • COMPARE event carries every setting — granularity, online mode, filters, restrict, locations<br>
+          • report archived under the retention policy; drift alerts link exactly this report<br>
+          • Export report / Repeat compare from the results view<br>
+          • repair (if invoked) is its own REFRESH event
+        </div>
+      </div>
+      <div style="margin-top:10px; background:#fff; border:1px solid #e3e1dc; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#6d7278; line-height:1.5;"><b style="color:#1a1c1e;">Then:</b> repair → re-compare to confirm convergence → schedule it nightly (Mode 3) and read the sync report instead.</div>
+    </div>
+  </div>
+
+  <!-- ===== sub-flow: repair ===== -->
+  <div style="margin-top:34px; margin-left:1108px;">
+    <div style="width:2px; height:26px; background:#b3541e; margin-left:130px; margin-bottom:10px;"></div>
+    <div style="border:1.5px dashed #b3541e; border-radius:12px; padding:16px 18px; background:#fdfbf8; width:1010px;">
+      <div style="font-size:12px; font-weight:700; color:#8a5a2a; margin-bottom:12px;">SUB-FLOW · Repair differences (from a composed report with drift) — "apply this report" via the row-wise refresh engine</div>
+      <div style="display:flex; align-items:flex-start; gap:0;">
+        <div style="width:210px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">DIRECTION</div>
+          <div style="border:1.5px solid #1a6e50; background:#f2f7f4; border-radius:5px; padding:4px 7px; font-size:9.5px; margin-bottom:3px;">◉ Source → target — source is truth</div>
+          <div style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 7px; font-size:9.5px; color:#6d7278;">○ Target → source — pull rows back</div>
+          <div style="font-size:9px; color:#6d7278; margin-top:5px;">Class labels and SQL flip with the direction.</div>
+        </div>
+        <div style="width:36px; flex:none; display:grid; place-items:center; padding-top:30px; color:#8a8f98; font-size:17px;">→</div>
+        <div style="width:200px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">DIFFERENCE CLASSES</div>
+          <div style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 7px; font-size:9.5px; margin-bottom:3px;">☑ Insert 132 missing rows</div>
+          <div style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 7px; font-size:9.5px; margin-bottom:3px;">☑ Update 57 differing rows</div>
+          <div style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 7px; font-size:9.5px;">☑ Delete 9 target-only rows</div>
+          <div style="font-size:9px; color:#6d7278; margin-top:5px;">Zero-count classes are dimmed and unpickable.</div>
+        </div>
+        <div style="width:36px; flex:none; display:grid; place-items:center; padding-top:30px; color:#8a8f98; font-size:17px;">→</div>
+        <div style="width:230px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">RESTRICT + SQL PREVIEW</div>
+          <div style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 7px; font-size:9px; font-family:'IBM Plex Mono',monospace; color:#6d7278; margin-bottom:5px;">WHERE UPDATED_AT &gt;= '2026-07-27'</div>
+          <div style="background:#f7f6f2; border:1px solid #eceae5; border-radius:5px; padding:5px 7px; font-size:8.5px; font-family:'IBM Plex Mono',monospace; color:#6d7278; line-height:1.6;">INSERT INTO SNOWFLAKE-PRD.AP_INVOICES<br>SELECT r.* FROM ERP.AP_INVOICES r<br>&nbsp;WHERE r.AP_INVOICE_ID IN (…132 keys)<br>&nbsp;&nbsp;&nbsp;AND (UPDATED_AT &gt;= '2026-07-27');<br>MERGE … / DELETE …</div>
+          <div style="font-size:9px; color:#6d7278; margin-top:5px;">SQL runs against the read side; keys come from the diff, the WHERE narrows the window.</div>
+        </div>
+        <div style="width:36px; flex:none; display:grid; place-items:center; padding-top:30px; color:#8a8f98; font-size:17px;">→</div>
+        <div style="width:190px; flex:none; background:#e8f2ed; border:1px solid #1a6e50; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:6px;">CREATE REPAIR JOB</div>
+          <div style="font-size:10px; line-height:1.6;">• job <span style="font-family:'IBM Plex Mono',monospace;">ora-erp-rep</span> — 198 rows written, O(differences), never a full reload<br>• REFRESH event with direction, classes, restrict, tables<br>• then: re-compare to confirm convergence</div>
+        </div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3261e; background:#fbe9e7; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#b3261e; line-height:1.5;"><b>Gate:</b> at least one difference class selected. Repair is offered only from a composed report — checksums and counts have no row inventory to apply.</div>
+    </div>
+  </div>
+
+  <!-- ===== sub-flow: background lifecycle ===== -->
+  <div style="margin-top:30px; margin-left:254px;">
+    <div style="border:1.5px dashed #b3541e; border-radius:12px; padding:16px 18px; background:#fdfbf8; width:1210px;">
+      <div style="font-size:12px; font-weight:700; color:#8a5a2a; margin-bottom:12px;">SUB-FLOW · Run in background — long compares and refreshes, several at once (one per stream), tracked to completion</div>
+      <div style="display:flex; align-items:flex-start; gap:0;">
+        <div style="width:200px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">MINIMIZE</div>
+          <div style="font-size:10px; line-height:1.6;">"Run in background" or ✕ closes the window — the job keeps running. Start more compares on other streams; refreshes and repairs join the same pool.</div>
+        </div>
+        <div style="width:36px; flex:none; display:grid; place-items:center; padding-top:30px; color:#8a8f98; font-size:17px;">→</div>
+        <div style="width:230px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">NOTICE CHIP · BOTTOM-RIGHT</div>
+          <div style="border:1px solid #e3e1dc; border-radius:8px; padding:7px 9px; box-shadow:0 2px 8px rgba(0,0,0,.08);">
+            <div style="display:flex; align-items:center; gap:6px; font-size:10px; font-weight:600;"><span style="width:7px; height:7px; border-radius:99px; background:#1a6e50;"></span>3 background jobs running<span style="margin-left:auto; color:#8a8f98;">→</span></div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:8.5px; color:#6d7278; margin-top:3px;">ora-erp-cmp 62% · pg-billing-rfr 41% · db2-mfg-cmp 8%</div>
+          </div>
+          <div style="font-size:9.5px; color:#6d7278; margin-top:5px;">Aggregates every running compare and refresh. Click → Jobs.</div>
+        </div>
+        <div style="width:36px; flex:none; display:grid; place-items:center; padding-top:30px; color:#8a8f98; font-size:17px;">→</div>
+        <div style="width:290px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">JOBS · ROWS EXPANDED WITH LIVE PROGRESS</div>
+          <div style="border:1px solid #e3e1dc; border-radius:7px; overflow:hidden; font-size:8.5px;">
+            <div style="padding:4px 7px; border-bottom:1px solid #f0eeea;">
+              <div style="display:flex; gap:6px; align-items:center;"><b style="font-family:'IBM Plex Mono',monospace;">ora-erp-cmp</b><span style="background:#e8f2ed; color:#1a6e50; border-radius:99px; padding:1px 6px; font-weight:600;">RUNNING (62% done)</span><span style="margin-left:auto; border:1px solid #e3e1dc; border-radius:5px; padding:1px 6px; font-weight:600;">Open window</span></div>
+              <div style="height:4px; background:#eceae5; border-radius:99px; overflow:hidden; margin:4px 0;"><div style="height:100%; width:62%; background:#1a6e50;"></div></div>
+              <div style="display:flex; gap:3px; flex-wrap:wrap; font-size:8px; color:#6d7278;"><span style="border:1px solid #f0eeea; border-radius:4px; padding:1px 5px;">GL_JOURNALS ✓</span><span style="border:1px solid #f0eeea; border-radius:4px; padding:1px 5px;">AP_INVOICES 56%</span><span style="border:1px solid #f0eeea; border-radius:4px; padding:1px 5px;">PO_LINES 12%</span></div>
+            </div>
+            <div style="padding:4px 7px;">
+              <div style="display:flex; gap:6px; align-items:center;"><b style="font-family:'IBM Plex Mono',monospace;">pg-billing-rfr-8841</b><span style="background:#e8f2ed; color:#1a6e50; border-radius:99px; padding:1px 6px; font-weight:600;">RUNNING (41% done)</span></div>
+              <div style="height:4px; background:#eceae5; border-radius:99px; overflow:hidden; margin-top:4px;"><div style="height:100%; width:41%; background:#1a6e50;"></div></div>
+              <div style="font-size:8px; color:#6d7278; margin-top:2px;">row-wise apply — slice 14 of 33 · 41%</div>
+            </div>
+          </div>
+          <div style="font-size:9.5px; color:#6d7278; margin-top:5px;">"Open window" reopens the compare dialog mid-run — deep analysis included.</div>
+        </div>
+        <div style="width:36px; flex:none; display:grid; place-items:center; padding-top:30px; color:#8a8f98; font-size:17px;">→</div>
+        <div style="width:220px; flex:none; background:#e8f2ed; border:1px solid #1a6e50; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:6px;">ON COMPLETION</div>
+          <div style="font-size:10px; line-height:1.6;">• toast with the verdict — IN SYNC / DRIFT DETECTED / STRUCTURE MISMATCH<br>• job leaves the Jobs list automatically<br>• event flips CURRENT → DONE on Events (persisted)<br>• chip shows "report ready" — click, or the stream's Compare button, to open the report</div>
+        </div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3261e; background:#fbe9e7; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#b3261e; line-height:1.5;"><b>Gate:</b> Cancel event (from the run view or Events) → job drains, event CANCELED, repeatable. A compare interrupted by a page reload is marked CANCELED — never a zombie RUNNING row.</div>
+    </div>
+  </div>
+
+  <!-- ===== branch: method / verdict matrix ===== -->
+  <div style="margin-top:30px; margin-left:254px;">
+    <div style="border:1.5px dashed #b3541e; border-radius:12px; padding:16px 18px; background:#fdfbf8; width:760px;">
+      <div style="font-size:12px; font-weight:700; color:#8a5a2a; margin-bottom:10px;">BRANCH · what each method can say (and what it can't)</div>
+      <div style="display:grid; grid-template-columns:130px 1fr; gap:6px 14px; font-size:11px;">
+        <div style="font-weight:600;">Row counts</div><div>COUNTS EQUAL / COUNT MISMATCH — no classes, no match rate, no repair. The sync report's first number.</div>
+        <div style="font-weight:600;">Bulk</div><div>IDENTICAL / DIFFERENT — checksum only; knows <i>that</i> tables differ, not which rows → composed re-run hint.</div>
+        <div style="font-weight:600;">Composed</div><div>Full inventory — missing on target / only on target / different, match rate, diff file, repair enabled.</div>
+        <div style="font-weight:600; color:#6b4fa1;">Any method</div><div>Structure check runs first — a mismatch short-circuits that table with the column named (<span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px;">column TIER missing on target</span>), never garbage row diffs.</div>
+        <div style="font-weight:600;">Verdict line</div><div>IN SYNC · DRIFT DETECTED · STRUCTURE MISMATCH — direction-independent; active filters and restrict always named.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

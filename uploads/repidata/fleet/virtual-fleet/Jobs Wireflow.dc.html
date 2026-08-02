@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#f4f3ef; font-family:'IBM Plex Sans',sans-serif; color:#1a1c1e; }
+    a { color:#1a6e50; } a:hover { color:#14523c; }
+  </style>
+</helmet>
+<div data-screen-label="Jobs wireflow" style="padding:36px 40px; min-width:2100px;">
+  <div style="font-size:22px; font-weight:700;">Jobs — wireflow</div>
+  <div style="display:flex; align-items:flex-start; gap:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:8px; padding:9px 13px; margin:10px 0 4px; max-width:1180px;">
+    <span style="flex:none; font-size:9.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; border:1px solid #1a6e50; border-radius:4px; padding:2px 7px; background:#fff;">CANONICAL</span>
+    <span style="font-size:11px; color:#6d7278; line-height:1.55;">Canonical for <b>Jobs</b> — the open set, the visible state machine, MISSING reconciliation, and bulk actions. Spec: <b>jobs-ui.md</b>, <b>jobs.md</b>.</span>
+  </div>
+  <div style="font-size:13px; color:#6d7278; margin:6px 0 14px;">Replicator console · the open set: what the scheduler is doing right now, what it is waiting on, what it is retrying, and <b>what should be running but is not</b>. Jobs and Events are one record seen in two tenses — a job that finishes does not write an event, it becomes one · docs: jobs.md, events.md, scheduler.md, virtual-fleet-ui.md, timeline.md</div>
+  <div style="display:flex; gap:16px; align-items:center; font-size:11.5px; color:#6d7278; margin-bottom:26px; flex-wrap:wrap;">
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1px solid #c9c6bf; border-radius:3px;"></span>screen / section</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1.5px dashed #b3541e; border-radius:3px;"></span>branch / sub-flow</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px; height:10px; background:#fbe9e7; border:1px solid #b3261e; border-radius:99px;"></span>rule / guard</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:3px;"></span>outcome / drill-down</span>
+  </div>
+
+  <!-- ===== row 0: the model ===== -->
+  <div style="display:flex; align-items:stretch; gap:18px; margin-bottom:32px;">
+    <div style="flex:1; background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:16px 18px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:4px;">THE MODEL — ONE RECORD, TWO TENSES</div>
+      <div style="font-size:15px; font-weight:600; margin-bottom:10px;">A job is an event that has not closed yet</div>
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:11px;">
+        <div style="border:1.5px solid #1a6e50; background:#e8f2ed; border-radius:8px; padding:9px 13px; font-size:11px;">
+          <div style="font-weight:700; color:#1a6e50; margin-bottom:2px;">JOBS — the open set</div>
+          <div style="color:#6d7278;">present tense · sorted by urgency · <b>has actions</b><br>RUNNING · WAITING · RETRY · SUSPENDED · MISSING</div>
+        </div>
+        <div style="text-align:center; color:#8a8f98; font-size:11px; line-height:1.5;">closes<br>→</div>
+        <div style="border:1.5px solid #7c6ce0; background:#f2effb; border-radius:8px; padding:9px 13px; font-size:11px;">
+          <div style="font-weight:700; color:#6a3fb5; margin-bottom:2px;">EVENTS — the closed set</div>
+          <div style="color:#6d7278;">past tense · immutable · sorted by time · <b>has evidence</b><br>DONE · FAILED · CANCELED, with artifact + attribution</div>
+        </div>
+        <div style="text-align:center; color:#8a8f98; font-size:11px; line-height:1.5;">both<br>plot on</div>
+        <div style="border:1.5px solid #b3541e; background:#fbf3ec; border-radius:8px; padding:9px 13px; font-size:11px;">
+          <div style="font-weight:700; color:#b3541e; margin-bottom:2px;">TIMELINE — where they meet</div>
+          <div style="color:#6d7278;">one axis · open conditions and closed history together</div>
+        </div>
+      </div>
+      <div style="font-size:11px; color:#6d7278; line-height:1.6;"><b style="color:#1a1c1e;">Same id, one state machine, one row builder.</b> This kills the whole class of bug where a job reports FAILED and the ledger reports DONE. It also explains the surface that already exists: an event-driven compare or refresh <b>holds a job</b> for as long as its event is CURRENT or WAITING, and cancelling the event drains the job. Two screens, because the questions are different — "what do I act on now?" and "what happened, and prove it" — but never two truths.</div>
+    </div>
+    <div style="width:460px; flex:none; background:#fbe9e7; border:1px solid #b3261e; border-radius:10px; padding:16px 18px;">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3261e; margin-bottom:6px;">THE FAILURE A JOBS LIST NORMALLY HIDES</div>
+      <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Silence reads as health</div>
+      <div style="font-size:11px; color:#6d7278; line-height:1.6;">A capture job that died leaves <b>no row</b>. The list looks calm and the stream is dead. So the screen does not list what exists — it <b>reconciles against what is owed</b>: every activated stream owes the scheduler a capture job and an apply job. A job that is owed and absent is a red <b>MISSING</b> row, sorted to the top, naming the connection it was expected on.</div>
+      <div style="background:#fff; border:1px solid #f3d1cf; border-radius:7px; padding:8px 10px; font-size:9px; margin-top:10px;">
+        <div style="display:flex; gap:6px; align-items:center;"><b style="font-family:'IBM Plex Mono',monospace;">sensor-ingest-capture</b><span style="background:#fbe9e7; color:#b3261e; border-radius:99px; padding:1px 6px; font-weight:700;">MISSING</span></div>
+        <div style="color:#b3261e; margin-top:3px;">expected on ORA-SENSORS · registered, then dropped</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== row 1 ===== -->
+  <div style="display:flex; align-items:flex-start; gap:0;">
+
+    <div style="width:222px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:8px;">SCOPE + ENTRY</div>
+        <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:8px;">
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Tree · VF → Jobs</div>
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">VF timeline · JOBS band</div>
+          <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Stream page → its jobs</div>
+        </div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.55;"><b style="color:#1a1c1e;">Scoped like Connections and Events:</b> opened at VF level it shows every job in the virtual fleet; opened from a stream it narrows to that stream's. One scope rule, so a count shown above always matches what the screen contains.</div>
+      </div>
+    </div>
+    <div style="width:32px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:620px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">LAYER 1 · THE LIST</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:7px;">Every row says where it is in its own curve</div>
+        <div style="background:#fbf3ec; border:1px solid #f0dcb8; border-radius:7px; padding:7px 10px; margin-bottom:7px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:9px;">
+          <b style="color:#b3541e;">3 jobs selected</b>
+          <span style="color:#6d7278;">stops movement on 2 streams: erp-financials, mfg-workorders · 1 not directly controllable</span>
+          <span style="margin-left:auto; display:flex; gap:4px;"><span style="border:1px solid #e3e1dc; background:#fff; border-radius:5px; padding:2px 7px; font-weight:600;">Suspend selected</span><span style="border:1px solid #e3e1dc; background:#fff; border-radius:5px; padding:2px 7px; font-weight:600;">Resume selected</span></span>
+        </div>
+        <div style="display:grid; grid-template-columns:16px 1.4fr .9fr .85fr .55fr 1.15fr 1.25fr 1fr; gap:4px; font-size:7.5px; color:#6d7278; border-bottom:1px solid #e3e1dc; padding-bottom:3px; margin-bottom:3px;">
+          <span></span><span>Job</span><span>Stream</span><span>Type</span><span>Shape</span><span>State</span><span>Detail</span><span></span>
+        </div>
+        <div style="display:grid; grid-template-columns:16px 1.4fr .9fr .85fr .55fr 1.15fr 1.25fr 1fr; gap:4px; font-size:8px; align-items:center; padding:4px 0; background:#fdf7f6;">
+          <span style="width:9px; height:9px; border:1px solid #c9c6bf; border-radius:2px; display:inline-block;"></span>
+          <b style="font-family:'IBM Plex Mono',monospace;">sensor-ingest-capture</b><span style="color:#6d7278;">sensor-ingest</span>
+          <span style="background:#e7effb; color:#2a5cab; border-radius:99px; padding:1px 5px; font-size:7px; font-weight:700; justify-self:start;">CAPTURE</span><span style="color:#6d7278;">cyclic</span>
+          <span><span style="background:#fbe9e7; color:#b3261e; border-radius:99px; padding:1px 5px; font-size:7px; font-weight:700;">MISSING</span><br><span style="color:#b3261e; font-size:7px;">expected on ORA-SENSORS</span></span>
+          <span style="color:#6d7278;">activated, but no capture job</span><span style="color:#8a8f98; text-align:right;">timeline →</span>
+        </div>
+        <div style="display:grid; grid-template-columns:16px 1.4fr .9fr .85fr .55fr 1.15fr 1.25fr 1fr; gap:4px; font-size:8px; align-items:center; padding:4px 0; border-top:1px solid #f2f1ee;">
+          <span style="width:9px; height:9px; border:1px solid #c9c6bf; border-radius:2px; display:inline-block;"></span>
+          <b style="font-family:'IBM Plex Mono',monospace;">hr-people-capture</b><span style="color:#6d7278;">hr-people</span>
+          <span style="background:#e7effb; color:#2a5cab; border-radius:99px; padding:1px 5px; font-size:7px; font-weight:700; justify-self:start;">CAPTURE</span><span style="color:#6d7278;">cyclic</span>
+          <span><span style="background:#fbf3ec; color:#b3541e; border-radius:99px; padding:1px 5px; font-size:7px; font-weight:700;">RETRY</span><br><span style="color:#b3541e; font-size:7px;">attempt 4 of 8 · next in 2m · failing 31m</span></span>
+          <span style="color:#6d7278;">log unavailable</span><span style="text-align:right; display:flex; gap:3px; justify-content:flex-end;"><span style="color:#8a8f98;">timeline →</span><span style="border:1px solid #e3e1dc; border-radius:4px; padding:1px 5px; font-weight:600;">Suspend</span></span>
+        </div>
+        <div style="display:grid; grid-template-columns:16px 1.4fr .9fr .85fr .55fr 1.15fr 1.25fr 1fr; gap:4px; font-size:8px; align-items:center; padding:4px 0; border-top:1px solid #f2f1ee;">
+          <span style="width:9px; height:9px; border:1px solid #c9c6bf; border-radius:2px; display:inline-block;"></span>
+          <b style="font-family:'IBM Plex Mono',monospace;">mfg-workorders-capture</b><span style="color:#6d7278;">mfg-workorders</span>
+          <span style="background:#e7effb; color:#2a5cab; border-radius:99px; padding:1px 5px; font-size:7px; font-weight:700; justify-self:start;">CAPTURE</span><span style="color:#6d7278;">cyclic</span>
+          <span><span style="background:#e8f2ed; color:#1a6e50; border-radius:99px; padding:1px 5px; font-size:7px; font-weight:700;">RUNNING</span> <span style="background:#fbf3ec; color:#b3541e; border-radius:99px; padding:1px 5px; font-size:7px; font-weight:700;">HANGING</span><br><span style="color:#b3541e; font-size:7px;">no progress for 18m</span></span>
+          <span style="color:#6d7278;">18m past envelope · still reading</span><span style="text-align:right; display:flex; gap:3px; justify-content:flex-end;"><span style="color:#8a8f98;">timeline →</span><span style="border:1px solid #e3e1dc; border-radius:4px; padding:1px 5px; font-weight:600;">Suspend</span></span>
+        </div>
+        <div style="display:grid; grid-template-columns:16px 1.4fr .9fr .85fr .55fr 1.15fr 1.25fr 1fr; gap:4px; font-size:8px; align-items:center; padding:4px 0; border-top:1px solid #f2f1ee;">
+          <span style="width:9px; height:9px; border:1px solid #c9c6bf; border-radius:2px; display:inline-block;"></span>
+          <b style="font-family:'IBM Plex Mono',monospace;">flight-telemetry-refresh</b><span style="color:#6d7278;">flight-telemetry</span>
+          <span style="background:#fbf3ec; color:#b3541e; border-radius:99px; padding:1px 5px; font-size:7px; font-weight:700; justify-self:start;">REFRESH</span><span style="color:#6d7278;">acyclic</span>
+          <span><span style="background:#f2f1ee; color:#6d7278; border-radius:99px; padding:1px 5px; font-size:7px; font-weight:700;">WAITING</span><br><span style="color:#8a8f98; font-size:7px;">scheduler slot — 4 of 4 in use · position 2</span></span>
+          <span style="color:#6d7278;">queued behind a running refresh</span><span style="color:#8a8f98; text-align:right;">timeline →</span>
+        </div>
+        <div style="display:grid; grid-template-columns:16px 1.4fr .9fr .85fr .55fr 1.15fr 1.25fr 1fr; gap:4px; font-size:8px; align-items:center; padding:4px 0; border-top:1px solid #f2f1ee;">
+          <span style="width:9px; height:9px; border:1px solid #c9c6bf; border-radius:2px; display:inline-block;"></span>
+          <b style="font-family:'IBM Plex Mono',monospace;">erp-financials-capture</b><span style="color:#6d7278;">erp-financials</span>
+          <span style="background:#e7effb; color:#2a5cab; border-radius:99px; padding:1px 5px; font-size:7px; font-weight:700; justify-self:start;">CAPTURE</span><span style="color:#6d7278;">cyclic</span>
+          <span><span style="background:#e8f2ed; color:#1a6e50; border-radius:99px; padding:1px 5px; font-size:7px; font-weight:700;">RUNNING</span><br><span style="color:#8a8f98; font-size:7px;">up 6d · 18,422 cycles</span></span>
+          <span style="color:#6d7278;">redo pos 4.2s behind head</span><span style="text-align:right; display:flex; gap:3px; justify-content:flex-end;"><span style="color:#8a8f98;">timeline →</span><span style="border:1px solid #e3e1dc; border-radius:4px; padding:1px 5px; font-weight:600;">Suspend</span></span>
+        </div>
+        <div style="border-top:1px solid #f2f1ee; padding:5px 0 0;">
+          <div style="display:flex; align-items:center; gap:7px;">
+            <div style="flex:1; height:4px; background:#f2f1ee; border-radius:99px; overflow:hidden;"><div style="height:100%; width:30%; background:#b3541e;"></div></div>
+            <span style="font-size:7.5px; color:#6d7278;">12 / 40 segments · 30%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="width:32px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:330px; flex:none;">
+      <div style="background:#fbe9e7; border:1px solid #b3261e; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3261e; margin-bottom:2px;">THE STATE MACHINE, VISIBLE</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:8px;">A state chip alone is anxiety</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.6;">
+          <div style="margin-bottom:6px;">Every non-steady state carries a <b>second line saying where it is in its own curve</b>, so an operator can tell "recovering" from "stuck" without opening a log.</div>
+          <div style="background:#fff; border:1px solid #f3d1cf; border-radius:6px; padding:6px 8px; margin-bottom:5px; font-size:9px;"><b>RETRY</b> → attempt N of M · next in T · failing for D<br><span style="color:#8a8f98;">the same 30s → ×2 → 15m / 8-attempt curve as alert delivery, reused</span></div>
+          <div style="background:#fff; border:1px solid #f3d1cf; border-radius:6px; padding:6px 8px; margin-bottom:5px; font-size:9px;"><b>WAITING</b> → what it waits on + queue position<br><span style="color:#8a8f98;">schedule · scheduler slot · lock · another job</span></div>
+          <div style="background:#fff; border:1px solid #f3d1cf; border-radius:6px; padding:6px 8px; margin-bottom:5px; font-size:9px;"><b>RUNNING</b> → uptime + cycles, or <b>no progress for D</b> when hanging<br><span style="color:#8a8f98;">RUNNING for 40m with no progress signal is indistinguishable from hung</span></div>
+          <div style="background:#fff; border:1px solid #f3d1cf; border-radius:6px; padding:6px 8px; font-size:9px;"><b>SUSPENDED / long runs</b> → a real progress bar<br><span style="color:#8a8f98;">segments or slices done / total, with percent</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="width:32px; flex:none; display:grid; place-items:center; padding-top:56px; color:#8a8f98; font-size:20px;">→</div>
+
+    <div style="width:300px; flex:none;">
+      <div style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">ROW ACTIONS</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:8px;">Three verbs, three meanings</div>
+        <div style="display:flex; flex-direction:column; gap:5px; font-size:9px; line-height:1.55;">
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>Suspend</b> <span style="color:#6d7278;">— graceful. Finishes the current cycle, drain progress visible, checkpoint held. Resume redoes at most one cycle, never loses correctness.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>Disable</b> <span style="color:#6d7278;">— the administrative lock that survives colleagues. An ordinary resume <b>refuses</b>; an explicit re-enable is required.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>Open event / Open window</b> <span style="color:#6d7278;">— event-driven work is not suspended here. It is cancelled from Events, which drains the job.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>timeline →</b> <span style="color:#6d7278;">— every row lands on the stream timeline at its own timestamp. This is the reconciliation link.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== row 2 ===== -->
+  <div style="display:flex; align-items:flex-start; gap:16px; margin-top:32px;">
+
+    <div style="width:480px; flex:none;">
+      <div style="background:#fff; border:1.5px dashed #b3541e; border-radius:10px; padding:13px 15px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; margin-bottom:2px;">BRANCH A · BULK ACTIONS</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">Never a count without a blast radius</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.6; margin-bottom:8px;">"Suspend 6 jobs" is meaningless. The bar states <b>which streams stop moving</b> before the operator commits, and names how many of the selection are not directly controllable.</div>
+        <div style="background:#fbf3ec; border:1px solid #f0dcb8; border-radius:7px; padding:8px 10px; font-size:9.5px; color:#8a5a2a; line-height:1.55;">
+          <b>3 jobs selected</b><br>stops movement on 2 streams: erp-financials, mfg-workorders<br>· 1 not directly controllable (event-driven — cancel from Events)
+        </div>
+        <div style="font-size:9.5px; color:#6d7278; line-height:1.55; margin-top:8px;">One selection model over <b>every</b> row — seeded, derived, and event-driven alike — so the checkbox behaves identically regardless of which builder produced the row. Bulk suspend is graceful per job, not a kill, and writes <b>one</b> ledger event naming every job and stream affected.</div>
+      </div>
+    </div>
+
+    <div style="width:440px; flex:none;">
+      <div style="background:#fff; border:1.5px dashed #b3541e; border-radius:10px; padding:13px 15px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; margin-bottom:2px;">BRANCH B · THE QUEUE</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">WAITING is waiting on something</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.6;">
+          <div>A bare WAITING chip is the least useful state in any scheduler. Each waiting job names its <b>reason</b> and, where it is queued behind others, its <b>position</b>.</div>
+          <div style="margin-top:6px;"><b style="color:#1a1c1e;">Reasons:</b> schedule (next fire time) · scheduler slot (N of M in use) · lock held by another job · a dependency job that has not finished.</div>
+          <div style="margin-top:6px;">Slot exhaustion is the one worth surfacing hardest: four refreshes queued behind four running ones is a <b>capacity</b> problem, not a fault, and the console should say so rather than let it read as a stall.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="width:460px; flex:none;">
+      <div style="background:#f2effb; border:1px solid #7c6ce0; border-radius:10px; padding:13px 15px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6a3fb5; margin-bottom:2px;">BRANCH C · WHAT EVENTS GAINS</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">Make it the evidence layer, not a feed</div>
+        <div style="display:flex; flex-direction:column; gap:5px; font-size:9px; line-height:1.55;">
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>Filter by artifact type</b> <span style="color:#6d7278;">— plan diff · compare report · run log · export · enrollment token. Auditors search by artifact, not by time.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>Stated retention window</b> <span style="color:#6d7278;">— a ledger with no retention policy is not an audit ledger. Say the window, and what happens at its edge.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>Signed export</b> <span style="color:#6d7278;">— a range export the auditor can verify off-platform. Real gap for regulated buyers.</span></div>
+          <div style="background:#fff; border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px;"><b>Diff view on definition changes</b> <span style="color:#6d7278;">— ACTIVATE and config-save events open the actual before/after, not a summary line.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="width:440px; flex:none;">
+      <div style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:10px; padding:13px 15px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">BRANCH D · THE TIMELINE IS THE JOIN</div>
+        <div style="font-size:13px; font-weight:600; margin-bottom:6px;">Where the two tenses reconcile</div>
+        <div style="font-size:10px; color:#6d7278; line-height:1.6;">
+          <div>Jobs and Events both link into the timeline <b>at the right timestamp</b>, so "what is running" and "what happened" can be read against each other on one axis.</div>
+          <div style="margin-top:6px;">A retrying capture, the activation two days before it, and the compare that failed after it are three rows on three screens — and one story on the timeline.</div>
+          <div style="margin-top:6px;"><b style="color:#1a1c1e;">Sibling timelines</b> at stream, VF, fleet, and global level all take the same links, so the join works at every scope.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== row 3 ===== -->
+  <div style="display:flex; align-items:stretch; gap:18px; margin-top:32px;">
+    <div style="flex:1; background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:8px;">JOB KINDS AND THEIR SHAPES</div>
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; font-size:10px; color:#6d7278; line-height:1.55;">
+        <div><span style="background:#e7effb; color:#2a5cab; border-radius:99px; padding:1px 7px; font-size:8.5px; font-weight:700;">CAPTURE</span><br><b style="color:#1a1c1e;">cyclic · continuous</b><br>Reads the source log forever. One per activated stream. Its absence is the MISSING case.</div>
+        <div><span style="background:#f0e9fb; color:#6a3fb5; border-radius:99px; padding:1px 7px; font-size:8.5px; font-weight:700;">INTEGRATE</span><br><b style="color:#1a1c1e;">cyclic · continuous</b><br>Applies the file log on its cadence. One per activated stream.</div>
+        <div><span style="background:#e8f2ed; color:#1a6e50; border-radius:99px; padding:1px 7px; font-size:8.5px; font-weight:700;">COMPARE</span><br><b style="color:#1a1c1e;">acyclic · scheduled or event-driven</b><br>Runs to completion. Event-driven ones are held by their event.</div>
+        <div><span style="background:#fbf3ec; color:#b3541e; border-radius:99px; padding:1px 7px; font-size:8.5px; font-weight:700;">REFRESH</span><br><b style="color:#1a1c1e;">acyclic · scheduled or event-driven</b><br>Runs to completion, segmented and resumable. Cancel keeps loaded segments.</div>
+      </div>
+      <div style="font-size:10px; color:#6d7278; line-height:1.55; margin-top:9px;"><b style="color:#1a1c1e;">Cyclic vs acyclic is the useful split</b>, not scheduled vs manual: a cyclic job is judged by whether it is <i>keeping up</i>, an acyclic one by whether it will <i>finish</i>. The two need different progress signals, and the list gives each the one that applies.</div>
+    </div>
+    <div style="width:440px; flex:none; background:#fbf3ec; border:1.5px dashed #b3541e; border-radius:10px; padding:14px 16px;">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#b3541e; margin-bottom:8px;">RULES THIS SCREEN HOLDS TO</div>
+      <div style="font-size:10.5px; color:#8a5a2a; line-height:1.6;">
+        <div>· A job and its event are one record; a finished job becomes an event.</div>
+        <div>· Absence is a red row — the list reconciles against what is owed.</div>
+        <div>· No state chip stands alone; each says where it is in its curve.</div>
+        <div>· Suspend is graceful and resumable; disable survives colleagues.</div>
+        <div>· Bulk actions state their blast radius before they run.</div>
+        <div>· Event-driven work is cancelled from Events, never killed here.</div>
+        <div>· Every state change is ledgered with previous → new state.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

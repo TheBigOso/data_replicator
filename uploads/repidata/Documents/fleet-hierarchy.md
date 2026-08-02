@@ -17,9 +17,9 @@ Global Fleet Manager        — overview of all fleets (all hub servers)
 └── Global Fleet Admin
 └── Fleet                   — one hub server; overview of its virtual fleets
     └── Fleet Admin
-    └── Virtual Fleet       — isolated environment; overview of its pipelines
+    └── Virtual Fleet       — isolated environment; overview of its streams
         └── Virtual Fleet Admin
-        └── Pipeline
+        └── Stream
             ├── Connections
             ├── Tables
             ├── Monitoring
@@ -32,14 +32,14 @@ Global Fleet Manager        — overview of all fleets (all hub servers)
 |---|---|---|---|
 | **Global Fleet** | The whole company | All fleets | Visibility gated by `FleetViewer` |
 | **Fleet** | One hub server (per department/division) | Virtual fleets | Own users, own repository |
-| **Virtual Fleet** | One logical hub on that server (per environment/project: prod, pre-prod, dev, per-client scenario) | Pipelines, connections, users, permissions | Full separation of definitions, jobs, grants |
-| **Pipeline** | One replication flow (capture → file log → apply) | Connections, tables, monitoring, jobs, events, admin | Operational scope |
+| **Virtual Fleet** | One logical hub on that server (per environment/project: prod, pre-prod, dev, per-client scenario) | Streams, connections, users, permissions | Full separation of definitions, jobs, grants |
+| **Stream** | One replication flow (capture → file log → apply) | Connections, tables, monitoring, jobs, events, admin | Operational scope |
 
-Virtual fleets are the answer to both multi-hub use cases: **environment separation** (testing / production / support / sales) and **project separation** (each client's replication scenario on its own virtual fleet). Every virtual fleet separates its pipelines, connections, users, and permissions from its siblings.
+Virtual fleets are the answer to both multi-hub use cases: **environment separation** (testing / production / support / sales) and **project separation** (each client's replication scenario on its own virtual fleet). Every virtual fleet separates its streams, connections, users, and permissions from its siblings.
 
 ## 3. Global Fleet console
 
-One screen listing every hub server in the company and every virtual fleet on it: state (Live / Frozen / Errors), pipeline count, connection count, user count, P95 latency, and the viewing user's access level per virtual fleet.
+One screen listing every hub server in the company and every virtual fleet on it: state (Live / Frozen / Errors), stream count, connection count, user count, P95 latency, and the viewing user's access level per virtual fleet.
 
 Built for scale (hundreds of fleets):
 
@@ -66,7 +66,7 @@ Each level of admin can manage admins/grants **at its own level and every level 
 
 Enforcement in the UI (prototyped):
 
-- Admin panels are not sidebar entries; each screen carries its own admin button — ⚙ Global Admin on the Global console, ⚙ Fleet Admin on the Fleet view, ⚙ VF Admin on the Virtual Fleet overview (Pipeline Admin stays on the pipeline node).
+- Admin panels are not sidebar entries; each screen carries its own admin button — ⚙ Global Admin on the Global console, ⚙ Fleet Admin on the Fleet view, ⚙ VF Admin on the Virtual Fleet overview (Stream Admin stays on the stream node).
 - The Permissions view is scope-aware: grants outside the acting admin's scope render with a 🔒 read-only marker and no Revoke action. SuperAdmins bypass tier restrictions (except their own SuperAdmin grant).
 - The grant dialog only offers what the level may give: repository-wide permission types (SuperAdmin, SysAdmin, HubCreation, ReadStatistics, FleetViewer) appear only for Global Fleet Admins and SuperAdmins; a Virtual Fleet Admin's dialog is locked to their own virtual fleet.
 - A scope note at the top of the Permissions view states explicitly what the current level can and cannot touch, and each admin screen opens with a capability statement for its level.
@@ -99,7 +99,7 @@ Every signed-in user has an identity chip in the top-right corner (avatar, usern
 | Permission | Grants |
 |---|---|
 | `HubOwner` | Full control of the virtual fleet, including access and properties |
-| `ReadWrite` | Pipelines and/or Connections (sub-selectable) — definitions and operations |
+| `ReadWrite` | Streams and/or Connections (sub-selectable) — definitions and operations |
 | `ReadExecRefresh` | Refresh, compare, start/stop jobs, view objects |
 | `ReadExec` | Compare, start/stop jobs, view objects |
 | `ReadOnly` | View objects only |
@@ -128,9 +128,9 @@ A permission granted to **All Users** is inherited by newly created users by def
 
 Operators must always know which environment they are editing — especially production. Theming is a **user preference, scoped per fleet**:
 
-- Each fleet carries an environment for the viewing user: a color (green/blue/red/purple/orange) shown as the banner and UI accent. Prototype defaults: hubsrv-corp = blue Pre Prod, hubsrv-rockets = red Production, hubsrv-radar = green Development.
+- Each fleet carries an environment for the viewing user: a color (green/blue/red/purple/orange) shown as the banner and UI accent. Prototype defaults: streamsrv-corp = blue Pre Prod, streamsrv-rockets = red Production, streamsrv-radar = green Development.
 - Each color keeps its **own label** (defaults: Development, Pre Prod, Production, Staging, Sandbox). Renaming happens on the banner itself, guarded by a prompt ("Rename this banner?" → Edit name / Keep); the field is read-only until editing is confirmed, so no stray-click renames.
-- Virtual fleets and pipelines inherit their fleet's environment. The Global Fleet console is not an environment: neutral banner ("Global Fleet — all environments"), not renamable, and the color picker requires a fleet context.
+- Virtual fleets and streams inherit their fleet's environment. The Global Fleet console is not an environment: neutral banner ("Global Fleet — all environments"), not renamable, and the color picker requires a fleet context.
 - **Production forces dark mode.** Entering a fleet whose environment is Production switches the UI to dark automatically; a manual dark-mode toggle covers everything else.
 - The color picker and toggles live in the user (identity) menu, section-labelled with the fleet they will affect.
 - All of it — per-fleet colors, per-color labels, dark mode, banner visibility — **persists per user**: every user builds their own environment scheme; one user's choices never affect another's view.
@@ -147,23 +147,23 @@ Prototyped local authentication and per-user workspace behavior:
 - **Identity display** — the console shows full names everywhere (user chip, Users and Permissions tables, grant dialog); email appears as the account identifier. No internal usernames surface in the UI.
 - **Resizable sidebar** — sidebar width drags between 180–440 px and is saved per user with the rest of their workspace preferences.
 
-## 10. Connections view (per pipeline / virtual fleet)
+## 10. Connections view (per stream / virtual fleet)
 
-The Connections screen lists the databases and stores a pipeline (or virtual fleet) replicates between, with their enrolled agents. **Specified in full in `connections.md`** (criteria CON-01..09); summarized here for hierarchy context:
+The Connections screen lists the databases and stores a stream (or virtual fleet) replicates between, with their enrolled agents. **Specified in full in `connection.md`** (criteria CON-01..09); summarized here for hierarchy context:
 
 - **Columns (default)** — Connection (name + source/target role pill), Platform, Description, Agent (binary version + platform), Heartbeat (last agent heartbeat, relative), Status (Healthy / Unreachable pill), and a per-row **Test** button that runs a connectivity test (agent reachability, latency, capability-matrix validation) and reports pass/fail with cause.
-- **Column chooser** — a Columns dropdown toggles visibility of every column, including hiding the Test button. Hidden-by-default extras: Host / endpoint, Created (date), Created by (full name), Pipelines (count of pipelines using the connection), Last test result. The Connection column is locked on.
-- **Sorting** — every visible header is click-sortable (click again to reverse) with a visible ▲/▼ indicator. Default order: Connection, descending, indicator shown on load. Heartbeat and Pipelines sort numerically, not lexically.
+- **Column chooser** — a Columns dropdown toggles visibility of every column, including hiding the Test button. Hidden-by-default extras: Host / endpoint, Created (date), Created by (full name), Streams (count of streams using the connection), Last test result. The Connection column is locked on.
+- **Sorting** — every visible header is click-sortable (click again to reverse) with a visible ▲/▼ indicator. Default order: Connection, descending, indicator shown on load. Heartbeat and Streams sort numerically, not lexically.
 - **Filtering** — a filter box under each visible header narrows rows by substring match; filters combine across columns; an empty state appears when nothing matches. The Connection filter also matches the role.
 - **Per-user persistence** — column visibility and sort order are stored per account with the user's other workspace preferences and restored at sign-in; each user keeps their own table setup. Filters are session-only.
-- **Scoping** — opened from a pipeline, the list is scoped to that pipeline's source and target connections; opened at the virtual-fleet level it shows all of the virtual fleet's connections.
+- **Scoping** — opened from a stream, the list is scoped to that stream's source and target connections; opened at the virtual-fleet level it shows all of the virtual fleet's connections.
 
 ## 10A. Where each screen lives
 
 Screens sit at the level that owns the objects they show, and the sidebar mirrors that exactly:
 
 - **Virtual fleet** owns **Connections**, **Jobs**, and **Events** — the databases it replicates between, the work it runs, and its audit trail. In the sidebar these follow the virtual fleet's streams.
-- **Stream (pipeline)** owns **Tables**, **Monitoring**, and **Admin** — what this stream replicates, how it is behaving, and its own settings.
+- **Stream (stream)** owns **Tables**, **Monitoring**, and **Admin** — what this stream replicates, how it is behaving, and its own settings.
 - Under a virtual fleet, streams are listed first in alphabetical order, then Jobs, Events, and Connections.
 
 Each of the three virtual-fleet screens is scoped by the level it was opened from: from a stream it narrows to that stream, from the virtual fleet it covers every stream in it. Counts published in the Global fleet console are derived from the same data those screens read, so a number an operator clicks always matches what they land on.
@@ -182,7 +182,7 @@ The console participates in browser navigation rather than trapping the operator
 | FLT-04 | Search (fleet/division/virtual-fleet), state filter, and error-first sort behave at 200+ fleets |
 | FLT-05 | Sidebar pinning persists per user; unpinned fleets reachable only via the console |
 | FLT-06 | Fleet creation refused for non-Global Admins; success ⇒ Enrolling state + creator's first Fleet Admin grant, both evented |
-| FLT-07 | Virtual-fleet isolation of pipelines, connections, users, grants proven from a sibling-scoped user |
+| FLT-07 | Virtual-fleet isolation of streams, connections, users, grants proven from a sibling-scoped user |
 | FLT-08 | Downward-only admin editing enforced server-side; violations fail and are evented |
 | FLT-09 | SuperAdmin edits any grant except their own SuperAdmin grant (another SuperAdmin only) |
 | FLT-10 | Permissions is one-row-per-attachment; Users is one-row-per-account |
@@ -190,7 +190,7 @@ The console participates in browser navigation rather than trapping the operator
 | FLT-12 | Permissions view scoped like Users: fleet admins see only their fleet's grants (repository-wide grants read-only); VF admins only their virtual fleet's |
 | FLT-13 | Users and Permissions tables sortable on every column with stable default order (user, ascending) |
 | FLT-14 | Self-service profile: users edit own name/email only; username and auth method admin-managed; profile changes evented |
-| FLT-15 | Environment (color + label) is per user × per fleet; VFs and pipelines inherit the fleet's environment; Global console shows the neutral non-renamable banner |
+| FLT-15 | Environment (color + label) is per user × per fleet; VFs and streams inherit the fleet's environment; Global console shows the neutral non-renamable banner |
 | FLT-16 | Banner rename is prompt-guarded (pencil or env change → Edit name / Keep); label field read-only until confirmed; each color keeps its own label |
 | FLT-17 | Production environments force dark mode on entry; manual dark toggle covers non-production; theme switch is immediate and complete (no unreadable controls) |
 | FLT-18 | All theming choices persist per user across sessions; a second user's session shows their own scheme, not the first user's |
@@ -206,6 +206,6 @@ The console participates in browser navigation rather than trapping the operator
 | FLT-29 | Connections, Jobs, and Events are virtual-fleet screens; Tables, Monitoring, and Admin are stream screens; the sidebar lists a virtual fleet's streams alphabetically, then Jobs, Events, and Connections |
 | FLT-30 | Browser Back and Forward walk the console's screens and never leave the application; filters, modals, and toasts create no history entries |
 | FLT-31 | Access to enter a fleet or virtual fleet is derived from the operator's grants everywhere it is shown — a SuperAdmin reaches every fleet and virtual fleet, and an ungranted operator is told which grant to ask for |
-| FLT-28 | A column chooser adds/removes columns (Host/endpoint, Created, Created by, Pipelines, Last test; Test button hideable; Connection locked); visibility and sort order persist per user across sessions and are isolated between users |
+| FLT-28 | A column chooser adds/removes columns (Host/endpoint, Created, Created by, Streams, Last test; Test button hideable; Connection locked); visibility and sort order persist per user across sessions and are isolated between users |
 
 Registered in `master-traceability-matrix.md` (FLT section, procedures pending).

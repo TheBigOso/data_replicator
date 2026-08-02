@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#f4f3ef; font-family:'IBM Plex Sans',sans-serif; color:#1a1c1e; }
+    a { color:#1a6e50; } a:hover { color:#14523c; }
+  </style>
+</helmet>
+<div data-screen-label="New stream wireflow" style="padding:36px 40px; min-width:2080px;">
+  <div style="font-size:22px; font-weight:700;">Creating a new stream — wireflow</div>
+  <div style="display:flex; align-items:flex-start; gap:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:8px; padding:9px 13px; margin:10px 0 4px; max-width:1180px;">
+    <span style="flex:none; font-size:9.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; border:1px solid #1a6e50; border-radius:4px; padding:2px 7px; background:#fff;">CANONICAL</span>
+    <span style="font-size:11px; color:#6d7278; line-height:1.55;">Canonical for the <b>New stream wizard</b> — its four steps, validation, and the inline connection sub-flow. Summarised as branch A of the <b>Virtual Fleet Wireflow</b> and ① of the <b>Stream Wireflow</b>; this file is the detail those two point at. Spec: <b>stream-ui.md</b>, <b>stream.md</b> §5.1.</span>
+  </div>
+  <div style="font-size:13px; color:#6d7278; margin:6px 0 14px;">Replicator console · 5-step wizard with the inline new-connection sub-flow and topology fan-out · docs: replication-topologies.md, connection.md, stream.md</div>
+  <div style="display:flex; gap:16px; align-items:center; font-size:11.5px; color:#6d7278; margin-bottom:26px;">
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1px solid #c9c6bf; border-radius:3px;"></span>screen / dialog step</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#fff; border:1.5px dashed #b3541e; border-radius:3px;"></span>branch / sub-flow</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:10px; height:10px; background:#fbe9e7; border:1px solid #b3261e; border-radius:99px;"></span>validation gate</span>
+    <span style="display:flex; align-items:center; gap:6px;"><span style="width:14px; height:10px; background:#e8f2ed; border:1px solid #1a6e50; border-radius:3px;"></span>outcome</span>
+  </div>
+
+  <!-- ===== main flow ===== -->
+  <div style="display:flex; align-items:flex-start; gap:0;">
+
+    <!-- entry -->
+    <div style="width:210px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:8px;">ENTRY POINTS</div>
+        <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; margin-bottom:6px; text-align:center;">VF dashboard · New stream</div>
+        <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 9px; text-align:center;">Streams list · New stream</div>
+        <div style="font-size:10.5px; color:#6d7278; margin-top:8px; line-height:1.5;">Scoped to the current virtual fleet — its connections, its streams, its event ledger.</div>
+      </div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- step 1 -->
+    <div style="width:270px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">STEP 1 OF 5</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Topology</div>
+        <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:5px;">START FROM</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-bottom:9px;">
+          <div style="border:1.5px solid #1a6e50; background:#f2f7f4; border-radius:6px; padding:5px 7px; font-size:10.5px; font-weight:600;">◉ Blank stream</div>
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 7px; font-size:10.5px; color:#6d7278;">○ Copy existing ▾</div>
+        </div>
+        <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:5px;">TOPOLOGY</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px;">
+          <div style="border:1.5px solid #1a6e50; background:#f2f7f4; border-radius:6px; padding:5px 7px; font-size:10.5px;"><b>Uni-directional</b><br><span style="color:#6d7278; font-family:'IBM Plex Mono',monospace;">○──▶●</span></div>
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 7px; font-size:10.5px;"><b>Broadcast</b><br><span style="color:#6d7278; font-family:'IBM Plex Mono',monospace;">○─▶●●●</span></div>
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 7px; font-size:10.5px;"><b>Consolidation</b><br><span style="color:#6d7278; font-family:'IBM Plex Mono',monospace;">○○○▶●</span></div>
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 7px; font-size:10.5px;"><b>Cascading</b><br><span style="color:#6d7278; font-family:'IBM Plex Mono',monospace;">○▶●▶●●</span></div>
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 7px; font-size:10.5px; opacity:.5;"><b>Bi-directional</b><br><span style="color:#6d7278;">v2 · deferred</span></div>
+          <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 7px; font-size:10.5px; opacity:.5;"><b>Multi-directional</b><br><span style="color:#6d7278;">v2 · deferred</span></div>
+        </div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3261e; background:#fbe9e7; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#b3261e; line-height:1.5;"><b>Gate:</b> bi-/multi-directional are not selectable — clicking explains the v2 deferral (loopback + collision design pass).</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- step 2 -->
+    <div style="width:290px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">STEP 2 OF 5</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:2px;">Endpoints</div>
+        <div style="font-size:10.5px; color:#6d7278; margin-bottom:8px;">Columns are shaped by the topology.</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <div>
+            <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:5px;">SOURCE</div>
+            <div style="border:1.5px solid #1a6e50; background:#f2f7f4; border-radius:6px; padding:5px 7px; font-size:10px; font-family:'IBM Plex Mono',monospace; margin-bottom:4px;">◉ ORA-ERP01</div>
+            <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 7px; font-size:10px; font-family:'IBM Plex Mono',monospace; margin-bottom:4px;">○ PG-BILLING</div>
+            <div style="border:1.5px dashed #c9c6bf; border-radius:6px; padding:5px 7px; font-size:10px; color:#1a6e50; font-weight:600;">+ New connection…</div>
+          </div>
+          <div>
+            <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:5px;">TARGET(S)</div>
+            <div style="border:1.5px solid #1a6e50; background:#f2f7f4; border-radius:6px; padding:5px 7px; font-size:10px; font-family:'IBM Plex Mono',monospace; margin-bottom:4px;">☑ SNOWFLAKE-PRD</div>
+            <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 7px; font-size:10px; font-family:'IBM Plex Mono',monospace; margin-bottom:4px;">☐ S3-LAKE</div>
+            <div style="border:1.5px dashed #c9c6bf; border-radius:6px; padding:5px 7px; font-size:10px; color:#1a6e50; font-weight:600;">+ New connection…</div>
+          </div>
+        </div>
+        <div style="font-size:10.5px; color:#6d7278; margin-top:8px; line-height:1.5;">Cascade adds an INTERMEDIATE column (databases only — file stores can't act as a source).</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3261e; background:#fbe9e7; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#b3261e; line-height:1.5;"><b>Gate:</b> endpoint counts per topology — uni 1+1 · broadcast 1+≥2 · consolidation ≥2+1 · cascade 1 + mid + ≥1. Open sub-flow must finish or cancel first.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- step 3 -->
+    <div style="width:270px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">STEP 3 OF 5</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:2px;">Tables</div>
+        <div style="font-size:10.5px; color:#6d7278; margin-bottom:8px;">The source connection's catalogue.</div>
+        <div style="display:flex; gap:6px; margin-bottom:7px;">
+          <div style="flex:1; border:1px solid #e3e1dc; border-radius:6px; padding:5px 8px; font-size:10px; color:#9a9f a6; color:#9aa0a6;">Search the source catalogue…</div>
+          <div style="font-size:10px; color:#1a6e50; font-weight:600; align-self:center;">Select all 50</div>
+        </div>
+        <div style="border:1px solid #e3e1dc; border-radius:7px; overflow:hidden;">
+          <div style="display:flex; gap:7px; padding:5px 8px; border-bottom:1px solid #f0eeea; font-size:10px;"><span style="color:#1a6e50;">☑</span><span style="font-family:'IBM Plex Mono',monospace; flex:1;">GL_PERIODS</span><span style="color:#6d7278;">45k rows</span></div>
+          <div style="display:flex; gap:7px; padding:5px 8px; border-bottom:1px solid #f0eeea; font-size:10px;"><span style="color:#1a6e50;">☑</span><span style="font-family:'IBM Plex Mono',monospace; flex:1;">AP_HOLDS</span><span style="color:#6d7278;">12k rows</span></div>
+          <div style="display:flex; gap:7px; padding:5px 8px; border-bottom:1px solid #f0eeea; font-size:10px;"><span style="color:#8a8f98;">☐</span><span style="font-family:'IBM Plex Mono',monospace; flex:1;">TAX_CODES</span><span style="color:#b3541e;">⚠ no key</span></div>
+          <div style="display:flex; gap:7px; padding:5px 8px; font-size:10px;"><span style="color:#8a8f98;">☐</span><span style="font-family:'IBM Plex Mono',monospace; flex:1;">AR_AGING</span><span style="color:#6d7278;">88k rows</span></div>
+        </div>
+        <div style="font-size:10px; color:#6d7278; margin-top:6px;">2 selected · 50 shown · flagged tables are registrable but warned</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3541e; background:#fbf3ec; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#8a5a2a; line-height:1.5;"><b>Branch:</b> zero selections allowed — register later from the stream's Tables view. Copy-an-existing carries the base registrations automatically; picks here are additive.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- step 4 -->
+    <div style="width:250px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">STEP 4 OF 5</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:8px;">Name and mode</div>
+        <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:4px;">STREAM NAME</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:6px 9px; font-size:10.5px; font-family:'IBM Plex Mono',monospace; margin-bottom:8px;">erp-analytics</div>
+        <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:4px;">MODE</div>
+        <div style="border:1.5px solid #1a6e50; background:#f2f7f4; border-radius:6px; padding:5px 8px; font-size:10.5px; margin-bottom:4px;">◉ Continuous CDC</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 8px; font-size:10.5px; color:#6d7278; margin-bottom:4px;">○ CDC + scheduled compare</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 8px; font-size:10.5px; color:#6d7278; margin-bottom:8px;">○ Scheduled refresh</div>
+        <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:4px;">STARTING STATE</div>
+        <div style="border:1.5px solid #1a6e50; background:#f2f7f4; border-radius:6px; padding:5px 8px; font-size:10.5px; margin-bottom:4px;">◉ Start suspended · recommended</div>
+        <div style="border:1px solid #e3e1dc; border-radius:6px; padding:5px 8px; font-size:10.5px; color:#6d7278;">○ Activate now</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3261e; background:#fbe9e7; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#b3261e; line-height:1.5;"><b>Gate:</b> name required. Multi-leg topologies suffix each leg: <span style="font-family:'IBM Plex Mono',monospace;">erp-analytics-s3-lake</span>, <span style="font-family:'IBM Plex Mono',monospace;">-snowflake-prd</span>…</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- step 5 -->
+    <div style="width:270px; flex:none;">
+      <div style="background:#fff; border:1px solid #e3e1dc; border-radius:10px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:2px;">STEP 5 OF 5</div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:2px;">Review</div>
+        <div style="font-size:10.5px; color:#6d7278; margin-bottom:8px;">One row per stream to be created.</div>
+        <div style="border:1px solid #e3e1dc; border-radius:7px; overflow:hidden; font-size:10px; font-family:'IBM Plex Mono',monospace;">
+          <div style="display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:6px; padding:4px 8px; border-bottom:1px solid #f0eeea; color:#6d7278; font-family:'IBM Plex Sans',sans-serif;">Stream · Reads · Writes</div>
+          <div style="display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:6px; padding:5px 8px; border-bottom:1px solid #f0eeea;"><b>erp-a…-snowflake</b><span>ORA-ERP01</span><span>SNOWFLAKE-PRD</span></div>
+          <div style="display:grid; grid-template-columns:1.3fr 1fr 1fr; gap:6px; padding:5px 8px;"><b>erp-a…-s3-lake</b><span>ORA-ERP01</span><span>S3-LAKE</span></div>
+        </div>
+        <div style="background:#f7f6f2; border:1px solid #eceae5; border-radius:6px; padding:7px 9px; font-size:10px; color:#6d7278; margin-top:8px; line-height:1.5;">Plan language: definitions land in the event ledger; target objects are created on the first refresh; nothing captures while suspended.</div>
+        <div style="background:#1a6e50; color:#fff; font-size:11px; font-weight:600; border-radius:6px; padding:6px 10px; text-align:center; margin-top:8px;">Create 2 streams</div>
+      </div>
+      <div style="margin-top:10px; border:1.5px dashed #b3261e; background:#fbe9e7; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#b3261e; line-height:1.5;"><b>Gate:</b> every leg's name must be unique across the repository.</div>
+    </div>
+    <div style="width:44px; flex:none; display:grid; place-items:center; padding-top:60px; color:#8a8f98; font-size:20px;">→</div>
+
+    <!-- outcome -->
+    <div style="width:250px; flex:none;">
+      <div style="background:#e8f2ed; border:1px solid #1a6e50; border-radius:10px; padding:12px 14px;">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:8px;">CREATED</div>
+        <div style="font-size:11px; line-height:1.7;">
+          • one stream per leg, in the fleet list and sidebar<br>
+          • picked tables registered on every leg (Queued / Suspended)<br>
+          • <span style="background:#eceae5; border-radius:99px; padding:1px 7px; font-size:10px;">Suspended</span> pills until activated<br>
+          • DEFINITION CHANGE in the event ledger — topology, legs, tables, starting state<br>
+          • persists across reloads<br>
+          • single leg → lands on its Stream detail; multi-leg → the fleet dashboard
+        </div>
+      </div>
+      <div style="margin-top:10px; background:#fff; border:1px solid #e3e1dc; border-radius:8px; padding:8px 11px; font-size:10.5px; color:#6d7278; line-height:1.5;"><b style="color:#1a1c1e;">Then:</b> register more tables → run first refresh → activate → watch the operational timeline.</div>
+    </div>
+  </div>
+
+  <!-- ===== sub-flow: new connection ===== -->
+  <div style="margin-top:34px; margin-left:524px;">
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+      <div style="width:2px; height:26px; background:#b3541e; margin-left:130px;"></div>
+    </div>
+    <div style="border:1.5px dashed #b3541e; border-radius:12px; padding:16px 18px; background:#fdfbf8; width:1210px;">
+      <div style="font-size:12px; font-weight:700; color:#8a5a2a; margin-bottom:12px;">SUB-FLOW · “+ New connection…” (from either endpoint column) — returns to Step 2 with the connection selected</div>
+      <div style="display:flex; align-items:flex-start; gap:0;">
+        <div style="width:230px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">SELECT PLATFORM</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; font-size:9.5px;">
+            <div style="border:1.5px solid #1a6e50; background:#f2f7f4; border-radius:5px; padding:4px 6px;"><b>Or</b> Oracle 19c</div>
+            <div style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 6px;"><b>MS</b> SQL Server</div>
+            <div style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 6px;"><b>Pg</b> PostgreSQL</div>
+            <div style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 6px;"><b>D2</b> DB2 LUW</div>
+          </div>
+          <div style="font-size:9.5px; color:#6d7278; margin-top:6px;">sources · targets show Snowflake / Databricks / PG / S3 / ADLS / local</div>
+        </div>
+        <div style="width:36px; flex:none; display:grid; place-items:center; padding-top:30px; color:#8a8f98; font-size:17px;">→</div>
+        <div style="width:200px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">NAME + AGENT</div>
+          <div style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 7px; font-size:9.5px; font-family:'IBM Plex Mono',monospace; margin-bottom:6px;">ORA-CRM01</div>
+          <div style="border:1.5px solid #1a6e50; background:#f2f7f4; border-radius:5px; padding:4px 7px; font-size:9.5px; margin-bottom:3px;">◉ Agentless — hub-direct</div>
+          <div style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 7px; font-size:9.5px; color:#6d7278;">○ Agent on host — host : port</div>
+        </div>
+        <div style="width:36px; flex:none; display:grid; place-items:center; padding-top:30px; color:#8a8f98; font-size:17px;">→</div>
+        <div style="width:210px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">DATABASE CONNECTION</div>
+          <div style="display:grid; grid-template-columns:2fr 1fr; gap:3px; margin-bottom:3px;">
+            <div style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 6px; font-size:9.5px; font-family:'IBM Plex Mono',monospace;">host</div>
+            <div style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 6px; font-size:9.5px; font-family:'IBM Plex Mono',monospace;">1521</div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:3px;">
+            <div style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 6px; font-size:9.5px; font-family:'IBM Plex Mono',monospace;">database / SID</div>
+            <div style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 6px; font-size:9.5px; font-family:'IBM Plex Mono',monospace;">user</div>
+          </div>
+          <div style="font-size:9px; color:#6d7278; margin-top:5px;">credentials vaulted on the hub — never on agent disk or logs</div>
+        </div>
+        <div style="width:36px; flex:none; display:grid; place-items:center; padding-top:30px; color:#8a8f98; font-size:17px;">→</div>
+        <div style="width:220px; flex:none; background:#fff; border:1px solid #e3e1dc; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#6d7278; margin-bottom:6px;">CAPTURE / INTEGRATE METHOD</div>
+          <div style="border:1.5px solid #1a6e50; background:#f2f7f4; border-radius:5px; padding:4px 7px; font-size:9.5px; margin-bottom:3px;">◉ Direct redo — lowest latency</div>
+          <div style="border:1px solid #e3e1dc; border-radius:5px; padding:4px 7px; font-size:9.5px; color:#6d7278; margin-bottom:6px;">○ Archived-log only</div>
+          <div style="border:1px solid #f3d1cf; background:#fbe9e7; border-radius:5px; padding:5px 7px; font-size:9px; color:#b3261e; line-height:1.45;">⚠ direct redo + agentless → configuration-time warning (connection.md) — the misconfiguration that otherwise becomes a runtime capture failure</div>
+        </div>
+        <div style="width:36px; flex:none; display:grid; place-items:center; padding-top:30px; color:#8a8f98; font-size:17px;">→</div>
+        <div style="width:180px; flex:none; background:#e8f2ed; border:1px solid #1a6e50; border-radius:9px; padding:10px 12px;">
+          <div style="font-size:10px; font-weight:700; letter-spacing:.07em; color:#1a6e50; margin-bottom:6px;">CREATE CONNECTION</div>
+          <div style="font-size:10px; line-height:1.6;">• saved untested, agent unconfigured<br>• DEFINITION CHANGE in the ledger<br>• appears in Connections<br>• auto-selected back in Step 2</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== branch: topology fan-out ===== -->
+  <div style="margin-top:30px; margin-left:254px;">
+    <div style="border:1.5px dashed #b3541e; border-radius:12px; padding:16px 18px; background:#fdfbf8; width:640px;">
+      <div style="font-size:12px; font-weight:700; color:#8a5a2a; margin-bottom:10px;">BRANCH · what each topology creates (Step 1 decides the legs)</div>
+      <div style="display:grid; grid-template-columns:130px 1fr; gap:6px 14px; font-size:11px;">
+        <div style="font-weight:600;">Uni-directional</div><div>1 stream — <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px;">name</span></div>
+        <div style="font-weight:600;">Broadcast</div><div>1 per target, shared capture — <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px;">name-&lt;target&gt;</span> × N</div>
+        <div style="font-weight:600;">Consolidation</div><div>1 per source — <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px;">name-&lt;source&gt;</span> × N · target objects namespaced per stream</div>
+        <div style="font-weight:600;">Cascading</div><div>1 + N — <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px;">name-hop1</span> into the intermediate, then <span style="font-family:'IBM Plex Mono',monospace; font-size:10.5px;">name-&lt;target&gt;</span> per fan-out leg reading the intermediate</div>
+        <div style="font-weight:600; color:#8a8f98;">Bi- / Multi-</div><div style="color:#8a8f98;">blocked — toast explains the v2 deferral; no navigation</div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

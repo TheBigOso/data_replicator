@@ -12,18 +12,23 @@ This repository is **design-stage**: it holds the design specifications and a wo
 
 | Path | What it is |
 | --- | --- |
-| `Replicator UI.dc.html` | The admin console prototype — every screen, fully interactive |
-| `support.js` | Runtime that renders the prototype. No build step, no npm, no bundler |
+| `uploads/repidata/Replicator UI.dc.html` | The admin console prototype — every screen, fully interactive |
+| `uploads/repidata/global-fleet/` | Global Fleet level — spec + wireflows for the Global Fleet console, Global Admin, Users &amp; Permissions |
+| `uploads/repidata/fleet/` | Fleet level — spec + wireflow for the Fleet page |
+| `uploads/repidata/fleet/virtual-fleet/` | Virtual Fleet level — specs + wireflows for the VF page, Jobs, Events, VF Timeline, Alert Rules, run history |
+| `uploads/repidata/fleet/virtual-fleet/connections/` | Connections — model + surface spec and wireflow |
+| `uploads/repidata/fleet/virtual-fleet/streams/` | Stream level — specs + wireflows for the Stream page, New stream, Activation, Compare, Tables, Add table |
+| `uploads/repidata/Documents/` | The **model** specification set — architecture, agent, stream, tables, compare, refresh, jobs, events, scheduler, sizing, slicing, topologies, filesystem layout, fleet paths, fleet hierarchy, naming |
+| `uploads/repidata/support.js` | Runtime that renders the prototype. No build step, no npm, no bundler |
 | `uploads/repidata/Documents/` | The design specification set (see [Specifications](#specifications)) |
 | `uploads/repidata/Documents/master-traceability-matrix.md` | The authoritative acceptance-criteria register |
 | `uploads/repidata/Documents/diagrams/` | Wire diagrams, one per concept |
-| `uploads/*.png` | Reference screenshots and wireframes gathered during design sessions |
 | `CLAUDE.md` | Project conventions |
 | `github.md` | Repo association and sync receipt |
 
 ## Running the prototype
 
-Open `Replicator UI.dc.html` in a modern browser. Nothing to install.
+Open `uploads/repidata/Replicator UI.dc.html` in a modern browser. Nothing to install.
 
 Sign-in is by **email** — the product has no usernames anywhere. Test accounts:
 
@@ -40,7 +45,7 @@ Session state and per-user preferences — theme, sidebar width, table columns, 
 
 These are load-bearing; the prototype is designed to make each one visible rather than merely claimed.
 
-**Enterprise flat license.** One price for the whole enterprise. No channel counting, no row metering, no usage telemetry. Perpetual license plus annual maintenance; the software never stops working if maintenance lapses.
+**Enterprise flat license.** One price for the whole enterprise. No stream counting, no row metering, no usage telemetry. Perpetual license plus annual maintenance; the software never stops working if maintenance lapses.
 
 **Nothing hidden.** All documentation — concepts, internals, file formats, wire protocol, troubleshooting — public, unpaywalled, and mirrorable into air-gapped enclaves. The product's own sharp edges are documented openly and converted into guardrails wherever possible.
 
@@ -54,9 +59,9 @@ These are load-bearing; the prototype is designed to make each one visible rathe
 
 ### Hierarchy and navigation
 
-Four levels — **Global Fleet → Fleet (hub server) → Virtual Fleet → Stream (pipeline)**. Each screen sits at the level that owns the objects it shows: the **virtual fleet** owns Connections, Jobs, and Events; each **stream** owns Tables, Monitoring, and Admin. Under a virtual fleet the sidebar lists its streams alphabetically, then Jobs, Events, and Connections. The sidebar is a searchable, expandable tree with a resizable width that persists per user, and it shows only what the signed-in operator's grants reach.
+Four levels — **Global Fleet → Fleet (hub server) → Virtual Fleet → Stream**. Each screen sits at the level that owns the objects it shows: the **virtual fleet** owns Connections, Jobs, and Events; each **stream** owns Tables, Monitoring, and Admin. Under a virtual fleet the sidebar lists its streams alphabetically, then Jobs, Events, and Connections. The sidebar is a searchable, expandable tree with a resizable width that persists per user, and it shows only what the signed-in operator's grants reach.
 
-Screens: Global fleet console, Browse fleets, Fleet view, Virtual fleet overview, Pipelines list, Pipeline detail, Pipeline admin, Connections, Connection detail, New connection wizard, Tables, Table detail, Monitoring, Jobs, Events, and Admin at three levels (global, fleet, virtual fleet).
+Screens: Global fleet console, Browse fleets, Fleet view, Virtual fleet overview, Streams list, Stream detail, Stream admin, Stream timeline, VF timeline, Connections, Connection detail, New connection wizard, Tables, Table detail, Monitoring, Jobs, Events, and Admin at three levels (global, fleet, virtual fleet).
 
 Every virtual-fleet screen is scoped by where it was opened from — from a stream it narrows to that stream, from the virtual fleet it covers all of them — and the counts published in the Global fleet console are derived from the same data those screens read, so a number you click matches what you land on.
 
@@ -119,15 +124,15 @@ Two consequences worth knowing:
 - **A Fleet Admin cannot widen their own reach.** Repository-scope permissions (`SuperAdmin`, `SysAdmin`, `HubCreation`, `ReadStatistics`, `FleetViewer`) are only grantable from Global Fleet Admin, so a fleet-level owner cannot grant themselves company-wide sight or hub-creation rights.
 - **Global Fleet Admin is where fleets come into existence.** Enrolling a fleet and setting its environment colour are global acts, because a new fleet changes what every `FleetViewer` sees.
 
-### Connections — specified in full in [`connections.md`](uploads/repidata/Documents/connections.md)
+### Connections — specified in full in [`connection.md`](uploads/repidata/fleet/virtual-fleet/connections/connection.md)
 
-The most developed area of the prototype, on the premise that connection problems are the most common cause of a stalled pipeline.
+The most developed area of the prototype, on the premise that connection problems are the most common cause of a stalled stream.
 
-**The list** shows Connection (with a source/target role pill), Platform, Description, Agent, Heartbeat, and Status, plus a per-row connectivity test. Available through a **column chooser**: host/endpoint, created date, created by, pipeline count, and last test result. The Test action is itself hideable; the Connection column is locked on.
+**The list** shows Connection (with a source/target role pill), Platform, Description, Agent, Heartbeat, and Status, plus a per-row connectivity test. Available through a **column chooser**: host/endpoint, created date, created by, stream count, and last test result. The Test action is itself hideable; the Connection column is locked on.
 
 Every visible header sorts (click to reverse, with a visible indicator; default **Connection descending**), and numeric columns sort numerically — a 14-minute-stale agent must not sort between 1s and 2s. Every visible header carries a filter box; filters combine and produce an explicit empty state. **Column visibility and sort order persist per user**; filters are session-only.
 
-**Connection detail** answers "what breaks if this is down" on the same page as the configuration: agent card (agent-based with binary, host, port, and heartbeat, or agentless hub-direct), database connection card, resolved source/target properties, and **pipeline membership** — every pipeline using the connection, the role it plays there, table count, and daily volume, each linking through to the pipeline.
+**Connection detail** answers "what breaks if this is down" on the same page as the configuration: agent card (agent-based with binary, host, port, and heartbeat, or agentless hub-direct), database connection card, resolved source/target properties, and **stream membership** — every stream using the connection, the role it plays there, table count, and daily volume, each linking through to the stream.
 
 **Three configuration dialogs**, sharing one contract — trade-offs stated inline, choices constrained by the class capability matrix, and a *Test connection before saving* checkbox that is on by default but can be unchecked (the confirmation discloses which happened, and every save lands in the event ledger):
 
@@ -135,13 +140,25 @@ Every visible header sorts (click to reverse, with a visible indicator; default 
 - **Database connection** — for Oracle: `ORACLE_HOME` and a connect path of either local connect with a **SID** (requires the agent on the Oracle host) or **Oracle TNS** (a `tnsnames.ora` name or the `[//]HOST[:PORT]/SERVICE_NAME` form, which re-derives host, port, and service across the console). Host, port, and database for other platforms. Credentials are vaulted on the hub, never written to agent disk or logs.
 - **Source and target properties** — Oracle capture method (**direct redo** or **archived-log only**), pluggable-database and SAP-source options, and advanced capture properties (extra redo archive directory, invisible columns, intermediate staging directory, case-sensitive names). PostgreSQL logical slot with slot and publication. Log readers for SQL Server and DB2. Target integrate method: continuous, batched cycles, or burst apply, with automatic state tables. Choosing direct redo over a non-loopback TNS connection raises a **configuration-time warning** — the misconfiguration that otherwise surfaces as a runtime capture failure.
 
-### Pipelines, tables, and operations
+### Streams, tables, and operations
 
-Pipeline list and detail with replication status, latency, and volume; per-pipeline Tables with the verified-status model; Monitoring with alerts surfaced as sidebar badges; Jobs; and the Events ledger. Admin exists at global, fleet, and virtual-fleet level with capability-gated create, edit, and delete.
+Stream list and detail with replication status, latency, and volume; per-stream Tables with the verified-status model; Monitoring with alerts surfaced as sidebar badges; Jobs; and the Events ledger. Admin exists at global, fleet, and virtual-fleet level with capability-gated create, edit, and delete.
 
-**Tables and table structure** — specified in full in [`tables-ui.md`](uploads/repidata/Documents/tables-ui.md). The Tables list covers every table across every pipeline (identity, pipeline, name in source, group, recent refresh, recent compare, change sparkline). Clicking a table name opens **table detail**: a facts strip (dialect per side, row estimate, changes today, capture method and the supplemental logging it requires, apply latency), the **columns grid** — source name, target name, source type, nullability, key, mapped target type, notes — keys and indexes, replication rules, a **Source / Target DDL** pane rendering real dialect-correct DDL, and definition history.
+**Tables and table structure** — specified in full in [`tables-ui.md`](uploads/repidata/fleet/virtual-fleet/streams/tables-ui.md). The Tables list covers every table across every stream (identity, stream, name in source, group, recent refresh, recent compare, change sparkline). Clicking a table name opens **table detail**: a facts strip (dialect per side, row estimate, changes today, capture method and the supplemental logging it requires, apply latency), the **columns grid** — source name, target name, source type, nullability, key, mapped target type, notes — keys and indexes, replication rules, a **Source / Target DDL** pane rendering real dialect-correct DDL, and definition history.
+
+Source objects are shown **fully qualified** everywhere — `MFGDB.MFG.WORKORDERS`, `ERPPRD.ERP.GL_JOURNALS`, `billingdb.billing.invoices` — with the database component following each platform's convention, and both the identity and the qualified name open the detail screen. A **Volume/day** column sits beside the sparkline, derived from the table's change rate and its own column width, with a **KB/MB/GB/TB (or Auto) selector the operator sets per stream** and which persists with their other preferences. The stream's own Tables section renders the *same* grid and row model as the Tables screen, so two paths to the same view cannot drift apart.
+
+**Removing a table is a stop, not a list edit.** Remove arms to Confirm, then a dialog names the stream, source object and target object and offers the stop sequence — drain in-flight changes (on by default) and drop the target table (off by default) — before capture for that table ends at the next checkpoint. Nothing else in the stream is interrupted, a `STOP` event records every choice, and the removal is scoped to that stream, so removing a table from a duplicate leaves the original registered.
 
 Columns are editable per row: source name, target name, both types, nullability, key membership, and notes. **Source and target column names are independent in both directions** — renaming one side never moves the other, because both hang off a column identity rather than off each other (`tables.md` §3.1). Columns can be dropped and restored; the primary key cannot be dropped. Every change re-derives the grid, the rules panel, and both DDL panes, and lands in the event ledger.
+
+**Duplicating a stream** — specified in full in [`stream-ui.md`](uploads/repidata/fleet/virtual-fleet/streams/stream-ui.md) §5. Every stream can be duplicated from three places (stream detail toolbar, a row action in the Streams list, Stream admin → Operations). A duplicate is a **new stream, not a variant**: it shares the source capture connection but gets its own log position, file log, jobs, checkpoints and state, and target objects namespaced by its name so the two never write the same tables. The dialog takes the new name, a target connection scoped to that virtual fleet, what carries over (table registrations, column plan, replication rules, schedules — schedules off by default so a test copy stays quiet), and whether it starts suspended or active. Suspended means visibly nothing moving: `—` latency and rows, a flat chart, capture "not started", an empty file log, and every copied table Suspended. Duplicates persist across reloads, and every metric is derived from the original, so a duplicate of a duplicate still reports honestly.
+
+**Comparing data** — specified in full in [`compare-ui.md`](uploads/repidata/fleet/virtual-fleet/streams/compare-ui.md) (semantics in [`compare.md`](uploads/repidata/Documents/compare.md)). Every stream's Compare button opens a dialog scoped to its read/write locations and registered tables: three method tiers (row counts, bulk checksums, composed — the default and the only tier that enables repair), online compare (in-flight re-check or double compare), parallel sessions, difference-class filters, an optional restrict predicate, and a live CLI-equivalent line. Starting it logs a **CURRENT COMPARE event** and holds a **RUNNING job** for the ~3–4 minutes a composed run takes; clicking any table row opens **deep analysis** — slice n of m, % of the current slice, the operation and key range, read/write positions, per-session assignments. The run can be sent to the **background**: a bottom-right notice chip aggregates every running compare and refresh with live %, Jobs rows expand with progress bars and per-table chips, and "Open window" reopens the dialog mid-run. On completion the job leaves Jobs, the event flips to DONE (a reload mid-run yields CANCELED, never a zombie), and the **report** states the verdict — IN SYNC / DRIFT DETECTED / STRUCTURE MISMATCH — with per-table difference classes, match rates, diff-file access, and the settings it was allowed to ignore. From a composed report with drift, **repair** generates the fix set (direction, classes, custom restrict WHERE, SQL preview) and applies it through the refresh engine with writes O(differences). The full flow is diagrammed in `Compare Data Wireflow.dc.html`.
+
+**Compare and refresh history** — specified in full in [`run-history.md`](uploads/repidata/fleet/virtual-fleet/run-history.md). The same ledger records are surfaced at four scopes: the **virtual fleet dashboard** shows every run in the fleet, a **stream dashboard** shows that stream's bulk runs, the **Tables screen** shows table-level runs for whatever the stream filter has in view, and **table detail** shows only that table's runs. Anything running sorts to the top; each row states outcome, duration and who started it. Clicking a run hands off to the ledger — Events opens with that event expanded and scrolled into view, however far down it sits — because the history panel is an index and the event is the record. Compare runs keep `state: DONE` with the result as an outcome field, so the Events state filter still selects them and a DONE pill never claims a mismatch was a success.
+
+**Operational timelines** — specified in full in [`timeline.md`](uploads/repidata/fleet/virtual-fleet/timeline.md). Monitoring answers *what is*; the timeline answers *what happened*. Two scopes share one model: a **stream timeline** (throughput, capture position lag, checkpoint lag, file-log backlog as history bands) and a **VF timeline** combining every stream in the virtual fleet (total throughput, worst capture lag, total backlog, plus a per-stream comparison table that drills down). Both carry a 1h/6h/24h/7d range selector, ledger events as clickable markers, a scrub cursor whose readout names the **dominant latency factor** at any moment, and a one-sentence diagnosis with numbers — why the latency is what it is, when it started, and when it clears. **Infrastructure health** cards at the top cover the source agent, hub system, repo database, and target agent with CPU %+cores, memory %+GB, and IO write/read; unreachable agents show last-seen instead of stale stats, agentless targets say the hub applies directly. The stream scope adds a per-table **flow-by-hour** profile (peak window and volume share — the surface for scheduling refreshes into troughs) and an **activate/deactivate what-if** panel that projects source-side accumulation, catch-up time, and target burst before the operator confirms anything.
 
 Destructive and structural actions are modelled as **plans**: the console states what would happen — jobs draining at checkpoints, file-log frames retained until acknowledged, target left untouched — before anything is confirmed.
 
@@ -151,11 +168,11 @@ Destructive and structural actions are modelled as **plans**: the console states
 
 These are properties of the console as built, not aspirations — they are what an operator actually experiences when clicking through:
 
-- **Real browser history.** Every screen change pushes a history entry, so Back and Forward walk the console (fleet → virtual fleet → pipeline → connection) instead of leaving the page. Modals, filter keystrokes, and toasts deliberately create no entries — Back should not undo typing.
+- **Real browser history.** Every screen change pushes a history entry, so Back and Forward walk the console (fleet → virtual fleet → stream → connection) instead of leaving the page. Modals, filter keystrokes, and toasts deliberately create no entries — Back should not undo typing.
 - **Grant-derived everything.** Visibility, enterability, and access labels all come from the operator's grants rather than being hardcoded per screen: a SuperAdmin can enter every virtual fleet in every fleet; a non-super sees `none` on ungranted ones and is told which grant to ask for.
-- **Per-user, per-account persistence.** Theme, sidebar width, pinned fleets, connection column sets, and sort order are stored per signed-in account and restored at sign-in. Filters are session-only, being an act of looking rather than a preference.
+- **Per-user, per-account persistence.** Theme, sidebar width, pinned fleets, connection column sets, sort order, and volume units are stored per signed-in account and restored at sign-in. Definitions the operator creates — duplicated streams and their suspended state, removed table registrations — persist in their own keys (`repl-dup-pipes`, `repl-removed-tables`) alongside the event ledger. Filters are session-only, being an act of looking rather than a preference.
 - **Environment signalling.** Each fleet carries an environment (production, test, …) whose colour becomes the console accent, so the operator can see which environment they are acting in without reading a label.
-- **Honest empty states.** Screens with nothing to show say so — no connections match the filters, no pipelines defined in this virtual fleet, this connection belongs to no pipeline — rather than rendering a blank area that reads as a loading failure. Counts shown in one screen match what the next screen contains.
+- **Honest empty states.** Screens with nothing to show say so — no connections match the filters, no streams defined in this virtual fleet, this connection belongs to no stream — rather than rendering a blank area that reads as a loading failure. Counts shown in one screen match what the next screen contains.
 - **Nothing silently succeeds.** Every save, test, switch, and structural action reports what happened, including whether a connection was tested before saving, and says when it would be recorded in the event ledger.
 
 ---
@@ -166,24 +183,19 @@ Each specification carries a phased test plan, test procedures, and numbered acc
 
 | Document | Subject |
 | --- | --- |
-| `architecture.md` | Hub-routed core, repository, REST API, file-log transport |
-| `agent.md` | Rust agent: enrollment, mTLS, static binary, upgrade rings |
-| `location.md` | Location model, capability matrix, credential envelope, configuration-time validation |
-| `connections.md` | The operator-facing connection surface — list, detail, dialogs, testing |
-| `channel.md` | What to replicate: table selection, identity derivation, mappings |
-| `tables.md` | Fleet-wide table surface, verified status (including honest INCONCLUSIVE), drift check, per-side column names |
-| `tables-ui.md` | The console surface for tables: list, table detail, columns grid, column editor, DDL panes |
-| `replication-topologies.md` | Broadcast, consolidation, cascade; the topology view |
-| `scheduler.md` | Continuous CDC, scheduled refresh, scheduled compare |
-| `refresh.md` | Online refresh without suspending integrate |
-| `compare.md` | Source-equals-target verification, multi-target verdicts |
-| `slicing-design.md` | Slice types, parallel writers, throughput |
-| `jobs.md` | Job model, priority classes, resource caps |
-| `events.md` | Audit ledger: completeness by construction, immutability, SIEM forwarding |
-| `fleet-hierarchy.md` | The four-level hierarchy, Global Fleet console, admin and grant model |
-| `sizing.md` | Environment sizing: storage inventory, compute distribution, quota formulas |
-| `naming.md`, `filesystem-layout.md` | Naming rules and on-disk layout |
-| `master-traceability-matrix.md` | Consolidated criteria, procedures, state, evidence |
+| `Documents/architecture.md` | Hub-routed core, repository, REST API, file-log transport, **and §2.2 the console application architecture** |
+| `Documents/agent.md` | Rust agent: enrollment, mTLS, static binary, upgrade rings |
+| `Documents/stream.md` | The stream model: table selection, identity derivation, replication styles, keys, lifecycle, plan-based activation |
+| `Documents/tables.md` | Fleet-wide table surface, verified status (including honest INCONCLUSIVE), drift check, per-side column names |
+| `Documents/compare.md` · `Documents/refresh.md` | Source-equals-target verification · online refresh without suspending integrate |
+| `Documents/jobs.md` · `Documents/events.md` | Job model and scheduler contract · the audit ledger: completeness by construction, immutability, SIEM forwarding |
+| `Documents/scheduler.md` · `Documents/slicing-design.md` | Stream modes, cron/calendars/overlap · slice types, parallel writers |
+| `Documents/replication-topologies.md` | Broadcast, consolidation, cascade; the topology view |
+| `Documents/fleet-hierarchy.md` | The four-level hierarchy, Global Fleet console, admin and grant model |
+| `Documents/fleet-paths.md` · `Documents/filesystem-layout.md` | The console tree on disk · the install/state contract |
+| `Documents/sizing.md` · `Documents/naming.md` | Environment sizing · terminology decisions (Channel → Stream, Location → Connection) |
+| `global-fleet/*.md` · `fleet/**/*.md` | The console-surface specs, each beside its wireflow (see the layout table above) |
+| `Documents/master-traceability-matrix.md` | Consolidated criteria, procedures, state, evidence |
 
 ### How verification works
 
@@ -191,13 +203,13 @@ Every specification follows the same four-link chain, and a concept is only firm
 
 The working rule: **a criterion is checked off only when its procedure has been executed, every expected result observed, and the listed evidence archived.** No procedure, no pass. Evidence lives with the release record so any pass can be re-audited later.
 
-Current state of the matrix: **165 criteria across 13 specifications**, none yet run — this is a design repository.
+Current state of the matrix: **276 criteria** (267 Not run · 7 Gated · 2 Deferred) across the model specs, the console surfaces, and the path model — none yet run; this is a design repository.
 
 ---
 
 ## v1 scope
 
-**Committed.** Hub-routed core (agents, encrypted file log, REST API, scheduler, repository); continuous CDC, scheduled refresh, and scheduled compare; PostgreSQL source and the PostgreSQL-to-PostgreSQL lab pipeline as the verification baseline.
+**Committed.** Hub-routed core (agents, encrypted file log, REST API, scheduler, repository); continuous CDC, scheduled refresh, and scheduled compare; PostgreSQL source and the PostgreSQL-to-PostgreSQL lab stream as the verification baseline.
 
 **In design for v1.** Oracle source via direct redo without LogMiner; SQL Server source; DB2 source; Snowflake and Databricks targets; file targets (S3-compatible, ADLS, local).
 
@@ -209,4 +221,3 @@ Current state of the matrix: **165 criteria across 13 specifications**, none yet
 
 Design-stage prototype. It models real product behavior, constraints, and permission gating, but it does not connect to a hub, an agent, or a database. Actions that would mutate a real fleet report what they would do instead of doing it.
 
-Note: `uploads/repidata/Replicator UI.dc.html` is a stale earlier copy of the prototype. The current one is `Replicator UI.dc.html` at the repository root.
